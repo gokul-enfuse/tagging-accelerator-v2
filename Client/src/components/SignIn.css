@@ -1,0 +1,90 @@
+@import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  background: #ffffff;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signin {
+    border : 10px solid;
+    border-image-slice: 1;
+    border-width: 5px;
+    border-image-source: linear-gradient(to right, rgb(19, 4, 99), rgb(147, 241, 243));
+    width: 500px;
+}
+
+.signin_wrapper {
+  background: #f6f9f9;
+}
+
+.signin_success {
+  width: 500px;
+  min-height: 450px;
+  border-radius: 3px ;
+  box-shadow: 5px 5px 5px #001324dc;
+
+}
+.signin_success h1 {
+  letter-spacing: 1px;
+}
+.signin_success p {
+  margin-top: 15px;
+  letter-spacing: 1px;
+}
+
+form {
+  padding: 20px 50px;
+}
+
+h2 {
+  text-align: center;
+  font-family: "Righteous", cursive;
+  font-size: 45px;
+  font-weight: 500;
+  margin: 25px;
+}
+
+div.textField {
+  width: 100%;
+  margin: 12px 10px;
+}
+
+div.textField input {
+  font-size: 20px;
+}
+div.textField svg {
+  font-size: 25px;
+}
+
+button {
+  background: #09deb0dc;
+  width: 90%;
+  line-height: 35px;
+  margin: 20px 20px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.error_msg {
+  color: #ff0000e0;
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+}
+
+

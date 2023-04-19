@@ -1,0 +1,9 @@
+POST http://localhost:5001/create/profile
+Content-Type: application/json
+
+{
+    "username":"admin",
+    "password":"admin123",
+    "confirmpassword":"admin123",
+    "role": 1
+}
