@@ -8,7 +8,7 @@ const RequireAuth = () => {
 
 console.log('Auth: ', auth)
     return (
-        auth.username
+        auth.profile_username
             ? <Outlet />
             :  <Navigate to="/" state={{ from: location }} replace />
     )

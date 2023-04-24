@@ -83,7 +83,6 @@ const TableData = () => {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-
   };
   const hasSelected = selectedRowKeys.length > 0;
 

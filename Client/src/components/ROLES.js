@@ -1,6 +1,6 @@
 export const ROLES = Object.freeze({
-    ADMIN: "Admin",
-    TAGGER: "Tagger",
-    REVIEWER: "Reviewer",
-    MANAGER: "Manager",
+    ADMIN: 1,
+    TAGGER: 3,
+    REVIEWER: 4,
+    MANAGER: 2,
   });

@@ -30,7 +30,7 @@ const ProfileData = () => {
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 console.log("Response data:", response.data);
-                const managerProfiles = response.data.filter(item => item.role === "Manager")
+                const managerProfiles = response.data.filter(item => item.profile_role === "Manager")
                 console.log("managerProfiles:", managerProfiles)
                 setData(managerProfiles)
             })

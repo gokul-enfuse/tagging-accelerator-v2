@@ -54,9 +54,7 @@ const CreateTask = () => {
                 const allProfiles = response.data
                 console.log("response data is", response.data);
 
-                const taggerlist = allProfiles.filter((item) => {
-                    return item.role === "Tagger"
-                })
+                const taggerlist = allProfiles.filter((item) => item.profile_role === 3 )
 
                 console.log("tagger list is", taggerlist);
                 setTaggers(taggerlist)
@@ -75,43 +73,46 @@ const CreateTask = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <label>Task Title</label><br />
-            <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
-            <label>Task ID</label><br />
-            <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />
-            <label>Creaton Date</label><br />
-            <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
-            <label>Assigned To</label><br />
+            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
+            <legend>Create Task:</legend>
+                <label>Task Title</label><br />
+                <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
+                <label>Task ID</label><br />
+                <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />
+                <label>Creaton Date</label><br />
+                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
+                <label>Assigned To</label><br />
 
-            <select name="assignedTo" value={formData.assignedTo} onChange={handleChange}>
-                <option key={""} value={""}>
-                    select
-                </option>
-                {taggers && taggers.map((tagger) => (
-                    <option key={tagger.id} value={tagger.username}>
-                        {tagger.username}
+                <select name="assignedTo" value={formData.assignedTo} onChange={handleChange}>
+                    <option key={""} value={""}>
+                        select
                     </option>
-                ))}</select><br />
+                    {taggers && taggers.map((tagger) => (
+                        <option key={tagger.profile_id} value={tagger.prfile_id}>
+                            {tagger.profile_username}
+                        </option>
+                    ))}</select><br />
 
-            {/*<input type="text" name="assignedTo" value={formData.assignedTo} onChange={handleChange}></input><br />*/}
-            {/* <label>Role</label><br />
-            <select name="role" value={formData.role} onChange={handleChange}>
-                <option key={""} value={""}>
-                    select
-                </option>
-                <option value="tagger">Tagger</option>
-                <option value="reviewer">Reviewer</option>
-            </select><br />*/}
+                {/*<input type="text" name="assignedTo" value={formData.assignedTo} onChange={handleChange}></input><br />*/}
+                {/* <label>Role</label><br />
+                <select name="role" value={formData.role} onChange={handleChange}>
+                    <option key={""} value={""}>
+                        select
+                    </option>
+                    <option value="tagger">Tagger</option>
+                    <option value="reviewer">Reviewer</option>
+                </select><br />*/}
 
 
-           {/* <label>Status</label><br />
-            <select name="status" value={formData.status} onChange={handleChange}>
-                <option value="inProgress">In progress</option>
-                <option value="completed">Complted</option>
-                <option value="waitingForReview">Waiting For Review</option>
+            {/* <label>Status</label><br />
+                <select name="status" value={formData.status} onChange={handleChange}>
+                    <option value="inProgress">In progress</option>
+                    <option value="completed">Complted</option>
+                    <option value="waitingForReview">Waiting For Review</option>
 
-            </select><br />*/}
-            <button type="submit">Add Task</button>
+                </select><br />*/}
+            </fieldset>
+            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Task</button>
 
         </form>
     );

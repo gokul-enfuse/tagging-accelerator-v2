@@ -16,21 +16,17 @@ const CompletedTaskData = () => {
             .then(response => {
                 console.log("Response data:", response.data);
                 setData(response.data)
-            })
-            .catch(error => console.error(error));
+            }).catch(error => console.error(error));
     }
     const getTaggers = () => {
         axios
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 const allProfiles = response.data
-                const reviewerList = allProfiles.filter((item) => {
-                    return item.role === "Reviewer"
-                })
+                const reviewerList = allProfiles.filter((item) => item.profile_role === 4)
                 console.log("reviewer list is", reviewerList);
                 setReviewerList(reviewerList)
-            })
-            .catch(error => console.error(error));
+            }).catch(error => console.error(error));
     }
     useEffect(() => {
         getCompletedTAsks();
@@ -47,7 +43,7 @@ const CompletedTaskData = () => {
         console.log("task id is :", record, ",assigned to is:", record.assignedTo)
         axios
             .put("http://localhost:5000/updatetask", {
-                "id": record._id,
+                "id": record.task_id,
                 "updatedData": { "assignedTo": assignedTo }
             })
             .then(response => {
@@ -89,7 +85,7 @@ const CompletedTaskData = () => {
             key: 'key',
 
             render: (text, record) => (
-                <select name="assignedTo" value={assignedTo[record._id]} onChange={(e) => handleAssignToChange(record._id, e)} disabled={isSubmitted[record._id]}>
+                <select name="assignedTo" value={assignedTo[record.profile_id]} onChange={(e) => handleAssignToChange(record.profile_id, e)} disabled={isSubmitted[record.profile_id]}>
                     <option key={""} value={""}>
                          {record.assignedTo || "select"}
                     </option>

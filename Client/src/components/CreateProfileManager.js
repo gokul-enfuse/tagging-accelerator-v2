@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 const CreateProfileManager = () => {
     const [formData, setFormData] = useState({
-        projectNames: [],
+        id: [],
         fullName: '',
         email: '',
         role: ''
@@ -32,17 +32,19 @@ const CreateProfileManager = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        formData.projectNames = selected
+        formData.id = selected
         console.log("formData:", formData)
 
         const username = formData.email;
         const password = Math.random().toString(36).slice(-8);
-        if (!formData.fullName) {
+       /*  if (!formData.fullName) {
             return
-        }
+        } */
         const formDataWithDetails =
         {
             ...formData,
+            name: formData.fullName,
+            fullname: formData.fullName,
             username: username,
             password: password,
             confirmPassword: password,
@@ -79,9 +81,9 @@ const CreateProfileManager = () => {
             <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
                 {projectList.map((project) => (
-                    <option key={project._id} value={project.projectName}>
+                    <option key={project.project_id} value={project.project_id}>
 
-                        {project.projectName}
+                        {project.project_Name}
                     </option>
                 ))}
             </select><br />
@@ -92,8 +94,8 @@ const CreateProfileManager = () => {
             <label>Role</label><br />
             <select name="role" value={formData.role} onChange={handleChange}>
                 <option key={""} value={""}> Select</option>
-                <option value="Tagger">Tagger</option>
-                <option value="Reviewer">Reviewer</option>
+                <option value="3">Tagger</option>
+                <option value="4">Reviewer</option>
             </select><br />
             <button type="submit">Add Profile</button>
         </form>

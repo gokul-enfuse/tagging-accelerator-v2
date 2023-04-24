@@ -25,7 +25,7 @@ const Manager = () => {
         navigate('/profiledetailsmanager')
       }
     return (
-        <div>
+        <div style={{marginBottom: '150px'}}>
             <h1>Welcome, Manager</h1>
             <div>
                 <label>Assigned To</label><br />

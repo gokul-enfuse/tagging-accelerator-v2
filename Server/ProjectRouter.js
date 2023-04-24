@@ -16,8 +16,7 @@ projectRouter.post('/create/project', async (req, res) => {
         res.status(400).json({message: "Invalid Input" });
     }
 
-    sql = `INSERT INTO ${table_name} (project_Name, project_clientname, project_domain, project_status, createdDate, modifiedDate) VALUES ('${project_Name}', '${project_clientname}', ${project_domain}, ${project_status}, '${createdDate}', '${modifiedDate}')`;
-
+    sql = `INSERT INTO ${table_name} (project_Name, project_clientname, project_domain, project_status, createdDate, modifiedDate) VALUES ('${project_Name}', '${project_clientname}', '${project_domain}', ${project_status}, '${createdDate}', '${modifiedDate}')`;
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(400).json({ message: "Could not create user.", error: error });
