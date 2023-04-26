@@ -16,9 +16,10 @@ const CreateTask = () => {
         taskId: '',
         status: '',
         creationDate: '',
-        assignedTo: '',
-        role: '',
-    })
+        assignedTo: 0,
+        role: 0,
+    });
+    const [taggers, setTaggers] = useState([]);
 
 
     const handleChange = (e) => {
@@ -29,7 +30,7 @@ const CreateTask = () => {
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('http://localhost:5000/createtask', {
+        let response = await fetch('http://localhost:5000/createtask', {
             method: 'POST',
             body: JSON.stringify(formData),
             headers: {
@@ -37,29 +38,21 @@ const CreateTask = () => {
             }
         })
         const data = await response.json();
-        console.log(data);
-        alert('Record added successfully');
-
-        console.log("previousRoute is:", previousRoute)
+        if(data.status === 200) {
+            alert('Record added successfully');
+        }
         navigate(previousRoute || '/');
     }
-    const [taggers, setTaggers] = useState([]);
+    
 
     const getTaggers = () => {
-
         axios
-            .get("http://localhost:5000/allprofiles")
-            .then(response => {
-
-                const allProfiles = response.data
-                console.log("response data is", response.data);
-
-                const taggerlist = allProfiles.filter((item) => item.profile_role === 3 )
-
-                console.log("tagger list is", taggerlist);
-                setTaggers(taggerlist)
-            })
-            .catch(error => console.error(error));
+            .get("http://localhost:5000/getalltaggers")
+            .then(res=> {
+                console.log(res);
+                const allProfiles = res.data;
+                setTaggers(allProfiles);
+            }).catch(error => console.error(error));
     }
 
     useEffect(() => {
@@ -83,12 +76,13 @@ const CreateTask = () => {
                 <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
                 <label>Assigned To</label><br />
 
-                <select name="assignedTo" value={formData.assignedTo} onChange={handleChange}>
-                    <option key={""} value={""}>
+                <select name="assignedTo" id="assignedTo" value={formData.assignedTo}  onChange={handleChange}>
+                    <option key={0} value={0}>
                         select
                     </option>
                     {taggers && taggers.map((tagger) => (
-                        <option key={tagger.profile_id} value={tagger.prfile_id}>
+                        <option key={tagger.profile_id} value={tagger.profile_id}>
+
                             {tagger.profile_username}
                         </option>
                     ))}</select><br />

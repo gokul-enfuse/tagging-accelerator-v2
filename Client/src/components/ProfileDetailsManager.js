@@ -3,12 +3,8 @@ import ProfileDataManager from './ProfileDataManager.js';
 
 
 const ProfileDetailsManager = () => {
-
     return (
-
-
         <ProfileDataManager />
-
     )
 }
 

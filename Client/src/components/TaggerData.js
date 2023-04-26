@@ -12,51 +12,48 @@ const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value);
   axios
-    .put("http://localhost:5000/updatetask", {
-      "id": record._id,
-      "updatedData": { "status": value }
-    })
-    .then(response => {
-      console.log("response handlechange data is:", response);
-
-    })
-    .catch(error => console.error(error));
+  .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+      task_title: record.task_title,
+      task_status: record.task_status,
+      profile_id: record.profile_id,
+      task_role: record.task_role
+  }).then(response => {
+    console.log("response handlechange data is:", response);
+    alert(response.data.message);
+  }).catch(error => console.error(error));
 
 }
 const columnsRow = [
   {
-    title: 'Task Title',
-    dataIndex: 'taskTitle',
+    title: 'Task ID',
+    dataIndex: 'task_id',
     key: 'key'
   },
   {
-    title: 'Task ID',
-    dataIndex: 'taskId',
+    title: 'Task Title',
+    dataIndex: 'task_Title',
     key: 'key'
   },
   {
     title: 'Assign To',
-    dataIndex: 'assignedTo',
+    dataIndex: 'profile_email',
     key: 'key',
   },
   {
     title: 'Status',
-    dataIndex: 'status',
+    dataIndex: 'task_status',
     key: 'key',
     render: (text, record) => (
-      <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-       
-        
-      <Option  value="In Progress">reassigned</Option>
+      <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>  
+        <Option  value="In Progress">reassigned</Option>
         <Option value="Completed" >Completed</Option>
         <Option value="Waiting for Review" >Task done</Option>
-
       </Select>
     )
   },
   {
     title: 'Created Date',
-    dataIndex: 'creationDate',
+    dataIndex: 'createdDate',
     key: 'key'
   },
 
@@ -67,7 +64,7 @@ const TaggerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
-  const taggerId = auth.username;
+  const taggerId = auth.profile_username;
   const [data, setData] = useState([])
   console.log("taggerId:", taggerId)
   const start = () => {
@@ -99,19 +96,12 @@ const TaggerData = () => {
   const getTaggers = () => {
 
     axios
-      .get("http://localhost:5000/allprofiles")
+      .get("http://localhost:5000/getalltaggers")
       .then(response => {
-
         const allProfiles = response.data
-        console.log("response data is for reviewer", response.data);
-
-        const taggerlist = allProfiles.filter((item) => {
-          return item.role === "Tagger"
-        })
-
-        console.log("tagger list is", taggerlist);
+        console.log("response data is for reviewer", allProfiles);
         // setReviewers(reviewerlist)
-        getTask(taggerId, taggerlist)
+        getTask(taggerId, allProfiles)
       })
       .catch(error => console.error(error));
   }
@@ -124,33 +114,27 @@ const TaggerData = () => {
           console.log("Response data:", response.data, "tagger data is:", taggers);
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
-
             return taggers.some(item2 => {
               console.log("item1 is:", item1, "item2 is:", item2);
-
               return item1.assignedTo === item2.username
             })
-
           });
           setData(filteredArray)
           console.log("tasklist  is:", filteredArray)
-        })
-        .catch(error => console.error(error));
-
+        }).catch(error => console.error(error));
       console.log("record is:", taggerIdInfo)
-    }
-    else {
+    } else {
       axios
-        .post("http://localhost:5000/taskbyfilter", { "assignedTo": taggerIdInfo })
-        .then(response => {
+        .post(`http://localhost:5000/taskbyfilter`, {
+          body: taggerIdInfo
+        }).then(response => {
           console.log("Response data is:", response.data);
           setData(response.data)
         })
         .catch(error => console.error(error));
-    }
-  }
+      }
+   }
   useEffect(() => {
-
     getTaggers();
   }, []);
 

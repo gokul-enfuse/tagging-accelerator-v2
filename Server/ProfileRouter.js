@@ -46,7 +46,7 @@ profileRouter.post('/create/profile', async (req, res) => {
 profileRouter.post("/api/login", (req, res) => {
     let table_name = process.env.PROFILE;
 
-    const sql = `SELECT profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate from ${table_name} WHERE profile_username = '${req.body.username}'`;
+    const sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate from ${table_name} WHERE profile_username = '${req.body.username}'`;
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(404).json({ message: "User not found.", error: error });
@@ -78,7 +78,7 @@ profileRouter.get('/allprofiles', async (req, res) => {
 });
 
 let getuser = (arg = null, res, table_name = null) => {
-    let sql = `SELECT profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate from ${table_name}`;
+    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate from ${table_name}`;
     if(arg) {
         sql += ` WHERE ${arg}`;
     }

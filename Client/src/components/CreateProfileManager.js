@@ -22,10 +22,8 @@ const CreateProfileManager = () => {
                 ...formData,
                 [e.target.name]: e.target.value,
                 // projectNames: selectedValues,
-
             }))
         }
-
         console.log("formData1:", formData)
     }
 
@@ -58,7 +56,7 @@ const CreateProfileManager = () => {
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
+        });
         const data = await response.json();
         console.log(data);
     }

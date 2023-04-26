@@ -11,15 +11,14 @@ taskRouter.post('/createtask', async (req, res) => {
     let task_title = req.body.taskTitle;
     let task_status = req.body.status;
     let profile_id = req.body.assignedTo; //denoted to assigned to
-    let task_role = req.body.role;
-    let creationDate = req.body.creationDate;
+    let task_role = (req.body.role)?req.body.role:3;
+    let createdDate = req.body.creationDate;
     let modifiedDate = new Date().toJSON();
 
     if(task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({message: "Invalid Input"});
     }
     sql = `INSERT INTO ${table_name} (task_title, task_status, profile_id, task_role, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${profile_id}, ${task_role}, '${createdDate}', '${modifiedDate}')`;
-
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(400).json({ message: "Could not create user.", error: error });
@@ -27,29 +26,19 @@ taskRouter.post('/createtask', async (req, res) => {
             res.status(200).json({ message: "User created.", rs: result});
         }
     });
-})
+});
 
 
 taskRouter.post('/taskbyfilter', async (req, res) => {
-
     console.log("request is for tagger:", req.body.assignedTo)
-    Task.find({ assignedTo: req.body.assignedTo }, (err, docs) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(docs);
-        }
-        res.status(200).send(docs)
-        console.log('doc is for tagger:', docs);
-    });
-
-    // console.log('doc is:', query);
-    // res.json(query)
-})
+    const arg = `profile_id = ${req.body.assignedTo}`;
+    await gettask(arg, res, 'accelerator_tasks', null);
+});
 
 taskRouter.get('/getalltask', async (req, res) => {
-     await gettask(null, res, 'accelerator_tasks');
-})
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
+     await gettask(null, res, 'accelerator_tasks', join);
+});
 
 taskRouter.delete('/task/:taskid', async (req, res) => {
     const taskid = req.params.taskid;
@@ -64,9 +53,10 @@ taskRouter.get('/completedtasks', async (req, res) => {
 taskRouter.put('/updatetask/:id', async (req, res) => {
     const table_name = process.env.TASK;
     const task_id = req.params.id;
+    const modifiedDate = new Date().toJSON();
 
-    sql = `UPDATE ${table_name} SET task_title = '${task_title}', task_status = '${task_status}', profile_id = '${profile_id}', task_role = '${task_role}', modifiedDate = '${modifiedDate}' WHERE task_id=${task_id}`;
-
+    sql = `UPDATE ${table_name} SET task_title = '${req.body.task_title}', task_status = '${req.body.task_status}', profile_id = ${req.body.profile_id}, task_role = ${req.body.task_role}, modifiedDate = '${modifiedDate}' WHERE task_id=${task_id}`;
+console.log(sql);
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(400).json({ message: "Could not update the task.", error: error });
@@ -76,8 +66,13 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     });
 });
 
-let gettask = (arg = null, res, table_name = null) => {
-    let sql = `SELECT task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate from ${table_name}`;
+let gettask = (arg = null, res, table_name = null, join = null) => {
+    //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
+    let sql = `SELECT * from ${table_name}`;
+    console.log(sql);
+    if(join!=null) {
+        sql += ` INNER JOIN ${join}`;
+    }
     if(arg!=null) {
         sql += ` WHERE ${arg}`;
     }
