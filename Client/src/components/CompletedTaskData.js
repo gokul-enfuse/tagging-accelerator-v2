@@ -18,7 +18,7 @@ const CompletedTaskData = () => {
                 setData(response.data)
             }).catch(error => console.error(error));
     }
-    const getTaggers = () => {
+    const getReviewers = () => {
         axios
             .get("http://localhost:5000/allprofiles")
             .then(response => {
@@ -30,7 +30,7 @@ const CompletedTaskData = () => {
     }
     useEffect(() => {
         getCompletedTAsks();
-        getTaggers();
+        getReviewers();
     }, [])
     const handleAssignToChange = (taskId, e) => {
         const newAssignedTo = e.target.value;
@@ -60,38 +60,38 @@ const CompletedTaskData = () => {
     };
     const columns = [
         {
-            title: 'Task Title',
-            dataIndex: 'taskTitle',
-            key: 'taskTitle'
-        },
-        {
             title: 'Task ID',
-            dataIndex: 'taskId',
+            dataIndex: 'task_id',
             key: 'taskId'
         },
         {
+            title: 'Task Title',
+            dataIndex: 'task_title',
+            key: 'taskTitle'
+        },
+        {
             title: 'Status',
-            dataIndex: 'status',
+            dataIndex: 'task_status',
             key: 'status'
         },
         {
             title: 'Created Date',
-            dataIndex: 'creationDate',
+            dataIndex: 'createdDate',
             key: 'creationDate'
         },
         {
             title: 'Assign To',
-            dataIndex: 'assignedTo',
+            dataIndex: 'profile_username',
             key: 'key',
 
             render: (text, record) => (
-                <select name="assignedTo" value={assignedTo[record.profile_id]} onChange={(e) => handleAssignToChange(record.profile_id, e)} disabled={isSubmitted[record.profile_id]}>
+                <select name="assignedTo" value={assignedTo[record.profile_id]} onChange={(e) => handleAssignToChange(record.profile_id, e)} disabled={isSubmitted[record.profile_id]} style={{width: '200px'}}>
                     <option key={""} value={""}>
                          {record.assignedTo || "select"}
                     </option>
                     {reviewerList && reviewerList.map((reviewer) => (
-                        <option key={reviewer.id} value={reviewer.username}>
-                            {reviewer.username}
+                        <option key={reviewer.profile_id} value={reviewer.profile_id}>
+                            {reviewer.profile_username}
                         </option>
                     ))}
                 </select>
@@ -106,7 +106,7 @@ const CompletedTaskData = () => {
                     onClick={() => handleTaskSubmit(record)}
                     disabled={isSubmitted[record._id]}
                 >
-                    Submit {Boolean(isSubmitted[record._id]) + "test"}
+                    Submit
                 </button>
             )
         },

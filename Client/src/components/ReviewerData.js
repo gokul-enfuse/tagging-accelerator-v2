@@ -14,7 +14,7 @@ const ReviewerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
-  const reviewerId = auth.username;
+  const reviewerId = auth.profile_username;
 
   let [data, setData] = useState([])
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -24,58 +24,16 @@ const ReviewerData = () => {
     console.log("value is:", value);
     setSelectedStatus(value);
     axios
-      .put("http://localhost:5000/updatetask", {
-        "id": record._id,
-        "updatedData": { "status": value }
-      })
-      .then(response => {
+      .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+          task_title: record.task_title,
+          task_status: value,
+          profile_id: record.profile_id,
+          task_role: record.task_role
+      }).then(response => {
         console.log("response handlechange data is:", response);
-
-      })
-      .catch(error => console.error(error));
-
+        alert(response.data.message);
+      }).catch(error => console.error(error));
   }
-
-  let columns = [
-    {
-      title: 'Task Title',
-      dataIndex: 'taskTitle',
-      key: 'key'
-    },
-    {
-      title: 'Task ID',
-      dataIndex: 'taskId',
-      key: 'key'
-    },
-    {
-      title: 'Assign To',
-      dataIndex: 'assignedTo',
-      key: 'key',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'key',
-
-      render: (text, record) => (
-        <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-
-
-          <Option key="1" value="In Progress" >fail </Option>
-          <Option key="2" value="Completed" >Waiting for Review </Option>
-          <Option key="3" value="Waiting for Review" >pass</Option>
-
-        </Select>
-      )
-    },
-    {
-      title: 'Created Date',
-      dataIndex: 'creationDate',
-      key: 'key'
-    },
-
-
-  ]
 
   const start = () => {
     setLoading(true);
@@ -117,14 +75,9 @@ const ReviewerData = () => {
     axios
       .get("http://localhost:5000/allprofiles")
       .then(response => {
-
         const allProfiles = response.data
         console.log("response data is for reviewer", response.data);
-
-        const reviewerlist = allProfiles.filter((item) => {
-          return item.role === "Reviewer"
-        })
-
+        const reviewerlist = allProfiles.filter((item) => item.profile_role === 4);
         console.log("reviewer list is", reviewerlist);
         // setReviewers(reviewerlist)
         getTask(reviewerId, reviewerlist)
@@ -137,16 +90,13 @@ const ReviewerData = () => {
       axios
         .get("http://localhost:5000/getalltask")
         .then(response => {
-          // console.log("Response data:", response.data, "reviewer data is:", reviewers);
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
-
+            console.log(item1);
             return reviewers.some(item2 => {
-              // console.log("item1 is:", item1, "item2 is:", item2);
-
+              console.log(item2);
               return item1.assignedTo === item2.username
             })
-
           });
           setData(filteredArray)
           console.log("tasklist  is:", filteredArray)
@@ -157,7 +107,9 @@ const ReviewerData = () => {
     }
     else {
       axios
-        .post("http://localhost:5000/taskbyfilter", { "assignedTo": reviewerIdInfo })
+        .post("http://localhost:5000/taskbyfilter", { 
+            "assignedTo": reviewerIdInfo 
+        })
         .then(response => {
           console.log("Response data is:", response.data);
           setData(response.data)
@@ -165,6 +117,43 @@ const ReviewerData = () => {
         .catch(error => console.error(error));
     }
   }
+
+  let columns = [
+    {
+      title: 'Task ID',
+      dataIndex: 'task_id',
+      key: 'key'
+    },
+    {
+      title: 'Task Title',
+      dataIndex: 'task_title',
+      key: 'key'
+    },
+    {
+      title: 'Assign To',
+      dataIndex: 'profile_username',
+      key: 'key',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'task_status',
+      key: 'key',
+
+      render: (text, record) => (
+        <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
+          <Option key="1" value="In Progress" >fail </Option>
+          <Option key="2" value="Completed" >Waiting for Review </Option>
+          <Option key="3" value="Waiting for Review" >pass</Option>
+
+        </Select>
+      )
+    },
+    {
+      title: 'Created Date',
+      dataIndex: 'createdDate',
+      key: 'key'
+    }
+  ]
 
   useEffect(() => {
     getReviewers();

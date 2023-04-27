@@ -5,28 +5,6 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 
-let columns = [
-    {
-        title: "Full Name",
-        dataIndex: 'profile_fullname',
-        key: 'key'
-    },
-    {
-        title: 'Username',
-        dataIndex: 'profile_username',
-        key: 'key'
-    },
-    {
-        title: 'Assigned Projects',
-        dataIndex: 'project_id',
-        key: 'key',
-    },
-    {
-        title: 'Role',
-        dataIndex: 'profile_role',
-        key: 'key',
-    }
-]
 const ProfileData = () => {
     let [data, setData] = useState([])
     const getAllProfiles = () => {
@@ -43,6 +21,31 @@ const ProfileData = () => {
     useEffect(() => {
         getAllProfiles();
     }, []);
+
+    let columns = [
+        {
+            title: "Full Name",
+            dataIndex: 'profile_fullname',
+            key: 'key'
+        },
+        {
+            title: 'Username',
+            dataIndex: 'profile_username',
+            key: 'key'
+        },
+        {
+            title: 'Assigned Projects',
+            dataIndex: 'project_name',
+            key: 'key',
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role_name',
+            key: 'key',
+        }
+    ]
+    
+
     return (
         <div>
             <div

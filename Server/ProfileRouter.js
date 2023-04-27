@@ -30,7 +30,7 @@ profileRouter.post('/create/profile', async (req, res) => {
                 if(result[0].c > 0) {
                      sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = ${project_id}, modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`;
                 } else {
-                     sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, ${project_id}, '${createdDate}', '${modifiedDate}')`;
+                     sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, '${project_id}', '${createdDate}', '${modifiedDate}')`;
                 }
                 conn.query(sql, (error, result) => {
                     if(error) {
@@ -69,16 +69,21 @@ profileRouter.post("/api/login", (req, res) => {
 
 profileRouter.get('/getalltaggers', async (req, res) => {
     let table_name = process.env.PROFILE;
-    getuser('profile_role = 3', res, table_name);
+    let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
+    getuser('profile_role = 3', res, table_name, join);
 });
 
 profileRouter.get('/allprofiles', async (req, res) => {
     let table_name = process.env.PROFILE;
-    getuser(null, res, table_name);
+    let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
+    getuser(null, res, table_name, join);
 });
 
-let getuser = (arg = null, res, table_name = null) => {
-    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate from ${table_name}`;
+let getuser = (arg = null, res, table_name = null ,join = null) => {
+    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, ${table_name}.project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, project_name, role_name from ${table_name}`;
+    if(join != null) {
+        sql += join
+    }
     if(arg) {
         sql += ` WHERE ${arg}`;
     }

@@ -10,7 +10,7 @@ const CreateTask = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const previousRoute = location.state?.previousRoute;
-    console.log("locaton state is:", location.state)
+   // console.log("locaton state is:", location.state)
     const [formData, setFormData] = useState({
         taskTitle: '',
         taskId: '',
@@ -49,7 +49,7 @@ const CreateTask = () => {
         axios
             .get("http://localhost:5000/getalltaggers")
             .then(res=> {
-                console.log(res);
+               // console.log(res);
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
             }).catch(error => console.error(error));

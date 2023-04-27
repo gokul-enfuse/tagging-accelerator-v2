@@ -30,9 +30,10 @@ taskRouter.post('/createtask', async (req, res) => {
 
 
 taskRouter.post('/taskbyfilter', async (req, res) => {
-    console.log("request is for tagger:", req.body.assignedTo)
-    const arg = `profile_id = ${req.body.assignedTo}`;
-    await gettask(arg, res, 'accelerator_tasks', null);
+    console.log("request is for tagger:", req.body)
+    const arg = `accelerator_tasks.profile_id = ${req.body. assignedTo}`;
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
+    await gettask(arg, res, 'accelerator_tasks', join);
 });
 
 taskRouter.get('/getalltask', async (req, res) => {
@@ -46,8 +47,9 @@ taskRouter.delete('/task/:taskid', async (req, res) => {
 });
 
 taskRouter.get('/completedtasks', async (req, res) => {
-    const condi = 'task_status = completed';
-    await gettask(condi, res, 'accelerator_tasks');
+    const condi = `task_status = 'Completed'`;
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
+    await gettask(condi, res, 'accelerator_tasks', join);
 })
 
 taskRouter.put('/updatetask/:id', async (req, res) => {
@@ -56,7 +58,6 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     const modifiedDate = new Date().toJSON();
 
     sql = `UPDATE ${table_name} SET task_title = '${req.body.task_title}', task_status = '${req.body.task_status}', profile_id = ${req.body.profile_id}, task_role = ${req.body.task_role}, modifiedDate = '${modifiedDate}' WHERE task_id=${task_id}`;
-console.log(sql);
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(400).json({ message: "Could not update the task.", error: error });
@@ -69,7 +70,6 @@ console.log(sql);
 let gettask = (arg = null, res, table_name = null, join = null) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
     let sql = `SELECT * from ${table_name}`;
-    console.log(sql);
     if(join!=null) {
         sql += ` INNER JOIN ${join}`;
     }

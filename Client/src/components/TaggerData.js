@@ -14,15 +14,15 @@ const handleStatusChange = (record, value, text) => {
   axios
   .put(`http://localhost:5000/updatetask/${record.task_id}`, {
       task_title: record.task_title,
-      task_status: record.task_status,
+      task_status: value,
       profile_id: record.profile_id,
       task_role: record.task_role
   }).then(response => {
     console.log("response handlechange data is:", response);
     alert(response.data.message);
   }).catch(error => console.error(error));
-
 }
+
 const columnsRow = [
   {
     title: 'Task ID',
@@ -31,7 +31,7 @@ const columnsRow = [
   },
   {
     title: 'Task Title',
-    dataIndex: 'task_Title',
+    dataIndex: 'task_title',
     key: 'key'
   },
   {
@@ -64,7 +64,7 @@ const TaggerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
-  const taggerId = auth.profile_username;
+  const taggerId = (auth.profile_username === "admin")?auth.profile_username : auth.profile_id;
   const [data, setData] = useState([])
   console.log("taggerId:", taggerId)
   const start = () => {
@@ -126,7 +126,7 @@ const TaggerData = () => {
     } else {
       axios
         .post(`http://localhost:5000/taskbyfilter`, {
-          body: taggerIdInfo
+            "assignedTo": taggerIdInfo
         }).then(response => {
           console.log("Response data is:", response.data);
           setData(response.data)
