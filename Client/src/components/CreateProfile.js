@@ -14,7 +14,6 @@ const CreateProfile = () => {
         let selectedValues = [...select.options]
             .filter(option => option.selected)
             .map(option => option.value);
-        console.log("selected:", selectedValues)
         setSelected(selectedValues)
         if (e.target.name) {
             setFormData(() => ({
@@ -23,13 +22,12 @@ const CreateProfile = () => {
                 // projectNames: selectedValues,
             }))
         }
-        console.log("formData1:", formData)
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         formData.id = selected
-        console.log("formData:", formData)
+        //console.log("formData:", formData)
 
         const username = formData.email;
         const password = Math.random().toString(36).slice(-8);
@@ -53,31 +51,28 @@ const CreateProfile = () => {
             }
         })
         const data = await response.json();
-        console.log(data);
-        document.getElementById("create-task").reset();
+        document.getElementById("create-profile").reset();
     }
     const [projectList, setProjectList] = useState([]);
 
     useEffect(() => {
         const fetchProjects = async () => {
             const response = await fetch('http://localhost:5000/allprojects');
-            console.log(response)
             const data = await response.json();
-            console.log("data is:", data)
             setProjectList(data);
         };
         fetchProjects();
     }, []);
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id='create-profile'>
             <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
                 <legend>Create Profile:</legend>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
                     {projectList.map((project) => (
-                        <option key={project.project_id} value={project.project_id} >
+                        <option key={project.project_id} value={project.project_id} disabled={(project.project_status === 1)?'disabled':''}>
                             {project.project_Name}
                         </option>
                     ))} 

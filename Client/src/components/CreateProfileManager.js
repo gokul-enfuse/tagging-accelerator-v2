@@ -58,7 +58,8 @@ const CreateProfileManager = () => {
             }
         });
         const data = await response.json();
-        console.log(data);
+        alert(data.message)
+        document.getElementById("create-task").reset();
     }
     const [projectList, setProjectList] = useState([]);
 
@@ -74,7 +75,7 @@ const CreateProfileManager = () => {
 
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
             <legend>Create Profile (Tagger & Reviewer):</legend>
                 <label><b>Project Name</b></label><br />

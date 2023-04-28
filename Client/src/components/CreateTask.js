@@ -50,7 +50,7 @@ const CreateTask = () => {
         axios
             .get("http://localhost:5000/getalltaggers")
             .then(res=> {
-               // console.log(res);
+                
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
             }).catch(error => console.error(error));
@@ -81,7 +81,7 @@ const CreateTask = () => {
                     <option key={0} value={0}>
                         select
                     </option>
-                    {taggers && taggers.map((tagger) => (
+                    {taggers.length > 0 && taggers.map((tagger) => (
                         <option key={tagger.profile_id} value={tagger.profile_id}>
 
                             {tagger.profile_username}
