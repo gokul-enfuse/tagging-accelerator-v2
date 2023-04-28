@@ -41,7 +41,8 @@ const CreateTask = () => {
         if(data.status === 200) {
             alert('Record added successfully');
         }
-        navigate(previousRoute || '/');
+        //navigate(previousRoute || '/');
+        document.getElementById("create-task").reset();
     }
     
 
@@ -65,7 +66,7 @@ const CreateTask = () => {
     // };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
             <legend>Create Task:</legend>
                 <label>Task Title</label><br />

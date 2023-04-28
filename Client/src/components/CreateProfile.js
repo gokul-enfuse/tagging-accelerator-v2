@@ -54,6 +54,7 @@ const CreateProfile = () => {
         })
         const data = await response.json();
         console.log(data);
+        document.getElementById("create-task").reset();
     }
     const [projectList, setProjectList] = useState([]);
 
@@ -76,8 +77,7 @@ const CreateProfile = () => {
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
                     {projectList.map((project) => (
-                        <option key={project.project_id} value={project.project_id}>
-
+                        <option key={project.project_id} value={project.project_id} >
                             {project.project_Name}
                         </option>
                     ))} 
@@ -86,22 +86,6 @@ const CreateProfile = () => {
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
                 <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
-                {/*<label>Username</label><br />
-                <input type="text" name="username" value={formData.username} onChange={handleChange}></input><br />
-                <label>Password</label><br />
-                <input type="text" name="password" value={formData.password} onChange={handleChange}></input><br />
-                <label>Confirm Password</label><br />
-                <input type="text" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}></input><br />
-                <label>Role</label><br />
-                <select name="role" value={formData.role} onChange={handleChange}> <br />
-                    <option key={""} value={""}> Select</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Tagger">Tagger</option>
-                    <option value="Reviewer">Reviewer</option>
-        <option value="Admin">Admin</option>
-
-
-                </select><br />*/}
             </fieldset>
             <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Profile</button>
         </form>

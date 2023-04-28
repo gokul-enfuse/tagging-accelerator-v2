@@ -66,6 +66,11 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     });
 });
 
+taskRouter.get('/projectlist', async(req, res) => {
+    let table_name = 'accelerator_project';
+    await gettask(null, res, table_name, null);
+})
+
 let gettask = (arg = null, res, table_name = null, join = null) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
     let sql = `SELECT * from ${table_name}`;
