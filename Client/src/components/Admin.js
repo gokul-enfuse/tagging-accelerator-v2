@@ -26,12 +26,12 @@ function Admin() {
 
   }
   return (
-    <div style={{marginBottom: '600px'}}>
+    <div style={{marginBottom: '700px'}}>
       <h1>Welcome, Admin</h1> <br/>
-        <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProject}>Create Project</Button>
+        {/* <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProject}>Create Project</Button>
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProfile}>Create Profile</Button>        
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleClick} >Create task</Button>
-        <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleReviewer} >Assign to Reviewer</Button>
+        <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleReviewer} >Assign to Reviewer</Button> */}
       {/* <TableData /> */}
     </div>
   )

@@ -75,27 +75,30 @@ const CreateProfileManager = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <label><b>Project Name</b></label><br />
-            <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
+            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
+            <legend>Create Profile (Tagger & Reviewer):</legend>
+                <label><b>Project Name</b></label><br />
+                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
-                {projectList.map((project) => (
-                    <option key={project.project_id} value={project.project_id}>
+                    {projectList.map((project) => (
+                        <option key={project.project_id} value={project.project_id}>
 
-                        {project.project_Name}
-                    </option>
-                ))}
-            </select><br />
-            <label><b>Full Name</b></label><br />
-            <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
-            <label><b>Email</b></label><br />
-            <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
-            <label>Role</label><br />
-            <select name="role" value={formData.role} onChange={handleChange}>
-                <option key={""} value={""}> Select</option>
-                <option value="3">Tagger</option>
-                <option value="4">Reviewer</option>
-            </select><br />
-            <button type="submit">Add Profile</button>
+                            {project.project_Name}
+                        </option>
+                    ))}
+                </select><br />
+                <label><b>Full Name</b></label><br />
+                <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
+                <label><b>Email</b></label><br />
+                <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
+                <label>Role</label><br />
+                <select name="role" value={formData.role} onChange={handleChange}>
+                    <option key={""} value={""}> Select</option>
+                    <option value="3">Tagger</option>
+                    <option value="4">Reviewer</option>
+                </select><br />
+            </fieldset>
+            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Profile</button>
         </form>
     );
 };

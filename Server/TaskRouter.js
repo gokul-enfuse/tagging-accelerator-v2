@@ -30,7 +30,6 @@ taskRouter.post('/createtask', async (req, res) => {
 
 
 taskRouter.post('/taskbyfilter', async (req, res) => {
-    console.log("request is for tagger:", req.body)
     const arg = `accelerator_tasks.profile_id = ${req.body. assignedTo}`;
     let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
     await gettask(arg, res, 'accelerator_tasks', join);

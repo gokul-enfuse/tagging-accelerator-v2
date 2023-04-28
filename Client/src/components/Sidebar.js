@@ -7,7 +7,36 @@ import { GrUserManager } from 'react-icons/gr';
 import useAuth from "../hooks/useAuth";
 import Button from '@mui/material/Button';
 import { ROLES } from './ROLES';
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
+const MenuItem = ({ item }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSubMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <li>
+      <NavLink to={item.path} className="link" onClick={toggleSubMenu}>
+        <span className='icon'>{item.icon}</span>
+        <span >{item.name}</span>
+        {item.submenu && (
+          <span className='link-text'>
+            {isOpen ? <FaChevronDown /> : <FaChevronRight />}
+          </span>
+        )}
+      </NavLink>
+      {item.submenu && isOpen && (
+        <ul>
+          {item.submenu.map((subitem) => (
+            <MenuItem key={subitem.id} item={subitem} />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+};
 
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -17,41 +46,65 @@ const Sidebar = ({ children }) => {
     {
       path: "/admin",
       name: "Admin",
-      id: 1,
-      icon: <FaAdn />
+      icon: <FaAdn />,
+      submenu: [
+        {
+          id: 4,
+          name: 'Create Project',
+          path: '/createproject',
+        },
+        {
+          id: 5,
+          name: 'Create Profile(Manager)',
+          path: '/createprofile',
+        },
+        {
+          id: 6,
+          name: 'Create Task',
+          path: '/createtask',
+        },
+        {
+          id: 7,
+          name: 'Assign To Reviewer',
+          path: '/assigntoreviewer',
+        },
+      ],
     },
 
     {
       path: "/manager",
       name: "Manager",
-      id: 2,
-      icon: <GrUserManager />
-
+      icon: <GrUserManager />,
+      submenu: [
+        {
+          id: 4,
+          name: 'Create Profile(Tagger & Reviewer)',
+          path: '/createprofilemanager',
+        },
+        {
+          id: 5,
+          name: 'Profile Details',
+          path: '/profiledetailsmanager',
+        },
+      ]
     },
     {
       path: "/tagger",
       name: "Tagger",
-      id: 3,
       icon: <MdDns />
 
     },
     {
       path: "/reviewer",
       name: "Reviewer",
-      id: 4,
       icon: <MdPreview />
     },
     {
       path: "/reports",
       name: "Reports",
-      id: 5,
       icon: <FaTh />
     },
-    // {
-    //   path: "/logout",
-    //   name: "Logout",
-    //   icon: <MdLogout />
-    // }
+
   ]
 
 const { auth, setAuth } = useAuth();
@@ -68,15 +121,16 @@ const logout =() =>{
           <img style={{ display: isOpen ? "block" : "none" }} src={logo} alt='logo' />
           <div style={{ width: isOpen ? "300px" : "50px" }} className='bars'><FaBars onClick={toggle} /></div>
         </div>
-        {
-          menuItem.map((item, index) => (
-            (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&
-            <NavLink to={item.path} key={index} className="link">
-              <div className='icon'>{item.icon}</div>
-              <div className='link-text'>{item.name}</div>
-            </NavLink>
-          ))
-        }
+        <nav>
+          <ul>
+              {
+                menuItem.map((item, index) => (
+                  (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&                  
+                    <MenuItem key={item.id} item={item} />
+                ))
+              }
+            </ul>
+          </nav>
         {auth.profile_role &&
         <Button variant="outlined"   style={{ width: '150px', margin: '55px', fontSize: '20px', color: "white", borderWidth: "1px", borderColor: "lightblue " }}  onClick={logout} to="/" ><b> Logout </b></Button>}
 

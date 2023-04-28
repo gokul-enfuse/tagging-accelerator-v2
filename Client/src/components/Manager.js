@@ -36,8 +36,8 @@ const Manager = () => {
                         </option>
                     ))}</select>
 
-                <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProfile}>Create Profile</Button>
-                <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleProfileDetails}>Profile Details</Button>
+                {/* <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProfile}>Create Profile</Button>
+                <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleProfileDetails}>Profile Details</Button> */}
 
 
                 {/*<Button variant="contained" component="label" style={{ width: btnSize, margin: '8px' }}>Upload Image
