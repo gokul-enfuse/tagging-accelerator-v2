@@ -23,7 +23,7 @@ const CompletedTaskData = () => {
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 const allProfiles = response.data
-                const reviewerList = allProfiles.filter((item) => item.profile_role === 4)
+                const reviewerList = allProfiles.length > 0  && allProfiles.filter((item) => item.profile_role === 4)
                 console.log("reviewer list is", reviewerList);
                 setReviewerList(reviewerList)
             }).catch(error => console.error(error));

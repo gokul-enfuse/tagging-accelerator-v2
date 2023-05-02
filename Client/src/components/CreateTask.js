@@ -39,26 +39,31 @@ const CreateTask = () => {
         })
         const data = await response.json();
         alert('Record added successfully');
-        setFormData({
-            taskTitle: '',
-            taskId: '',
-            status: '',
-            creationDate: '',
-            assignedTo: 0,
-            role: 0,
-        })
+        // setFormData({
+        //     taskTitle: '',
+        //     taskId: '',
+        //     status: '',
+        //     creationDate: '',
+        //     assignedTo: 0,
+        //     role: 0,
+        // })
         // if(data.status === 200) {
         //     alert('Record added successfully');
         // }
         // navigate(previousRoute || '/');
+        if(data.status === 200) {
+            alert('Record added successfully');
+        }
+        //navigate(previousRoute || '/');
+        document.getElementById("create-task").reset();
     }
 
 
     const getTaggers = () => {
         axios
             .get("http://localhost:5000/getalltaggers")
-            .then(res => {
-                // console.log(res);
+            .then(res=> {
+                
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
             }).catch(error => console.error(error));
@@ -74,9 +79,9 @@ const CreateTask = () => {
     // };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
-                <legend>Create Task:</legend>
+        <form onSubmit={handleSubmit} id='create-task'>
+            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
+            <legend>Create Task:</legend>
                 <label>Task Title</label><br />
                 <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
                  {/* <label>Task ID</label><br />
@@ -89,7 +94,7 @@ const CreateTask = () => {
                     <option key={0} value={0}>
                         select
                     </option>
-                    {taggers && taggers.map((tagger) => (
+                    {taggers.length > 0 && taggers.map((tagger) => (
                         <option key={tagger.profile_id} value={tagger.profile_id}>
 
                             {tagger.profile_username}

@@ -39,8 +39,10 @@ const CreateProject = () => {
         })
         const data = await response.json();
         alert('Record added successfully');
-        setFormData(defaultFormValues)
+        // setFormData(defaultFormValues)
         // navigate(previousRoute || '/');
+        //navigate(previousRoute || '/');
+        document.getElementById("create-project").reset();
     }
     // const [projects, setProjects] = useState([]);
 
@@ -68,9 +70,9 @@ const CreateProject = () => {
     // }, []);
 
     return (
-        <form onSubmit={handleSubmit}>
-            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
-                <legend>Create Project:</legend>
+        <form onSubmit={handleSubmit} id='create-project'>
+            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
+            <legend>Create Project:</legend>
                 <label><b>Project Name </b></label><br />
                 <input type="text" name="projectName" value={formData.projectName} onChange={e => handleChange(e, true)} ></input><br />
                 {/*<label><b>Manager</b></label><br />

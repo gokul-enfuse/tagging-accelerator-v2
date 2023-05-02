@@ -36,7 +36,14 @@ profileRouter.post('/create/profile', async (req, res) => {
                     if(error) {
                         res.status(400).json({ message: "Could not create user.", error: error });
                     } else {
-                        res.status(200).json({ message: "User created.", rs: result});
+                       let updateSQl = `UPDATE accelerator_project SET project_status = 1 WHERE project_id in (${project_id})`;
+                       conn.query(updateSQl, (error, result) => {
+                           if(error) {
+                                res.status(400).json({ message: "Could not create user.", error: error });
+                           } else {
+                                res.status(200).json({ message: "User created.", rs: result});
+                           }
+                       })
                     }
                 });
             }

@@ -1,14 +1,16 @@
-import React from 'react';
+import React , { useState, useEffect } from 'react';
 import TableData from './TableData';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth.js';
-
+import axios from "axios";
 
 const Manager = () => {
     const { auth } = useAuth();
+    console.log(auth);
     const btnSize = '200px'
     const navigate = useNavigate()
+    const [projectList, setProjectList] = useState([])
     const handleClick = () => {
         navigate({
             pathname: '/createtask',
@@ -16,21 +18,40 @@ const Manager = () => {
         });
     }
 
-    const handleCreateProfile = () => {
+      const handleCreateProfile = () => {
         navigate('/createprofilemanager')
     }
     const handleProfileDetails = () => {
         navigate('/profiledetailsmanager')
+      }
+    const getProject = () => {
+        if (auth.profile_username === "admin") {
+            axios
+                .get("http://localhost:5000/projectlist")
+                .then(response => {
+                    console.log("Response data:", response.data);
+                    const allProject = response.data
+                    setProjectList(allProject)
+                    console.log("tasklist  is:", allProject)
+                }).catch(error => console.error(error));
+        } else {
+            console.log("Project")
+        }
     }
+    useEffect(() => {
+        getProject();
+    }, []);
     return (
         <div style={{ marginBottom: '150px', textAlign: 'center', alignItems: 'center' }}>
             <h1 style={{ marginTop: 80 }}>Welcome, Manager</h1>
             <div>
-                <label>Assigned To</label><br />
-                <select name="assignedTo" style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}>
-                    {auth.project_names && auth.project_names.map((item) => (
-                        <option key={item} value={item}>
-                            {item}
+                <label>Assigned to Project</label><br />
+
+                <select name="assignedTo" style={{width: '150px', height: '35px', border: '1px solid skyblue'}}>
+
+                    {projectList && projectList.map((item) => (
+                        <option key={item.project_id} value={item.project_id}>
+                            {item.project_name}
                         </option>
                     ))}</select>
 
