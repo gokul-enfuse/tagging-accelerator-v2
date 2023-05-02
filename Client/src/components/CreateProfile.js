@@ -53,7 +53,19 @@ const CreateProfile = () => {
             }
         })
         const data = await response.json();
-        console.log(data);
+        console.log("data", data);
+        alert('Record added successfully');
+        setFormData({
+            id: [],
+            fullName: '',
+            email: '',
+            name: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+            role: 2
+        })
+
     }
     const [projectList, setProjectList] = useState([]);
 
@@ -70,7 +82,7 @@ const CreateProfile = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
+            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
                 <legend>Create Profile:</legend>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
@@ -80,7 +92,7 @@ const CreateProfile = () => {
 
                             {project.project_Name}
                         </option>
-                    ))} 
+                    ))}
                 </select><br />
                 <label><b>Manager's Full Name</b></label><br />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
@@ -103,7 +115,7 @@ const CreateProfile = () => {
 
                 </select><br />*/}
             </fieldset>
-            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Profile</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
         </form>
     );
 };

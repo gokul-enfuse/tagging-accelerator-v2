@@ -8,17 +8,17 @@ import { useEffect } from 'react';
 let columns = [
     {
         title: "Manager's Full Name",
-        dataIndex: 'fullName',
+        dataIndex: 'profile_fullname',
         key: 'key'
     },
     {
         title: 'Username',
-        dataIndex: 'username',
+        dataIndex: 'profile_username',
         key: 'key'
     },
     {
         title: 'Assigned Projects',
-        dataIndex: 'projectNames',
+        dataIndex: 'project_name',
         key: 'key',
     }
 ]
@@ -30,7 +30,7 @@ const ProfileData = () => {
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 console.log("Response data:", response.data);
-                const managerProfiles = response.data.filter(item => item.profile_role === "Manager")
+                const managerProfiles = response.data.filter(item => item.profile_role === 2)
                 console.log("managerProfiles:", managerProfiles)
                 setData(managerProfiles)
             })

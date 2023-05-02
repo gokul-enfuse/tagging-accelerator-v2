@@ -45,6 +45,7 @@ const Sidebar = ({ children }) => {
   const menuItem = [
     {
       path: "/admin",
+      id: 1,
       name: "Admin",
       icon: <FaAdn />,
       submenu: [
@@ -73,6 +74,7 @@ const Sidebar = ({ children }) => {
 
     {
       path: "/manager",
+      id: 2,
       name: "Manager",
       icon: <GrUserManager />,
       submenu: [
@@ -90,17 +92,20 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "/tagger",
+      id: 3,
       name: "Tagger",
       icon: <MdDns />
 
     },
     {
       path: "/reviewer",
+      id: 4,
       name: "Reviewer",
       icon: <MdPreview />
     },
     {
       path: "/reports",
+      id: 5,
       name: "Reports",
       icon: <FaTh />
     },

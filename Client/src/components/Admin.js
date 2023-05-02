@@ -8,8 +8,8 @@ function Admin() {
   const btnSize = '200px'
   const navigate = useNavigate();
   const handleClick = () => {
-    
-    navigate( '/createtask', { state: { previousRoute: '/admin' } }); 
+
+    navigate('/createtask', { state: { previousRoute: '/admin' } });
   }
 
   const handleCreateProfile = () => {
@@ -26,9 +26,9 @@ function Admin() {
 
   }
   return (
-    <div style={{marginBottom: '700px'}}>
-      <h1>Welcome, Admin</h1> <br/>
-        {/* <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProject}>Create Project</Button>
+    <div style={{ marginBottom: '400px', textAlign: 'center', alignItems: 'center' }}>
+      <h1 style={{ marginTop: 100 }}>Welcome, Admin</h1> <br />
+      {/* <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProject}>Create Project</Button>
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProfile}>Create Profile</Button>        
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleClick} >Create task</Button>
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleReviewer} >Assign to Reviewer</Button> */}

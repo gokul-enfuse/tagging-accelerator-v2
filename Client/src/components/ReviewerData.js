@@ -14,7 +14,7 @@ const ReviewerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
-  const reviewerId = auth.profile_username;
+  const reviewerId = (auth.profile_username === "admin") ? auth.profile_username : auth.profile_id;
 
   let [data, setData] = useState([])
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -25,10 +25,10 @@ const ReviewerData = () => {
     setSelectedStatus(value);
     axios
       .put(`http://localhost:5000/updatetask/${record.task_id}`, {
-          task_title: record.task_title,
-          task_status: value,
-          profile_id: record.profile_id,
-          task_role: record.task_role
+        task_title: record.task_title,
+        task_status: value,
+        profile_id: record.profile_id,
+        task_role: record.task_role
       }).then(response => {
         console.log("response handlechange data is:", response);
         alert(response.data.message);
@@ -86,6 +86,7 @@ const ReviewerData = () => {
   }
 
   const getTask = (reviewerIdInfo, reviewers) => {
+    console.log("reviewerId", reviewerId)
     if (reviewerId === "admin") {
       axios
         .get("http://localhost:5000/getalltask")
@@ -107,8 +108,8 @@ const ReviewerData = () => {
     }
     else {
       axios
-        .post("http://localhost:5000/taskbyfilter", { 
-            "assignedTo": reviewerIdInfo 
+        .post("http://localhost:5000/taskbyfilter", {
+          "assignedTo": reviewerIdInfo
         })
         .then(response => {
           console.log("Response data is:", response.data);

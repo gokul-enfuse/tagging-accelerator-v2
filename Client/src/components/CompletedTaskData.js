@@ -40,11 +40,13 @@ const CompletedTaskData = () => {
     const handleTaskSubmit = (record) => {
         // const task = data.find(task => task.taskId === record);
         // const payload = { ...task, assignedTo: assignedTo };
-        console.log("task id is :", record, ",assigned to is:", record.assignedTo)
+        console.log("task id is :", record, ",assigned to is:", record.profile_id)
+        console.log("assigned to latest:", assignedTo)
         axios
-            .put("http://localhost:5000/updatetask", {
+            .put("http://localhost:5000/updatetask/"+record.task_id, {
                 "id": record.task_id,
-                "updatedData": { "assignedTo": assignedTo }
+                "updatedData": { "assignedTo": assignedTo, record }
+               
             })
             .then(response => {
                 console.log("response handlechange data is:", response);

@@ -35,9 +35,9 @@ const CreateProfileManager = () => {
 
         const username = formData.email;
         const password = Math.random().toString(36).slice(-8);
-       /*  if (!formData.fullName) {
-            return
-        } */
+        /*  if (!formData.fullName) {
+             return
+         } */
         const formDataWithDetails =
         {
             ...formData,
@@ -59,6 +59,17 @@ const CreateProfileManager = () => {
         });
         const data = await response.json();
         console.log(data);
+        alert('Record added successfully');
+        setFormData({
+            id: [],
+            fullName: '',
+            email: '',
+            role: '',
+            name: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+        })
     }
     const [projectList, setProjectList] = useState([]);
 
@@ -75,8 +86,8 @@ const CreateProfileManager = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
-            <legend>Create Profile (Tagger & Reviewer):</legend>
+            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
+                <legend>Create Profile (Tagger & Reviewer):</legend>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
@@ -98,7 +109,7 @@ const CreateProfileManager = () => {
                     <option value="4">Reviewer</option>
                 </select><br />
             </fieldset>
-            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Profile</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
         </form>
     );
 };

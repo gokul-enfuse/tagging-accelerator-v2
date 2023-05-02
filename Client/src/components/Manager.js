@@ -18,18 +18,16 @@ const Manager = () => {
 
     const handleCreateProfile = () => {
         navigate('/createprofilemanager')
-      }
-      const handleProfileDetails = () => {
+    }
+    const handleProfileDetails = () => {
         navigate('/profiledetailsmanager')
-      }
+    }
     return (
-        <div style={{marginBottom: '150px'}}>
-            <h1>Welcome, Manager</h1>
+        <div style={{ marginBottom: '150px', textAlign: 'center', alignItems: 'center' }}>
+            <h1 style={{ marginTop: 80 }}>Welcome, Manager</h1>
             <div>
                 <label>Assigned To</label><br />
-
-                <select name="assignedTo" style={{width: '150px', height: '35px', border: '1px solid skyblue'}}>
-
+                <select name="assignedTo" style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}>
                     {auth.project_names && auth.project_names.map((item) => (
                         <option key={item} value={item}>
                             {item}

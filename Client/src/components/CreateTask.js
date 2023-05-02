@@ -10,7 +10,7 @@ const CreateTask = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const previousRoute = location.state?.previousRoute;
-   // console.log("locaton state is:", location.state)
+    // console.log("locaton state is:", location.state)
     const [formData, setFormData] = useState({
         taskTitle: '',
         taskId: '',
@@ -38,18 +38,27 @@ const CreateTask = () => {
             }
         })
         const data = await response.json();
-        if(data.status === 200) {
-            alert('Record added successfully');
-        }
-        navigate(previousRoute || '/');
+        alert('Record added successfully');
+        setFormData({
+            taskTitle: '',
+            taskId: '',
+            status: '',
+            creationDate: '',
+            assignedTo: 0,
+            role: 0,
+        })
+        // if(data.status === 200) {
+        //     alert('Record added successfully');
+        // }
+        // navigate(previousRoute || '/');
     }
-    
+
 
     const getTaggers = () => {
         axios
             .get("http://localhost:5000/getalltaggers")
-            .then(res=> {
-               // console.log(res);
+            .then(res => {
+                // console.log(res);
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
             }).catch(error => console.error(error));
@@ -66,17 +75,17 @@ const CreateTask = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
-            <legend>Create Task:</legend>
+            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
+                <legend>Create Task:</legend>
                 <label>Task Title</label><br />
                 <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
-                <label>Task ID</label><br />
-                <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />
+                 {/* <label>Task ID</label><br />
+                <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />*/}
                 <label>Creaton Date</label><br />
                 <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
                 <label>Assigned To</label><br />
 
-                <select name="assignedTo" id="assignedTo" value={formData.assignedTo}  onChange={handleChange}>
+                <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange}>
                     <option key={0} value={0}>
                         select
                     </option>
@@ -98,7 +107,7 @@ const CreateTask = () => {
                 </select><br />*/}
 
 
-            {/* <label>Status</label><br />
+                {/* <label>Status</label><br />
                 <select name="status" value={formData.status} onChange={handleChange}>
                     <option value="inProgress">In progress</option>
                     <option value="completed">Complted</option>
@@ -106,7 +115,7 @@ const CreateTask = () => {
 
                 </select><br />*/}
             </fieldset>
-            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Task</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Task</button>
 
         </form>
     );

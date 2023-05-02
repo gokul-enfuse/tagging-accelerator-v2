@@ -124,9 +124,11 @@ const TaggerData = () => {
         }).catch(error => console.error(error));
       console.log("record is:", taggerIdInfo)
     } else {
+      console.log("taggerIdInfo:",taggerIdInfo)
       axios
         .post(`http://localhost:5000/taskbyfilter`, {
             "assignedTo": taggerIdInfo
+            
         }).then(response => {
           console.log("Response data is:", response.data);
           setData(response.data)
