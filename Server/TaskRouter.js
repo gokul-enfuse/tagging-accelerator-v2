@@ -51,12 +51,15 @@ taskRouter.get('/completedtasks', async (req, res) => {
     await gettask(condi, res, 'accelerator_tasks', join);
 })
 
+
 taskRouter.put('/updatetask/:id', async (req, res) => {
     const table_name = process.env.TASK;
     const task_id = req.params.id;
     const modifiedDate = new Date().toJSON();
-    console.log("updated data:", req.body.updatedData.record)
-    sql = `UPDATE ${table_name} SET task_title = '${req.body.task_title}', task_status = '${req.body.task_status}', profile_id = ${req.body.profile_id}, task_role = ${req.body.task_role}, modifiedDate = '${modifiedDate}' WHERE task_id=${task_id}`;
+
+    console.log("updated data:", req.body)
+    console.log("updated data:", req.body.record.task_title)
+    sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', profile_id = ${req.body.record.profile_id}, task_role = ${req.body.record.task_role}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not update the task.", error: error });

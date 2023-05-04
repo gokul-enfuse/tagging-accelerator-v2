@@ -77,7 +77,7 @@ const ReviewerData = () => {
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", response.data);
-        const reviewerlist = allProfiles.length>0 && allProfiles.filter((item) => item.profile_role === 4);
+        const reviewerlist = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4);
         console.log("reviewer list is", reviewerlist);
         // setReviewers(reviewerlist)
         getTask(reviewerId, reviewerlist)
@@ -93,10 +93,10 @@ const ReviewerData = () => {
         .then(response => {
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
-            console.log(item1);
+            console.log("item1", item1);
             return reviewers.some(item2 => {
-              console.log(item2);
-              return item1.assignedTo === item2.username
+              console.log("item2:", item2);
+              return item1.task_role === item2.profile_role
             })
           });
           setData(filteredArray)
