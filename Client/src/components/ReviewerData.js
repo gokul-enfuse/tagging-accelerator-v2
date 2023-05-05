@@ -23,12 +23,15 @@ const ReviewerData = () => {
   const handleStatusChange = (record, value, text) => {
     console.log("value is:", value);
     setSelectedStatus(value);
+    record.task_status = value;
+
     axios
       .put(`http://localhost:5000/updatetask/${record.task_id}`, {
-        task_title: record.task_title,
-        task_status: value,
-        profile_id: record.profile_id,
-        task_role: record.task_role
+        record
+        // task_title: record.task_title,
+        // task_status: value,
+        // profile_id: record.profile_id,
+        // task_role: record.task_role
       }).then(response => {
         console.log("response handlechange data is:", response);
         alert(response.data.message);

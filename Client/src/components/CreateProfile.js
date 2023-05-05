@@ -53,18 +53,18 @@ const CreateProfile = () => {
         const data = await response.json();
         console.log("data", data);
         alert('Record added successfully');
-        // setFormData({
-        //     id: [],
-        //     fullName: '',
-        //     email: '',
-        //     name: '',
-        //     username: '',
-        //     password: '',
-        //     confirmPassword: '',
-        //     role: 2
-        // })
+        setFormData({
+            id: [],
+            fullName: '',
+            email: '',
+            name: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+            role: 2
+        })
 
-        document.getElementById("create-profile").reset();
+        // document.getElementById("create-profile").reset();
     }
     const [projectList, setProjectList] = useState([]);
 

@@ -39,10 +39,10 @@ const CreateProject = () => {
         })
         const data = await response.json();
         alert('Record added successfully');
-        // setFormData(defaultFormValues)
+        setFormData(defaultFormValues)
         // navigate(previousRoute || '/');
         //navigate(previousRoute || '/');
-        document.getElementById("create-project").reset();
+        // document.getElementById("create-project").reset();
     }
     // const [projects, setProjects] = useState([]);
 

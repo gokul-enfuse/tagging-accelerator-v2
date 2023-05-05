@@ -39,23 +39,23 @@ const CreateTask = () => {
         })
         const data = await response.json();
         alert('Record added successfully');
-        // setFormData({
-        //     taskTitle: '',
-        //     taskId: '',
-        //     status: '',
-        //     creationDate: '',
-        //     assignedTo: 0,
-        //     role: 0,
-        // })
-        // if(data.status === 200) {
-        //     alert('Record added successfully');
-        // }
+        setFormData({
+            taskTitle: '',
+            taskId: '',
+            status: '',
+            creationDate: '',
+            assignedTo: 0,
+            role: 0,
+        })
+        if(data.status === 200) {
+            alert('Record added successfully');
+        }
         // navigate(previousRoute || '/');
         if(data.status === 200) {
             alert('Record added successfully');
         }
         //navigate(previousRoute || '/');
-        document.getElementById("create-task").reset();
+        // document.getElementById("create-task").reset();
     }
 
 

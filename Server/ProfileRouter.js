@@ -28,7 +28,7 @@ profileRouter.post('/create/profile', async (req, res) => {
                 console.log(result[0].c);
                 let sql ='';
                 if(result[0].c > 0) {
-                     sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = ${project_id}, modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`;
+                     sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = '${project_id}', modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`;
                 } else {
                      sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, '${project_id}', '${createdDate}', '${modifiedDate}')`;
                 }

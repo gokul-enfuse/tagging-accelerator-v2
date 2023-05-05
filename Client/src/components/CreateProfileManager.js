@@ -60,18 +60,18 @@ const CreateProfileManager = () => {
         const data = await response.json();
         console.log(data);
         alert('Record added successfully');
-        // setFormData({
-        //     id: [],
-        //     fullName: '',
-        //     email: '',
-        //     role: '',
-        //     name: '',
-        //     username: '',
-        //     password: '',
-        //     confirmPassword: '',
-        // })
+        setFormData({
+            id: [],
+            fullName: '',
+            email: '',
+            role: '',
+            name: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+        })
         alert(data.message)
-        document.getElementById("create-task").reset();
+        // document.getElementById("create-task").reset();
     }
     const [projectList, setProjectList] = useState([]);
 

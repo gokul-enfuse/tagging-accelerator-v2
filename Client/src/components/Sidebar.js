@@ -59,16 +59,7 @@ const Sidebar = ({ children }) => {
           name: 'Create Profile(Manager)',
           path: '/createprofile',
         },
-        {
-          id: 6,
-          name: 'Create Task',
-          path: '/createtask',
-        },
-        {
-          id: 7,
-          name: 'Assign To Reviewer',
-          path: '/assigntoreviewer',
-        },
+
       ],
     },
 
@@ -88,6 +79,16 @@ const Sidebar = ({ children }) => {
           id: 5,
           name: 'Profile Details',
           path: '/profiledetailsmanager',
+        },
+        {
+          id: 6,
+          name: 'Create Task',
+          path: '/createtask',
+        },
+        {
+          id: 7,
+          name: 'Assign To Reviewer',
+          path: '/assigntoreviewer',
         },
       ]
     },
@@ -116,11 +117,11 @@ const Sidebar = ({ children }) => {
 
   ]
 
-const { auth, setAuth } = useAuth();
-const logout =() =>{
-  setAuth({})
-  console.log("Logged out")
-}
+  const { auth, setAuth } = useAuth();
+  const logout = () => {
+    setAuth({})
+    console.log("Logged out")
+  }
 
 
   return (
@@ -132,16 +133,16 @@ const logout =() =>{
         </div>
         <nav>
           <ul>
-              {
-                menuItem.map((item, index) => (
-                  (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&                  
-                    <MenuItem key={item.id} item={item} />
-                ))
-              }
-            </ul>
-          </nav>
+            {
+              menuItem.map((item, index) => (
+                (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&
+                <MenuItem key={item.id} item={item} />
+              ))
+            }
+          </ul>
+        </nav>
         {auth.profile_role &&
-        <Button variant="outlined"   style={{ width: '150px', margin: '55px', fontSize: '20px', color: "white", borderWidth: "1px", borderColor: "lightblue " }}  onClick={logout} to="/" ><b> Logout </b></Button>}
+          <Button variant="outlined" style={{ width: '150px', margin: '55px', fontSize: '20px', color: "white", borderWidth: "1px", borderColor: "lightblue " }} onClick={logout} to="/" ><b> Logout </b></Button>}
 
       </div>}
       <main>{children}</main>
