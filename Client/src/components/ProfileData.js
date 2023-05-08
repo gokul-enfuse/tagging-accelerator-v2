@@ -5,6 +5,23 @@ import 'antd/dist/antd.min.css'
 import axios from "axios";
 import { useEffect } from 'react';
 
+// let columns = [
+//     {
+//         title: "Manager's Full Name",
+//         dataIndex: 'profile_fullname',
+//         key: 'key'
+//     },
+//     {
+//         title: 'Username',
+//         dataIndex: 'profile_username',
+//         key: 'key'
+//     },
+//     {
+//         title: 'Assigned Projects',
+//         dataIndex: 'project_name',
+//         key: 'key',
+//     }
+// ]
 
 const ProfileData = () => {
     let [data, setData] = useState([])
@@ -13,6 +30,8 @@ const ProfileData = () => {
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 console.log("Response data:", response.data);
+                {/*const managerProfiles = response.data.filter(item => item.profile_role === 2)*/}
+                
                 const managerProfiles = response.data.length > 0 && response.data.filter(item => item.profile_role === 2)
                 console.log("managerProfiles:", managerProfiles)
                 setData(managerProfiles)

@@ -8,14 +8,15 @@ const CreateProject = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const previousRoute = location.state?.previousRoute;
-    const [formData, setFormData] = useState({
+    const defaultFormValues = {
         projectName: '',
         firstName: '',
         lastName: '',
         client: '',
         domain: '',
         assignTo: "",
-    })
+    }
+    const [formData, setFormData] = useState(defaultFormValues)
 
     const handleChange = (e, isProjectName) => {
         if (isProjectName) {
@@ -38,8 +39,10 @@ const CreateProject = () => {
         })
         const data = await response.json();
         alert('Record added successfully');
+        setFormData(defaultFormValues)
+        // navigate(previousRoute || '/');
         //navigate(previousRoute || '/');
-        document.getElementById("create-project").reset();
+        // document.getElementById("create-project").reset();
     }
     // const [projects, setProjects] = useState([]);
 
@@ -89,13 +92,13 @@ const CreateProject = () => {
                 </select><br />
                 <label><b>Assign To</b></label><br />
                 <select name="assignTo" value={formData.assignTo} onChange={handleChange}>
-                <option key={""} value={""}> Select</option>
-                <option value="0">false</option>
-                <option value="1">true</option>
+                    <option key={""} value={""}> Select</option>
+                    <option value="0">false</option>
+                    <option value="1">true</option>
                 </select>
-            </fieldset> 
-                <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Project</button>
-                       
+            </fieldset>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Project</button>
+
         </form>
     );
 }

@@ -51,7 +51,20 @@ const CreateProfile = () => {
             }
         })
         const data = await response.json();
-        document.getElementById("create-profile").reset();
+        console.log("data", data);
+        alert('Record added successfully');
+        setFormData({
+            id: [],
+            fullName: '',
+            email: '',
+            name: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+            role: 2
+        })
+
+        // document.getElementById("create-profile").reset();
     }
     const [projectList, setProjectList] = useState([]);
 
@@ -75,14 +88,14 @@ const CreateProfile = () => {
                         <option key={project.project_id} value={project.project_id} disabled={(project.project_status === 1)?'disabled':''}>
                             {project.project_Name}
                         </option>
-                    ))} 
+                    ))}
                 </select><br />
                 <label><b>Manager's Full Name</b></label><br />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
                 <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
             </fieldset>
-            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Profile</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
         </form>
     );
 };

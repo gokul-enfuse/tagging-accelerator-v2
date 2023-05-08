@@ -59,21 +59,13 @@ const Sidebar = ({ children }) => {
           name: 'Create Profile(Manager)',
           path: '/createprofile',
         },
-        {
-          id: 6,
-          name: 'Create Task',
-          path: '/createtask',
-        },
-        {
-          id: 7,
-          name: 'Assign To Reviewer',
-          path: '/assigntoreviewer',
-        },
+
       ],
     },
 
     {
       path: "/manager",
+      id: 2,
       name: "Manager",
       id: 2,
       icon: <GrUserManager />,
@@ -88,10 +80,21 @@ const Sidebar = ({ children }) => {
           name: 'Profile Details',
           path: '/profiledetailsmanager',
         },
+        {
+          id: 6,
+          name: 'Create Task',
+          path: '/createtask',
+        },
+        {
+          id: 7,
+          name: 'Assign To Reviewer',
+          path: '/assigntoreviewer',
+        },
       ]
     },
     {
       path: "/tagger",
+      id: 3,
       name: "Tagger",
       id: 3,
       icon: <MdDns />
@@ -99,12 +102,14 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "/reviewer",
+      id: 4,
       name: "Reviewer",
       id: 4,
       icon: <MdPreview />
     },
     {
       path: "/reports",
+      id: 5,
       name: "Reports",
       id: 5,
       icon: <FaTh />
@@ -112,11 +117,11 @@ const Sidebar = ({ children }) => {
 
   ]
 
-const { auth, setAuth } = useAuth();
-const logout =() =>{
-  setAuth({})
-  console.log("Logged out")
-}
+  const { auth, setAuth } = useAuth();
+  const logout = () => {
+    setAuth({})
+    console.log("Logged out")
+  }
 
 
   return (
@@ -128,16 +133,16 @@ const logout =() =>{
         </div>
         <nav>
           <ul>
-              {
-                menuItem.map((item, index) => (
-                  (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&                  
-                    <MenuItem key={item.id} item={item} />
-                ))
-              }
-            </ul>
-          </nav>
+            {
+              menuItem.map((item, index) => (
+                (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&
+                <MenuItem key={item.id} item={item} />
+              ))
+            }
+          </ul>
+        </nav>
         {auth.profile_role &&
-        <Button variant="outlined"   style={{ width: '150px', margin: '55px', fontSize: '20px', color: "white", borderWidth: "1px", borderColor: "lightblue " }}  onClick={logout} to="/" ><b> Logout </b></Button>}
+          <Button variant="outlined" style={{ width: '150px', margin: '55px', fontSize: '20px', color: "white", borderWidth: "1px", borderColor: "lightblue " }} onClick={logout} to="/" ><b> Logout </b></Button>}
 
       </div>}
       <main>{children}</main>

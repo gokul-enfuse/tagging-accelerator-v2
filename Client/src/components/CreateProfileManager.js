@@ -35,9 +35,9 @@ const CreateProfileManager = () => {
 
         const username = formData.email;
         const password = Math.random().toString(36).slice(-8);
-       /*  if (!formData.fullName) {
-            return
-        } */
+        /*  if (!formData.fullName) {
+             return
+         } */
         const formDataWithDetails =
         {
             ...formData,
@@ -58,8 +58,20 @@ const CreateProfileManager = () => {
             }
         });
         const data = await response.json();
+        console.log(data);
+        alert('Record added successfully');
+        setFormData({
+            id: [],
+            fullName: '',
+            email: '',
+            role: '',
+            name: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+        })
         alert(data.message)
-        document.getElementById("create-task").reset();
+        // document.getElementById("create-task").reset();
     }
     const [projectList, setProjectList] = useState([]);
 
@@ -99,7 +111,7 @@ const CreateProfileManager = () => {
                     <option value="4">Reviewer</option>
                 </select><br />
             </fieldset>
-            <button type="submit" style={{width:'800px', marginLeft:'0px'}}>Add Profile</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
         </form>
     );
 };

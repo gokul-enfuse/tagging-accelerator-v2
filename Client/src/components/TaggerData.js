@@ -11,16 +11,15 @@ import { useRef } from 'react';
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value);
+  record.task_status = value;
+  console.log("record:", record)
   axios
-  .put(`http://localhost:5000/updatetask/${record.task_id}`, {
-      task_title: record.task_title,
-      task_status: value,
-      profile_id: record.profile_id,
-      task_role: record.task_role
-  }).then(response => {
-    console.log("response handlechange data is:", response);
-    alert(response.data.message);
-  }).catch(error => console.error(error));
+    .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+      "record": record,
+    }).then(response => {
+      console.log("response handlechange data is:", response);
+      alert(response.data.message);
+    }).catch(error => console.error(error));
 }
 
 const columnsRow = [
@@ -44,8 +43,8 @@ const columnsRow = [
     dataIndex: 'task_status',
     key: 'key',
     render: (text, record) => (
-      <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>  
-        <Option  value="In Progress">reassigned</Option>
+      <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
+        <Option value="In Progress">reassigned</Option>
         <Option value="Completed" >Completed</Option>
         <Option value="Waiting for Review" >Task done</Option>
       </Select>
@@ -64,7 +63,7 @@ const TaggerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
-  const taggerId = (auth.profile_username === "admin")?auth.profile_username : auth.profile_id;
+  const taggerId = (auth.profile_username === "admin") ? auth.profile_username : auth.profile_id;
   const [data, setData] = useState([])
   console.log("taggerId:", taggerId)
   const start = () => {
@@ -124,16 +123,18 @@ const TaggerData = () => {
         }).catch(error => console.error(error));
       console.log("record is:", taggerIdInfo)
     } else {
+      console.log("taggerIdInfo:", taggerIdInfo)
       axios
         .post(`http://localhost:5000/taskbyfilter`, {
-            "assignedTo": taggerIdInfo
+          "assignedTo": taggerIdInfo
+
         }).then(response => {
           console.log("Response data is:", response.data);
           setData(response.data)
         })
         .catch(error => console.error(error));
-      }
-   }
+    }
+  }
   useEffect(() => {
     getTaggers();
   }, []);
