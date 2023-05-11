@@ -99,7 +99,9 @@ let getuser = (arg = null, res, table_name = null ,join = null) => {
             res.status(404).json({ message: "Data not found.", error: error });
         } else {
             if(result.length) {
+                console.log("result latest:", result)
                 res.json(result);
+                
             } else {
                 res.status(200).json({ message: "There is no data for specific search."});
             }
