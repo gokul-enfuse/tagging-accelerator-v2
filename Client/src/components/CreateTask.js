@@ -28,6 +28,7 @@ const CreateTask = () => {
             [e.target.name]: e.target.value
         }))
     }
+    console.log("formdata:", formData)
     const handleSubmit = async (e) => {
         e.preventDefault();
         let response = await fetch('http://localhost:5000/createtask', {
