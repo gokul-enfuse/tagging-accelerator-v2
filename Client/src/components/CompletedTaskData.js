@@ -16,39 +16,42 @@ const CompletedTaskData = () => {
             .then(response => {
                 console.log("Response data:", response.data);
                 setData(response.data)
-            })
-            .catch(error => console.error(error));
+            }).catch(error => console.error(error));
     }
-    const getTaggers = () => {
+    const getReviewers = () => {
         axios
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 const allProfiles = response.data
-                const reviewerList = allProfiles.filter((item) => {
-                    return item.role === "Reviewer"
-                })
+                const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4)
                 console.log("reviewer list is", reviewerList);
                 setReviewerList(reviewerList)
-            })
-            .catch(error => console.error(error));
+            }).catch(error => console.error(error));
     }
     useEffect(() => {
         getCompletedTAsks();
-        getTaggers();
+        getReviewers();
     }, [])
     const handleAssignToChange = (taskId, e) => {
-        const newAssignedTo = e.target.value;
-        console.log("new assignee is :", e.target.value)
-        setAssignedTo(newAssignedTo);
+        // const newAssignedTo = e.target.value;
+        // console.log("new assignee is :", e.target.value)
+        setAssignedTo(e.target.value);
+        console.log("new assignee is :", assignedTo)
     };
     const handleTaskSubmit = (record) => {
         // const task = data.find(task => task.taskId === record);
         // const payload = { ...task, assignedTo: assignedTo };
-        console.log("task id is :", record, ",assigned to is:", record.assignedTo)
+        console.log("task id is :", record, ",assigned to is:", record.profile_id)
+        console.log("assigned to latest:", assignedTo)
+        record.profile_id = assignedTo;
+        record.profile_role = 4 //assigned the role_id of reviewer 
+        record.task_role = 4 //assigned the role_id of reviewer 
+
         axios
-            .put("http://localhost:5000/updatetask", {
-                "id": record._id,
-                "updatedData": { "assignedTo": assignedTo }
+            .put("http://localhost:5000/updatetask/" + record.task_id, {
+                "id": record.task_id,
+                record
+
             })
             .then(response => {
                 console.log("response handlechange data is:", response);
@@ -64,38 +67,38 @@ const CompletedTaskData = () => {
     };
     const columns = [
         {
-            title: 'Task Title',
-            dataIndex: 'taskTitle',
-            key: 'taskTitle'
-        },
-        {
             title: 'Task ID',
-            dataIndex: 'taskId',
+            dataIndex: 'task_id',
             key: 'taskId'
         },
         {
+            title: 'Task Title',
+            dataIndex: 'task_title',
+            key: 'taskTitle'
+        },
+        {
             title: 'Status',
-            dataIndex: 'status',
+            dataIndex: 'task_status',
             key: 'status'
         },
         {
             title: 'Created Date',
-            dataIndex: 'creationDate',
+            dataIndex: 'createdDate',
             key: 'creationDate'
         },
         {
             title: 'Assign To',
-            dataIndex: 'assignedTo',
+            dataIndex: 'profile_id',
             key: 'key',
 
             render: (text, record) => (
-                <select name="assignedTo" value={assignedTo[record._id]} onChange={(e) => handleAssignToChange(record._id, e)} disabled={isSubmitted[record._id]}>
+                <select name="assignedTo" value={assignedTo[record.profile_id]} onChange={(e) => handleAssignToChange(record.profile_id, e)} disabled={isSubmitted[record.profile_id]} style={{ width: '200px' }}>
                     <option key={""} value={""}>
-                         {record.assignedTo || "select"}
+                        {record.assignedTo || "select"}
                     </option>
                     {reviewerList && reviewerList.map((reviewer) => (
-                        <option key={reviewer.id} value={reviewer.username}>
-                            {reviewer.username}
+                        <option key={reviewer.profile_id} value={reviewer.profile_id}>
+                            {reviewer.profile_username}
                         </option>
                     ))}
                 </select>
@@ -110,7 +113,7 @@ const CompletedTaskData = () => {
                     onClick={() => handleTaskSubmit(record)}
                     disabled={isSubmitted[record._id]}
                 >
-                    Submit {Boolean(isSubmitted[record._id]) + "test"}
+                    Submit
                 </button>
             )
         },

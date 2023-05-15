@@ -5,28 +5,6 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 
-let columns = [
-    {
-        title: "Full Name",
-        dataIndex: 'fullName',
-        key: 'key'
-    },
-    {
-        title: 'Username',
-        dataIndex: 'username',
-        key: 'key'
-    },
-    {
-        title: 'Assigned Projects',
-        dataIndex: 'projectNames',
-        key: 'key',
-    },
-    {
-        title: 'Role',
-        dataIndex: 'role',
-        key: 'key',
-    }
-]
 const ProfileData = () => {
     let [data, setData] = useState([])
     const getAllProfiles = () => {
@@ -34,7 +12,7 @@ const ProfileData = () => {
             .get("http://localhost:5000/allprofiles")
             .then(response => {
                 console.log("Response data:", response.data);
-                const managerProfiles = response.data.filter(item => item.role === "Tagger" || item.role === "Reviewer")
+                const managerProfiles = response.data.length >0 && response.data.filter(item => item.profile_role === 3 || item.profile_role === 4)
                 console.log("managerProfiles:", managerProfiles)
                 setData(managerProfiles)
             })
@@ -43,6 +21,31 @@ const ProfileData = () => {
     useEffect(() => {
         getAllProfiles();
     }, []);
+
+    let columns = [
+        {
+            title: "Full Name",
+            dataIndex: 'profile_fullname',
+            key: 'key'
+        },
+        {
+            title: 'Username',
+            dataIndex: 'profile_username',
+            key: 'key'
+        },
+        {
+            title: 'Assigned Projects',
+            dataIndex: 'project_name',
+            key: 'key',
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role_name',
+            key: 'key',
+        }
+    ]
+    
+
     return (
         <div>
             <div

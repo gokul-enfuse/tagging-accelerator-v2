@@ -9,52 +9,54 @@ import { useEffect } from 'react';
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
-  console.log("value is:", value);
+  console.log("value is:", value, record);
   axios
-    .put("http://localhost:5000/updatetask", {
-      "id": record._id,
-      "updatedData": { "status": value }
+    .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+      task_title: record.task_title,
+      task_status: value,
+      profile_id: record.profile_id,
+      task_role: record.task_role
     })
     .then(response => {
       console.log("response handlechange data is:", response);
-
+      alert(response.data.message);
     })
     .catch(error => console.error(error));
 
 }
 let columns = [
   {
-    title: 'Task Title',
-    dataIndex: 'taskTitle',
+    title: 'Task ID',
+    dataIndex: 'task_id',
     key: 'key'
   },
   {
-    title: 'Task ID',
-    dataIndex: 'taskId',
+    title: 'Task Title',
+    dataIndex: 'task_title',
     key: 'key'
   },
   {
     title: 'Assign To',
-    dataIndex: 'assignedTo',
+    dataIndex: 'profile_email',
     key: 'key',
   },
   {
     title: 'Status',
-    dataIndex: 'status',
+    dataIndex: 'task_status',
     key: 'key',
 
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-        <Option value="In Progress">in progress</Option>
-        <Option value="Completed">Completed</Option>
-        <Option value="Waiting for Review">Waiting for Review</Option>
+        <Option key={1} value="In Progress">in progress</Option>
+        <Option key={2} value="Completed">Completed</Option>
+        <Option key={3} value="Waiting for Review">Waiting for Review</Option>
 
       </Select>
     )
   },
   {
     title: 'Created Date',
-    dataIndex: 'creationDate',
+    dataIndex: 'createdDate',
     key: 'key'
   },
 
@@ -83,7 +85,6 @@ const TableData = () => {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-
   };
   const hasSelected = selectedRowKeys.length > 0;
 
@@ -105,7 +106,7 @@ const TableData = () => {
 
   //   })
   // }
-  console.log('role:', auth.role, ', columns: ', columns);
+  console.log('role:', auth.profile_role, ', columns: ', columns);
 
   // columns= columns.filter((columnitem) => {
   //  return columnitem.title !== 'Assign To'

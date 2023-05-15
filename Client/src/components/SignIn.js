@@ -29,44 +29,29 @@ const SignIn = () => {
       password: Yup.string().min(5).required("Password is required"),
     }),
 
-    onSubmit: (values) => {
-      console.log("values", values);
-      console.log("user", values.username);
-      console.log("password", values.password);
-     
+    onSubmit: (values) => {     
       const baseURL = "http://localhost:5000/api/login"
 
       axios.post(baseURL, values).then((response) => {
-
         if (response.status === 200) {
-          console.log("response data is:", response.data)
-
-          if (response.data.role === "Admin") {
+          if (response.data.profile_role === 1) {
             navigate("/admin");
-          } else if (response.data.role === "Tagger") {
+          } else if (response.data.profile_role === 3) {
             navigate("/tagger");
-
-          } else if (response.data.role === "Reviewer") {
+          } else if (response.data.profile_role === 4) {
             navigate("/reviewer");
-          } else if (response.data.role === "Manager") {
+          } else if (response.data.profile_role === 2) {
             navigate("/manager");
           }
-        }
-        else {
+        } else {
           console.warn("check the response")
         }
-        setAuth(response.data)
-        console.log("response:", response)
-
-
-      })
-        .catch((error) => {
-
+        setAuth(response.data);
+      }).catch((error) => {
           alert(error.response.data.message);
         });
       // navigate('/admin', { replace: false });
       navigate(from, { replace: true });
-
     }
   });
 
