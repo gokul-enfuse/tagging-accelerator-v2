@@ -30,16 +30,30 @@ const CreateProject = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("formdata is:", formData)
-        const response = await fetch('http://localhost:5000/create/project', {
-            method: 'POST',
-            body: JSON.stringify(formData),
-            headers: {
-                'Content-Type': 'application/json'
+
+        await axios.get("http://localhost:5000/allprojects").then(async response => {
+            const allProjects = response.data
+            console.log("res data: ", response.data)
+            const projectNames = allProjects.map(project => project.project_Name);
+            if (projectNames.includes(formData.projectName)) {
+                alert(`A project with name "${formData.projectName}" already exists. Please choose a different name.`);
+                return;
             }
-        })
-        const data = await response.json();
-        alert('Record added successfully');
-        setFormData(defaultFormValues)
+            else {
+                const response = await fetch('http://localhost:5000/create/project', {
+                    method: 'POST',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                const data = await response.json();
+                alert('Record added successfully');
+                setFormData(defaultFormValues)
+            }
+        });
+
+
         // navigate(previousRoute || '/');
         //navigate(previousRoute || '/');
         // document.getElementById("create-project").reset();
@@ -71,8 +85,8 @@ const CreateProject = () => {
 
     return (
         <form onSubmit={handleSubmit} id='create-project'>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
-            <legend>Create Project:</legend>
+            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
+                <legend>Create Project:</legend>
                 <label><b>Project Name </b></label><br />
                 <input type="text" name="projectName" value={formData.projectName} onChange={e => handleChange(e, true)} ></input><br />
                 {/*<label><b>Manager</b></label><br />
