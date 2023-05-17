@@ -28,11 +28,19 @@ projectRouter.post('/create/project', async (req, res) => {
 
 projectRouter.get('/allprojects', async (req, res) => {
     const table_name = process.env.PROJECT;
-    await getprojects(null, res, table_name);
+    await getprojects(null, res, table_name, null);
 });
 
-let getprojects = (arg = null, res, table_name = null) => {
+projectRouter.get('/specificprojects', async (req, res) => {
+    const table_name = process.env.PROJECT;
+    await getprojects(null, res, table_name, null);
+});
+
+let getprojects = (arg = null, res, table_name = null, join = null) => {
     let sql = `SELECT project_id, project_Name, project_clientname, project_domain, project_status, createdDate, modifiedDate from ${table_name}`;
+    if(join!=null) {
+        sql += join;
+    }
     if(arg!=null) {
         sql += ` WHERE ${arg}`;
     }

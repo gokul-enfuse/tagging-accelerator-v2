@@ -89,27 +89,23 @@ const ReviewerData = () => {
   }
 
   const getTask = (reviewerIdInfo, reviewers) => {
-    console.log("reviewerId", reviewerId)
+    console.log("reviewerId", reviewerId, reviewerIdInfo, reviewers)
     if (reviewerId === "admin") {
       axios
-        .get("http://localhost:5000/getalltask")
+        .get(`http://localhost:5000/getreviewertask`)
         .then(response => {
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
-            console.log("item1", item1);
             return reviewers.some(item2 => {
-              console.log("item2:", item2);
               return item1.task_role === item2.profile_role
             })
           });
           setData(filteredArray)
-          console.log("tasklist  is:", filteredArray)
         })
         .catch(error => console.error(error));
 
       console.log("record is:", reviewerIdInfo)
-    }
-    else {
+    } else {
       axios
         .post("http://localhost:5000/taskbyfilter", {
           "assignedTo": reviewerIdInfo
