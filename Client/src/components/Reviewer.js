@@ -7,7 +7,7 @@ function Reviewer() {
 
   return (
     <div>
-      <h1>Welcome, {auth.profile_name || ""} </h1>
+      <h1>Welcome, {(auth.profile_name===null)?auth.profile_name:'Admin' || ""} </h1>
       <ReviewerData />
     </div>
   )

@@ -15,11 +15,14 @@ const CreateTask = () => {
         taskTitle: '',
         taskId: '',
         status: '',
-        creationDate: '',
+        assignedProject: '',
         assignedTo: 0,
+        reviewer_profile_id: '',
         role: 0,
+        creationDate: '',
     });
     const [taggers, setTaggers] = useState([]);
+    const [projects, setProjects] = useState([]);
 
 
     const handleChange = (e) => {
@@ -44,9 +47,11 @@ const CreateTask = () => {
             taskTitle: '',
             taskId: '',
             status: '',
-            creationDate: '',
+            assignedProject: '',
             assignedTo: 0,
+            reviewer_profile_id: '',
             role: 0,
+            creationDate: '',
         })
         if(data.status === 200) {
             alert('Record added successfully');
@@ -63,15 +68,29 @@ const CreateTask = () => {
     const getTaggers = () => {
         axios
             .get("http://localhost:5000/getalltaggers")
-            .then(res=> {
-                
+            .then(res=> {                
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
             }).catch(error => console.error(error));
     }
 
+    const changeSelectOptionHandler = (event) => {
+        console.log("Vikas=",event.target.value);
+        getProject(event.target.value);
+    };
+
+    const getProject = () => {
+        axios
+            .get(`http://localhost:5000/specificprojects`)
+            .then(res=> {                
+                const allProjects = res.data;
+                setProjects(allProjects);
+            }).catch(error => console.error(error));
+    }
+
     useEffect(() => {
         getTaggers();
+        getProject();
     }, []);
 
     // const handleClick = () => {
@@ -83,15 +102,9 @@ const CreateTask = () => {
         <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
             <legend>Create Task:</legend>
-                <label>Task Title</label><br />
-                <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
-                 {/* <label>Task ID</label><br />
-                <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />*/}
-                <label>Creaton Date</label><br />
-                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
                 <label>Assigned To</label><br />
 
-                <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange}>
+                <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{width: '230px'}}>
                     <option key={0} value={0}>
                         select
                     </option>
@@ -101,6 +114,25 @@ const CreateTask = () => {
                             {tagger.profile_username}
                         </option>
                     ))}</select><br />
+                <label>Assigned Project</label><br />
+
+                <select name="assignedProject" id="assignedProject" value={formData.assignedProject} onChange={handleChange} style={{width: '230px'}}>
+                    <option key={0} value={0}>
+                        select
+                    </option>
+                    {projects.length > 0 && projects.map((project) => (
+                        <option key={project.project_id} value={project.project_id}>
+
+                            {project.project_Name}
+                        </option>
+                    ))}</select><br />
+                <label>Task Title</label><br />
+                <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
+                 {/* <label>Task ID</label><br />
+                <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />*/}
+                <label>Creaton Date</label><br />
+                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
+                
 
                 {/*<input type="text" name="assignedTo" value={formData.assignedTo} onChange={handleChange}></input><br />*/}
                 {/* <label>Role</label><br />

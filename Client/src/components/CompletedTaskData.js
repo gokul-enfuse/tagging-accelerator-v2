@@ -34,16 +34,12 @@ const CompletedTaskData = () => {
     }, [])
     const handleAssignToChange = (taskId, e) => {
         // const newAssignedTo = e.target.value;
-        // console.log("new assignee is :", e.target.value)
         setAssignedTo(e.target.value);
-        console.log("new assignee is :", assignedTo)
     };
     const handleTaskSubmit = (record) => {
         // const task = data.find(task => task.taskId === record);
         // const payload = { ...task, assignedTo: assignedTo };
-        console.log("task id is :", record, ",assigned to is:", record.profile_id)
-        console.log("assigned to latest:", assignedTo)
-        record.profile_id = assignedTo;
+        record.reviewer_profile_id = assignedTo;
         record.profile_role = 4 //assigned the role_id of reviewer 
         record.task_role = 4 //assigned the role_id of reviewer 
 
@@ -51,16 +47,11 @@ const CompletedTaskData = () => {
             .put("http://localhost:5000/updatetask/" + record.task_id, {
                 "id": record.task_id,
                 record
-
             })
             .then(response => {
-                console.log("response handlechange data is:", response);
-
                 let temp = isSubmitted;
                 temp[response.data._id] = true
                 setIsSubmitted(temp)
-                console.log("temp value is :", temp, response.data._id)
-                console.log("is submitted is:", isSubmitted)
                 alert("success");
             })
             .catch(error => console.error(error));
