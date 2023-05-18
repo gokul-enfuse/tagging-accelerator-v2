@@ -17,8 +17,10 @@ const CreateProfile = () => {
         setSelected(selectedValues)
         if (e.target.name) {
             setFormData(() => ({
+               
                 ...formData,
                 [e.target.name]: e.target.value,
+                
                 // projectNames: selectedValues,
             }))
         }
@@ -28,8 +30,8 @@ const CreateProfile = () => {
         e.preventDefault();
         formData.id = selected
         //console.log("formData:", formData)
-
-        const username = formData.email;
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const username = formData.fullName.split(' ').join('')+"."+ randomNumber;
         const password = Math.random().toString(36).slice(-8);
         /* if (!formData.fullName) {
             return

@@ -8,6 +8,8 @@ import useAuth from "../hooks/useAuth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import logo from './enfuse-logo.png';
+import google from './goggleSignin.png';
+
 
 const SignIn = () => {
   const { setAuth } = useAuth();
@@ -29,7 +31,7 @@ const SignIn = () => {
       password: Yup.string().min(5).required("Password is required"),
     }),
 
-    onSubmit: (values) => {     
+    onSubmit: (values) => {
       const baseURL = "http://localhost:5000/api/login"
 
       axios.post(baseURL, values).then((response) => {
@@ -48,8 +50,8 @@ const SignIn = () => {
         }
         setAuth(response.data);
       }).catch((error) => {
-          alert(error.response.data.message);
-        });
+        alert(error.response.data.message);
+      });
       // navigate('/admin', { replace: false });
       navigate(from, { replace: true });
     }
@@ -70,7 +72,12 @@ const SignIn = () => {
           <div className='top-section'>
             <img style={{ width: isOpen ? "130px" : "50px" }} src={logo} alt='logo' />
           </div>
-           {/*<h2>Login Form</h2>*/}
+          {/*<h2>Login Form</h2>*/}
+
+          {/*<button type="button" className="google-button" style={ {background: "#fafafa"}}>
+           <img src= {google} alt="Google Icon" className="google-icon" />
+      </button>*/}
+
           <TextField
             name="username"
             type="text"
@@ -115,6 +122,9 @@ const SignIn = () => {
           {formik.touched.password && formik.errors.password ? (
             <div className="error_msg">{formik.errors.password}</div>
           ) : null}
+          <div className="forgot-password" style={{ textAlign: "center" }}>
+            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#">Click here</a></p>
+          </div>
 
           <button type="submit">Login</button>
 

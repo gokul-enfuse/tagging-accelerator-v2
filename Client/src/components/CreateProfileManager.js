@@ -33,7 +33,8 @@ const CreateProfileManager = () => {
         formData.id = selected
         console.log("formData:", formData)
 
-        const username = formData.email;
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const username = formData.fullName.split(' ').join('') + "." + randomNumber;
         const password = Math.random().toString(36).slice(-8);
         /*  if (!formData.fullName) {
              return
@@ -88,8 +89,8 @@ const CreateProfileManager = () => {
 
     return (
         <form onSubmit={handleSubmit} id='create-task'>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
-            <legend>Create Profile (Tagger & Reviewer):</legend>
+            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
+                <legend>Create Profile (Tagger & Reviewer):</legend>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
