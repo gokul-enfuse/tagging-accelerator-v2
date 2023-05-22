@@ -56,6 +56,27 @@ const SignIn = () => {
       navigate(from, { replace: true });
     }
   });
+  function validateInput() {
+    const email = document.getElementById("reset-email").value;
+    console.log("input:", email)
+    if (email === "") {
+      alert("Please fill in the input field.")
+    } else {
+      axios
+        .post("http://localhost:5000/user/reset", { email })
+        .then(response => {
+          console.log("response data :", response.data)
+          alert("Please check your Email")
+
+        })
+        .catch(error => console.error(error));
+
+
+      // Perform desired action when the input is valid
+      // For example, submit a form or proceed with further processing
+      // ...
+    }
+  }
 
   return (
 
@@ -122,7 +143,19 @@ const SignIn = () => {
           {formik.touched.password && formik.errors.password ? (
             <div className="error_msg">{formik.errors.password}</div>
           ) : null}
-          <div className="forgot-password" style={{ textAlign: "center" }}>
+          <TextField
+            name="email"
+            type="text"
+            placeholder="Enter your Email"
+            className="textField"
+            id="reset-email"
+          // onChange={formik.handleChange}
+          // onBlur={formik.handleBlur}
+          // value={formik.values.username}
+          />
+
+
+          <div onClick={() => validateInput()} className="forgot-password" style={{ textAlign: "center" }}>
             <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#">Click here</a></p>
           </div>
 
