@@ -55,7 +55,7 @@ const Manager = () => {
     }, []);
     return (
         <div>
-            <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>Welcome, {(auth.profile_name===null)?auth.profile_name:'Admin' || ""}</h1>
+            <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>Welcome, {auth.profile_name || ""}</h1>
             <div>
                 <label style={{ marginTop: 20 }}>Assigned to Project</label><br />
                 <select name="assignedTo" style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}>
