@@ -18,7 +18,7 @@ emailRouter.post("/user/reset", (req, res) => {
             service: "gmail",
             auth: {
                 user: "recruitments@enfuse-solutions.com",
-                pass: "xrvhswkeympfqwsf"
+                pass: " "
             }
         });
 

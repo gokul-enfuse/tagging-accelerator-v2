@@ -14,7 +14,7 @@ import google from './goggleSignin.png';
 const SignIn = () => {
   const { setAuth } = useAuth();
   const [isOpen] = useState(true);
-
+  const [isEmailVisible, setIsEmailVisible] = useState(false);
 
   let navigate = useNavigate();
   const location = useLocation();
@@ -56,6 +56,9 @@ const SignIn = () => {
       navigate(from, { replace: true });
     }
   });
+  function showEmailField() {
+    setIsEmailVisible(true);
+  }
   function validateInput() {
     const email = document.getElementById("reset-email").value;
     console.log("input:", email)
@@ -98,30 +101,33 @@ const SignIn = () => {
           {/*<button type="button" className="google-button" style={ {background: "#fafafa"}}>
            <img src= {google} alt="Google Icon" className="google-icon" />
       </button>*/}
+          {!isEmailVisible && (
 
-          <TextField
-            name="username"
-            type="text"
-            placeholder="Username"
-            className="textField"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton>
-                    <PersonIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.username}
-          />
+            <TextField
+              name="username"
+              type="text"
+              placeholder="Username"
+              className="textField"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton>
+                      <PersonIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.username}
+            />
+            )}
 
           {formik.touched.username && formik.errors.username ? (
             <div className="error_msg">{formik.errors.user}</div>
           ) : null}
 
+          {!isEmailVisible && (
           <TextField
             name="password"
             type="password"
@@ -136,27 +142,34 @@ const SignIn = () => {
                 </InputAdornment>
               ),
             }}
+
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.password}
           />
+          )}
+
           {formik.touched.password && formik.errors.password ? (
             <div className="error_msg">{formik.errors.password}</div>
           ) : null}
-          <TextField
-            name="email"
-            type="text"
-            placeholder="Enter your Email"
-            className="textField"
-            id="reset-email"
-          // onChange={formik.handleChange}
-          // onBlur={formik.handleBlur}
-          // value={formik.values.username}
-          />
 
+          {isEmailVisible && (
+            <TextField
+              name="email"
+              type="text"
+              placeholder="Enter your Email"
+              className="textField"
+              id="reset-email"
+            // onChange={formik.handleChange}
+            // onBlur={formik.handleBlur}
+            // value={formik.values.username}
+            />
+          )}
 
           <div onClick={() => validateInput()} className="forgot-password" style={{ textAlign: "center" }}>
-            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#">Click here</a></p>
+
+            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#" onClick={showEmailField}>Click here</a></p>
+
           </div>
 
           <button type="submit">Login</button>
