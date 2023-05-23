@@ -115,7 +115,7 @@ const TaggerData = () => {
           const filteredArray = allTasks.filter(item1 => {
             return taggers.some(item2 => {
               console.log("item1 is:", item1, "item2 is:", item2);
-              return item1.assignedTo === item2.username
+              return item1.profile_id === item2.profile_id
             })
           });
           setData(filteredArray)

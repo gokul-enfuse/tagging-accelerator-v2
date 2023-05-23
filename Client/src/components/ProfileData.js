@@ -25,54 +25,53 @@ import { useEffect } from 'react';
 
 const ProfileData = () => {
     const [data, setData] = useState([])
-    console.log('data:', data)
-    const [rowData, setRowData] = useState([]);
-    const [visible, setVisible] = useState(false);
+    // const [rowData, setRowData] = useState([]);
+    // const [visible, setVisible] = useState(false);
 
-    const [form] = Form.useForm();
+    // const [form] = Form.useForm();
 
-    const showModal = (key) => {
-        setVisible(prevState => ({
-            ...prevState,
-            [key]: true
-        }));
-    };
-    const handleCancel = (key) => {
-        setVisible(prevState => ({
-            ...prevState,
-            [key]: false
-        }));
-    };
+    // const showModal = (key) => {
+    //     setVisible(prevState => ({
+    //         ...prevState,
+    //         [key]: true
+    //     }));
+    // };
+    // const handleCancel = (key) => {
+    //     setVisible(prevState => ({
+    //         ...prevState,
+    //         [key]: false
+    //     }));
+    // };
 
-    const handleOk = () => {
-        form.validateFields().then(values => {
-            // Handle form submission here
-            console.log('Form values:', values);
+    // const handleOk = () => {
+    //     form.validateFields().then(values => {
+    //         // Handle form submission here
+    //         console.log('Form values:', values);
 
-            // Close the modal
-            handleCancel();
-        });
-    };
+    //         // Close the modal
+    //         handleCancel();
+    //     });
+    // };
 
-    // Function to handle the "Edit" button click
-    const handleEdit = key => {
-        const updatedData = rowData.map(row => {
-            console.log("row:", row)
-            if (row.key === key) {
-                return { ...row, editable: !row.editable };
-            }
-            return row;
-        });
+    // // Function to handle the "Edit" button click
+    // const handleEdit = key => {
+    //     const updatedData = rowData.map(row => {
+    //         console.log("row:", row)
+    //         if (row.key === key) {
+    //             return { ...row, editable: !row.editable };
+    //         }
+    //         return row;
+    //     });
 
-        setRowData(updatedData);
-        showModal();
-    };
+    //     setRowData(updatedData);
+    //     showModal();
+    // };
 
-    // Function to handle the "Delete" button click
-    const handleDelete = key => {
-        const updatedData = rowData.filter(row => row.key !== key);
-        setRowData(updatedData);
-    };
+    // // Function to handle the "Delete" button click
+    // const handleDelete = key => {
+    //     const updatedData = rowData.filter(row => row.key !== key);
+    //     setRowData(updatedData);
+    // };
     const getAllProfiles = () => {
         axios
             .get("http://localhost:5000/allprofiles")
@@ -102,23 +101,22 @@ const ProfileData = () => {
                         })
                         console.log("result is:", result)
                         setData(result)
+                        console.log("setData:", data)
                     })
                     .catch(error => console.error(error));
             })
             .catch(error => console.error(error));
     }
 
-    useEffect(() => {
-        getAllProfiles();
-    }, []);
     // Update data with editable flag
     useEffect(() => {
-        const updatedData = data.map(row => ({
-            ...row,
-            editable: false
-        }));
-        setRowData(updatedData);
-    }, [data]);
+        getAllProfiles();
+        // const updatedData = data.map(row => ({
+        //     ...row,
+        //     editable: false
+        // }));
+        // setRowData(updatedData);
+    }, []);
 
 
     let columns = [
@@ -137,63 +135,24 @@ const ProfileData = () => {
             dataIndex: 'project_name',
             key: 'key',
         },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text, record) => (
-                <span>
-                    <Button style={{ width: '30%' }} onClick={() => handleEdit(record.key)}>
-                        {record.editable ? 'Save' : 'Edit'}
-                    </Button>
-                    <Button style={{ width: '30%' }} onClick={() => handleDelete(record.key)}>Delete</Button>
-                </span>
-            ),
-        },
+        // {
+        //     title: 'Action',
+        //     key: 'action',
+        //     render: (text, record) => (
+        //         <span>
+        //             <Button style={{ width: '30%' }} onClick={() => handleEdit(record.key)}>
+        //                 {record.editable ? 'Save' : 'Edit'}
+        //             </Button>
+        //             <Button style={{ width: '30%' }} onClick={() => handleDelete(record.key)}>Delete</Button>
+        //         </span>
+        //     ),
+        // },
     ]
 
     return (
         <div>
-            {rowData.map(row => (
-                <React.Fragment key={row.key}>
-                    {/* Modal for each row */}
-                    <Modal
-                        visible={visible[row.key]}
-                        onCancel={() => handleCancel(row.key)}
-                        onOk={() => handleOk(row.key)}
-                        title="Edit Profile"
-                    >
-                        <Form form={form} layout="vertical">
-                            <Form.Item
-                                label="Full Name"
-                                name={`fullname-${row.key}`}
-                                rules={[{ required: true, message: 'Please enter your full name' }]}
-                            >
-                                <Input />
-                            </Form.Item>
-                            {/* Add more form items for other fields */}
-                        </Form> </Modal>
-
-                    <div
-                        style={{
-                            marginBottom: 16,
-                        }}
-                    >
-                        <span
-                            style={{
-                                marginRight: 8,
-                            }}
-                        >
-                        </span>
-                    </div>
-                    <Table columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
-                </React.Fragment>
-            ))}
+            <Table columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
         </div>
     );
 }
-
-
-
-
-
 export default ProfileData;

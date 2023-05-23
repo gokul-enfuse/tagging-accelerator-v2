@@ -76,7 +76,7 @@ profileRouter.post("/api/login", (req, res) => {
 profileRouter.get('/getalltaggers', async (req, res) => {
     let table_name = process.env.PROFILE;
     let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
-    getuser('profile_role = 3', res, table_name, join);
+    getuser('accelerator_profile.profile_role = 3', res, table_name, join);
 });
 
 profileRouter.get('/allprofiles', async (req, res) => {
@@ -93,6 +93,7 @@ let getuser = (arg = null, res, table_name = null ,join = null) => {
     if(arg) {
         sql += ` WHERE ${arg}`;
     }
+    // console.log("sql:", sql)
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(404).json({ message: "Data not found.", error: error });
