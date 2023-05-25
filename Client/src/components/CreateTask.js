@@ -75,7 +75,6 @@ const CreateTask = () => {
     }
 
     const changeSelectOptionHandler = (event) => {
-        console.log("Vikas=",event.target.value);
         getProject(event.target.value);
     };
 
