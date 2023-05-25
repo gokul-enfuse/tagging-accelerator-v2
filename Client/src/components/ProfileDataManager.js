@@ -4,12 +4,13 @@ import 'antd/dist/antd.min.css'
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
+const localhost = '52.44.231.112';
 
 const ProfileData = () => {
     let [data, setData] = useState([])
     const getAllProfiles = () => {
         axios
-            .get("http://localhost:5000/allprofiles")
+            .get("http://${localhost}:5000/allprofiles")
             .then(response => {
                 console.log("Response data:", response.data);
                 const managerProfiles = response.data.length > 0 && response.data.filter(item => item.profile_role === 3 || item.profile_role === 4)
@@ -17,7 +18,7 @@ const ProfileData = () => {
                 setData(managerProfiles)
 
                 axios
-                    .get("http://localhost:5000/allprojects")
+                    .get("http://${localhost}:5000/allprojects")
                     .then(response => {
                         console.log("Response data projects:", response.data);
                         const allprojects = response.data

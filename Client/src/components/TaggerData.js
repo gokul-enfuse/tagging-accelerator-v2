@@ -6,7 +6,7 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { useRef } from 'react';
-
+const localhost = '52.44.231.112';
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
@@ -14,7 +14,7 @@ const handleStatusChange = (record, value, text) => {
   record.task_status = value;
   console.log("record:", record)
   axios
-    .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+    .put(`http://${localhost}:5000/updatetask/${record.task_id}`, {
       "record": record,
     }).then(response => {
       console.log("response handlechange data is:", response);
@@ -95,7 +95,7 @@ const TaggerData = () => {
   const getTaggers = () => {
 
     axios
-      .get("http://localhost:5000/getalltaggers")
+      .get("http://${localhost}:5000/getalltaggers")
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", allProfiles);
@@ -108,7 +108,7 @@ const TaggerData = () => {
   const getTask = (taggerIdInfo, taggers) => {
     if (taggerId === "admin") {
       axios
-        .get("http://localhost:5000/getalltask")
+        .get("http://${localhost}:5000/getalltask")
         .then(response => {
           console.log("Response data:", response.data, "tagger data is:", taggers);
           const allTasks = response.data
@@ -125,7 +125,7 @@ const TaggerData = () => {
     } else {
       console.log("taggerIdInfo:", taggerIdInfo)
       axios
-        .post(`http://localhost:5000/taskbyfilter`, {
+        .post(`http://${localhost}:5000/taskbyfilter`, {
           "assignedTo": taggerIdInfo
 
         }).then(response => {
@@ -142,7 +142,7 @@ const TaggerData = () => {
   // const getFailedTask = () => {
 
   //   axios
-  //     .get("http://localhost:5000/failedtasks")
+  //     .get("http://${localhost}:5000/failedtasks")
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);

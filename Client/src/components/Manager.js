@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
+const localhost = '52.44.231.112';
 
 const Manager = () => {
     const { auth } = useAuth();
@@ -25,7 +26,7 @@ const Manager = () => {
     }
     const getProject = () => {
         axios
-            .get("http://localhost:5000/projectlist")
+            .get("http://${localhost}:5000/projectlist")
             .then(response => {
                 console.log("Response data:", response.data);
                 const allProject = response.data
@@ -55,7 +56,7 @@ const Manager = () => {
     }, []);
     return (
         <div>
-            <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>Welcome, {auth.profile_name || ""}</h1>
+            <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>Welcome, {(auth.profile_name===null)?auth.profile_name:'Admin' || ""}</h1>
             <div>
                 <label style={{ marginTop: 20 }}>Assigned to Project</label><br />
                 <select name="assignedTo" style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}>

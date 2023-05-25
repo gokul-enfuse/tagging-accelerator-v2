@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table } from 'antd';
 import axios from "axios";
 import useAuth from '../hooks/useAuth.js';
+const localhost = '52.44.231.112';
 
 const CompletedTaskData = () => {
     const { auth } = useAuth();
@@ -12,7 +13,7 @@ const CompletedTaskData = () => {
 
     const getCompletedTAsks = () => {
         axios
-            .get("http://localhost:5000/completedtasks")
+            .get("http://${localhost}:5000/completedtasks")
             .then(response => {
                 console.log("Response data:", response.data);
                 setData(response.data)
@@ -20,7 +21,7 @@ const CompletedTaskData = () => {
     }
     const getReviewers = () => {
         axios
-            .get("http://localhost:5000/allprofiles")
+            .get("http://${localhost}:5000/allprofiles")
             .then(response => {
                 const allProfiles = response.data
                 const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4)
@@ -34,33 +35,24 @@ const CompletedTaskData = () => {
     }, [])
     const handleAssignToChange = (taskId, e) => {
         // const newAssignedTo = e.target.value;
-        // console.log("new assignee is :", e.target.value)
         setAssignedTo(e.target.value);
-        console.log("new assignee is :", assignedTo)
     };
     const handleTaskSubmit = (record) => {
         // const task = data.find(task => task.taskId === record);
         // const payload = { ...task, assignedTo: assignedTo };
-        console.log("task id is :", record, ",assigned to is:", record.profile_id)
-        console.log("assigned to latest:", assignedTo)
-        record.profile_id = assignedTo;
+        record.reviewer_profile_id = assignedTo;
         record.profile_role = 4 //assigned the role_id of reviewer 
         record.task_role = 4 //assigned the role_id of reviewer 
 
         axios
-            .put("http://localhost:5000/updatetask/" + record.task_id, {
+            .put("http://${localhost}:5000/updatetask/" + record.task_id, {
                 "id": record.task_id,
                 record
-
             })
             .then(response => {
-                console.log("response handlechange data is:", response);
-
                 let temp = isSubmitted;
                 temp[response.data._id] = true
                 setIsSubmitted(temp)
-                console.log("temp value is :", temp, response.data._id)
-                console.log("is submitted is:", isSubmitted)
                 alert("success");
             })
             .catch(error => console.error(error));
