@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
+const localhost = '52.44.231.112';
 
 const Manager = () => {
     const { auth } = useAuth();
@@ -25,7 +26,7 @@ const Manager = () => {
     }
     const getProject = () => {
         axios
-            .get("http://localhost:5000/projectlist")
+            .get("http://${localhost}:5000/projectlist")
             .then(response => {
                 console.log("Response data:", response.data);
                 const allProject = response.data

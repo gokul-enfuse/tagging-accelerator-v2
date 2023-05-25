@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table } from 'antd';
 import axios from "axios";
 import useAuth from '../hooks/useAuth.js';
+const localhost = '52.44.231.112';
 
 const CompletedTaskData = () => {
     const { auth } = useAuth();
@@ -12,7 +13,7 @@ const CompletedTaskData = () => {
 
     const getCompletedTAsks = () => {
         axios
-            .get("http://localhost:5000/completedtasks")
+            .get("http://${localhost}:5000/completedtasks")
             .then(response => {
                 console.log("Response data:", response.data);
                 setData(response.data)
@@ -20,7 +21,7 @@ const CompletedTaskData = () => {
     }
     const getReviewers = () => {
         axios
-            .get("http://localhost:5000/allprofiles")
+            .get("http://${localhost}:5000/allprofiles")
             .then(response => {
                 const allProfiles = response.data
                 const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4)
@@ -44,7 +45,7 @@ const CompletedTaskData = () => {
         record.task_role = 4 //assigned the role_id of reviewer 
 
         axios
-            .put("http://localhost:5000/updatetask/" + record.task_id, {
+            .put("http://${localhost}:5000/updatetask/" + record.task_id, {
                 "id": record.task_id,
                 record
             })

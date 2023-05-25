@@ -7,8 +7,7 @@ import axios from "axios";
 import { useEffect } from 'react';
 
 const { Option } = Select;
-
-
+const localhost = '52.44.231.112';
 
 const ReviewerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -26,7 +25,7 @@ const ReviewerData = () => {
     record.task_status = value;
 
     axios
-      .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+      .put(`http://${localhost}:5000/updatetask/${record.task_id}`, {
         record
         // task_title: record.task_title,
         // task_status: value,
@@ -59,7 +58,7 @@ const ReviewerData = () => {
   // const getTask = () => {
 
   //   axios
-  //     .get("http://localhost:5000/completedtasks")
+  //     .get("http://${localhost}:5000/completedtasks")
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);
@@ -76,7 +75,7 @@ const ReviewerData = () => {
   const getReviewers = () => {
 
     axios
-      .get("http://localhost:5000/allprofiles")
+      .get("http://${localhost}:5000/allprofiles")
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", response.data);
@@ -92,7 +91,7 @@ const ReviewerData = () => {
     console.log("reviewerId", reviewerId, reviewerIdInfo, reviewers)
     if (reviewerId === "admin") {
       axios
-        .get(`http://localhost:5000/getreviewertask`)
+        .get(`http://${localhost}:5000/getreviewertask`)
         .then(response => {
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
@@ -107,7 +106,7 @@ const ReviewerData = () => {
       console.log("record is:", reviewerIdInfo)
     } else {
       axios
-        .post("http://localhost:5000/taskbyfilter", {
+        .post("http://${localhost}:5000/taskbyfilter", {
           "assignedTo": reviewerIdInfo
         })
         .then(response => {

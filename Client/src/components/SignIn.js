@@ -8,6 +8,7 @@ import useAuth from "../hooks/useAuth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import logo from './enfuse-logo.png';
+const localhost = '52.44.231.112';
 
 const SignIn = () => {
   const { setAuth } = useAuth();
@@ -30,7 +31,7 @@ const SignIn = () => {
     }),
 
     onSubmit: (values) => {     
-      const baseURL = "http://localhost:5000/api/login"
+      const baseURL = "http://${localhost}:5000/api/login"
 
       axios.post(baseURL, values).then((response) => {
         if (response.status === 200) {

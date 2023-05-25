@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-
+const localhost = '52.44.231.112';
 
 const CreateProfileManager = () => {
     const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ const CreateProfileManager = () => {
         }
         console.log("formData before api:", formData)
 
-        const response = await fetch('http://localhost:5000/create/profile', {
+        const response = await fetch('http://${localhost}:5000/create/profile', {
             method: 'POST',
             body: JSON.stringify(formDataWithDetails),
             headers: {
@@ -77,7 +77,7 @@ const CreateProfileManager = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const response = await fetch('http://localhost:5000/allprojects');
+            const response = await fetch('http://${localhost}:5000/allprojects');
             const data = await response.json();
             console.log("data is:", data)
             setProjectList(data);

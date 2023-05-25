@@ -5,13 +5,13 @@ import { ROLES } from './ROLES.js';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
-
+const localhost = '52.44.231.112';
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value, record);
   axios
-    .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+    .put(`http://${localhost}:5000/updatetask/${record.task_id}`, {
       task_title: record.task_title,
       task_status: value,
       profile_id: record.profile_id,
@@ -115,7 +115,7 @@ const TableData = () => {
   const getTask = () => {
 
     axios
-      .get("http://localhost:5000/getalltask")
+      .get("http://${localhost}:5000/getalltask")
       .then(response => {
         console.log("Response data:", response.data);
         setData(response.data)

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import { useEffect } from 'react';
-
+const localhost = '52.44.231.112';
 
 
 const CreateTask = () => {
@@ -34,7 +34,7 @@ const CreateTask = () => {
     console.log("formdata:", formData)
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let response = await fetch('http://localhost:5000/createtask', {
+        let response = await fetch('http://${localhost}:5000/createtask', {
             method: 'POST',
             body: JSON.stringify(formData),
             headers: {
@@ -67,7 +67,7 @@ const CreateTask = () => {
 
     const getTaggers = () => {
         axios
-            .get("http://localhost:5000/getalltaggers")
+            .get("http://${localhost}:5000/getalltaggers")
             .then(res=> {                
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
@@ -81,7 +81,7 @@ const CreateTask = () => {
 
     const getProject = () => {
         axios
-            .get(`http://localhost:5000/specificprojects`)
+            .get(`http://${localhost}:5000/specificprojects`)
             .then(res=> {                
                 const allProjects = res.data;
                 setProjects(allProjects);

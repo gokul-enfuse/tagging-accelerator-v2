@@ -12,7 +12,7 @@ Install XAMPP
 - Double click xampp-control.exe, it opens the panel
 - Apache -> Start
 - MySQL -> Start
-- Open http://localhost/phpmyadmin/ 
+- Open http://${localhost}/phpmyadmin/ 
 - Create database name : accelerator
 - Click on import, to import the *.sql dump (it contains table details)
 - You can also do manually copy in "Query" tab.

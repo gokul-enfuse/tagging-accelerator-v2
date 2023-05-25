@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-
+const localhost = '52.44.231.112';
 
 const CreateProfile = () => {
     const [formData, setFormData] = useState({
@@ -43,7 +43,7 @@ const CreateProfile = () => {
             confirmPassword: password,
             role: 2
         }
-        const response = await fetch('http://localhost:5000/create/profile', {
+        const response = await fetch('http://${localhost}:5000/create/profile', {
             method: 'POST',
             body: JSON.stringify(formDataWithDetails),
             headers: {
@@ -70,7 +70,7 @@ const CreateProfile = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const response = await fetch('http://localhost:5000/allprojects');
+            const response = await fetch('http://${localhost}:5000/allprojects');
             const data = await response.json();
             setProjectList(data);
         };
