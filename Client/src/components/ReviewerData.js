@@ -58,7 +58,7 @@ const ReviewerData = () => {
   // const getTask = () => {
 
   //   axios
-  //     .get("http://${localhost}:5000/completedtasks")
+  //     .get(`http://${localhost}:5000/completedtasks`)
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);
@@ -75,7 +75,7 @@ const ReviewerData = () => {
   const getReviewers = () => {
 
     axios
-      .get("http://${localhost}:5000/allprofiles")
+      .get(`http://${localhost}:5000/allprofiles`)
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", response.data);
@@ -106,7 +106,7 @@ const ReviewerData = () => {
       console.log("record is:", reviewerIdInfo)
     } else {
       axios
-        .post("http://${localhost}:5000/taskbyfilter", {
+        .post(`http://${localhost}:5000/taskbyfilter`, {
           "assignedTo": reviewerIdInfo
         })
         .then(response => {
