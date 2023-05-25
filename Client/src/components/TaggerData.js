@@ -95,7 +95,7 @@ const TaggerData = () => {
   const getTaggers = () => {
 
     axios
-      .get("http://${localhost}:5000/getalltaggers")
+      .get(`http://${localhost}:5000/getalltaggers`)
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", allProfiles);
@@ -108,7 +108,7 @@ const TaggerData = () => {
   const getTask = (taggerIdInfo, taggers) => {
     if (taggerId === "admin") {
       axios
-        .get("http://${localhost}:5000/getalltask")
+        .get(`http://${localhost}:5000/getalltask`)
         .then(response => {
           console.log("Response data:", response.data, "tagger data is:", taggers);
           const allTasks = response.data
@@ -142,7 +142,7 @@ const TaggerData = () => {
   // const getFailedTask = () => {
 
   //   axios
-  //     .get("http://${localhost}:5000/failedtasks")
+  //     .get(`http://${localhost}:5000/failedtasks`)
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);

@@ -115,7 +115,7 @@ const TableData = () => {
   const getTask = () => {
 
     axios
-      .get("http://${localhost}:5000/getalltask")
+      .get(`http://${localhost}:5000/getalltask`)
       .then(response => {
         console.log("Response data:", response.data);
         setData(response.data)

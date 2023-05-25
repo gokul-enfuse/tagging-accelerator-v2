@@ -26,7 +26,7 @@ const Manager = () => {
     }
     const getProject = () => {
         axios
-            .get("http://${localhost}:5000/projectlist")
+            .get(`http://${localhost}:5000/projectlist`)
             .then(response => {
                 console.log("Response data:", response.data);
                 const allProject = response.data
