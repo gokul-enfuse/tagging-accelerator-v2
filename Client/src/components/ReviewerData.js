@@ -24,18 +24,42 @@ const ReviewerData = () => {
     console.log("value is:", value);
     setSelectedStatus(value);
     record.task_status = value;
+    record.reviewer_profile_id = 0
+    record.task_role = 3
+    record.reviewer_task_status = value;
+    console.log("record 111:", record)
+    // if (record.task_status = "Waiting for Review") {
+    //   record.profile_id = 0
+    //   axios
+    //     .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+    //       record
+    //       // task_title: record.task_title,
+    //       // task_status: value,
+    //       // profile_id: record.profile_id,
+    //       // task_role: record.task_role
+    //     }).then(response => {
+    //       console.log("response handlechange data is:", response);
+    //       alert(response.data.message);
+    //     }).catch(error => console.error(error));
+    // }
 
-    axios
-      .put(`http://localhost:5000/updatetask/${record.task_id}`, {
-        record
-        // task_title: record.task_title,
-        // task_status: value,
-        // profile_id: record.profile_id,
-        // task_role: record.task_role
-      }).then(response => {
-        console.log("response handlechange data is:", response);
-        alert(response.data.message);
-      }).catch(error => console.error(error));
+    if (value === "Fail") {
+      axios
+        .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+          record
+          // task_title: record.task_title,
+          // task_status: value,
+          // profile_id: record.profile_id,
+          // task_role: record.task_role
+        }).then(response => {
+          console.log("response handlechange data is:", response);
+          alert(response.data.message);
+        }).catch(error => console.error(error));
+    }
+    if (value === "Pass") {
+      // alert("This task will not be sent to the tagger.");
+      return;
+    }
   }
 
   const start = () => {
@@ -141,9 +165,9 @@ const ReviewerData = () => {
 
       render: (text, record) => (
         <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-          <Option key="1" value="In Progress" >fail </Option>
-          <Option key="2" value="Completed" >Waiting for Review </Option>
-          <Option key="3" value="Waiting for Review" >pass</Option>
+          <Option key="1" value="Fail" >Fail </Option>
+          <Option key="2" value="Pending" >Waiting for Review </Option>
+          <Option key="3" value="Pass" >Pass</Option>
 
         </Select>
       )

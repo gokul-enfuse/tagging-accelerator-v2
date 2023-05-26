@@ -7,7 +7,6 @@ import axios from "axios";
 import { useEffect } from 'react';
 import { useRef } from 'react';
 
-
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value);
@@ -21,7 +20,6 @@ const handleStatusChange = (record, value, text) => {
       alert(response.data.message);
     }).catch(error => console.error(error));
 }
-
 const columnsRow = [
   {
     title: 'Task ID',
@@ -44,9 +42,9 @@ const columnsRow = [
     key: 'key',
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-        <Option value="In Progress">reassigned</Option>
+        <Option value="Reassigned" disabled>reassigned</Option>
         <Option value="Completed" >Completed</Option>
-        <Option value="Waiting for Review" >Task done</Option>
+        <Option value="Done" disabled>Task done</Option>
       </Select>
     )
   },
@@ -55,10 +53,7 @@ const columnsRow = [
     dataIndex: 'createdDate',
     key: 'key'
   },
-
 ]
-
-
 const TaggerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -90,10 +85,7 @@ const TaggerData = () => {
   //     return item
   //   })
   // }
-
-
   const getTaggers = () => {
-
     axios
       .get("http://localhost:5000/getalltaggers")
       .then(response => {
@@ -104,7 +96,6 @@ const TaggerData = () => {
       })
       .catch(error => console.error(error));
   }
-
   const getTask = (taggerIdInfo, taggers) => {
     if (taggerId === "admin") {
       axios

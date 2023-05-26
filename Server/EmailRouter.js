@@ -17,15 +17,15 @@ emailRouter.post("/user/reset", (req, res) => {
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: "recruitments@enfuse-solutions.com",
-                pass: " "
+                user: "sunandatest08@gmail.com",
+                pass: "kazxxfhnycngvyjr"
             }
         });
 
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: "Enfuse Welcomes You",
+            subject: "Reset your password",
             html: compiledTemplate.render({    }),
             attachments: [
                 {

@@ -23,6 +23,9 @@ const Manager = () => {
     const handleProfileDetails = () => {
         navigate('/profiledetailsmanager')
     }
+
+    const [selectedProject, setSelectedProject] = useState(null);
+
     const getProject = () => {
         axios
             .get("http://localhost:5000/projectlist")
@@ -53,13 +56,23 @@ const Manager = () => {
     useEffect(() => {
         getProject();
     }, []);
+
+    const handleProjectChange = (event) => {
+        const selectedProjectId = event.target.value;
+        setSelectedProject(selectedProjectId);
+        console.log("selectedProjectId:", selectedProjectId)
+    }
     return (
         <div>
             <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>Welcome, {auth.profile_name || ""}</h1>
             <div>
                 <label style={{ marginTop: 20 }}>Assigned to Project</label><br />
-                <select name="assignedTo" style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}>
+                <select name="assignedTo" style={{ width: '150px', height: '35px', border: '1px solid skyblue' }} onChange={handleProjectChange}>
+                    <option key="0" value="">
+                        Select
+                    </option>
                     {projectList && projectList.map((item) => (
+
                         <option key={item.project_id} value={item.project_id}>
                             {item.project_name}
                         </option>
@@ -76,7 +89,7 @@ const Manager = () => {
                     <input hidden accept="image/*" multiple type="file" />
                 </Button>*/}
             </div>
-            <TableData />
+            <TableData selectedProject={selectedProject} />
         </div>
     )
 }

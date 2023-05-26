@@ -73,11 +73,6 @@ const SignIn = () => {
 
         })
         .catch(error => console.error(error));
-
-
-      // Perform desired action when the input is valid
-      // For example, submit a form or proceed with further processing
-      // ...
     }
   }
 
@@ -121,32 +116,32 @@ const SignIn = () => {
               onBlur={formik.handleBlur}
               value={formik.values.username}
             />
-            )}
+          )}
 
           {formik.touched.username && formik.errors.username ? (
             <div className="error_msg">{formik.errors.user}</div>
           ) : null}
 
           {!isEmailVisible && (
-          <TextField
-            name="password"
-            type="password"
-            placeholder="Password"
-            className="textField"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton>
-                    <LockIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            <TextField
+              name="password"
+              type="password"
+              placeholder="Password"
+              className="textField"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton>
+                      <LockIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
 
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-          />
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+            />
           )}
 
           {formik.touched.password && formik.errors.password ? (

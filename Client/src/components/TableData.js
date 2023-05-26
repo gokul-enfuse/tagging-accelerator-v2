@@ -62,12 +62,12 @@ let columns = [
 
 ]
 
-const TableData = () => {
+const TableData = ({ selectedProject }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   let [data, setData] = useState([])
-
+console.log("selectedProject tabledata:",selectedProject)
   const start = () => {
     setLoading(true);
     // ajax request after empty completing
@@ -112,26 +112,21 @@ const TableData = () => {
   //  return columnitem.title !== 'Assign To'
 
   // })
-  const getTask = () => {
+  const getTask = (record) => {
 
     axios
-      .get("http://localhost:5000/getalltask")
+      .get(`http://localhost:5000/gettaskbyproject/${selectedProject}`)
       .then(response => {
         console.log("Response data:", response.data);
+        console.log("selectedProject table:", selectedProject);
         setData(response.data)
       })
       .catch(error => console.error(error));
   }
 
-
   useEffect(() => {
     getTask();
-  }, []);
-
-  useEffect(() => {
-    console.log(setData);
-  }, [setData]);
-
+  }, [selectedProject]);
 
 
   return (
