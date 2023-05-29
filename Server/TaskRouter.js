@@ -43,11 +43,11 @@ taskRouter.get('/getalltask', async (req, res) => {
 });
 taskRouter.get('/gettaskbyproject/:projectId', async (req, res) => {
     const projectId = req.params.projectId;
-    const condi = `project_id = ${projectId}`;
+    const condi = `accelerator_tasks.project_id = ${projectId}`;
 
-    let join = `accelerator_project ON accelerator_tasks.project_id = ${projectId}`
-    await gettask(condi, res, 'accelerator_tasks', null);
-});
+    let join = `accelerator_profile ON accelerator_tasks.project_id = accelerator_profile.project_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`; 
+    await gettask(condi, res, 'accelerator_tasks', join);
+}); 
 
 taskRouter.get('/getreviewertask', async (req, res) => {
     let join = `accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id`

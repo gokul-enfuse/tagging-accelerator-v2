@@ -9,6 +9,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import logo from './enfuse-logo.png';
 import google from './goggleSignin.png';
+import { DOMAIN } from "../Constant";
+
 
 
 const SignIn = () => {
@@ -31,8 +33,8 @@ const SignIn = () => {
       password: Yup.string().min(5).required("Password is required"),
     }),
 
-    onSubmit: (values) => {
-      const baseURL = "http://localhost:5000/api/login"
+    onSubmit: (values) => {     
+      const baseURL = `${DOMAIN}/api/login`
 
       axios.post(baseURL, values).then((response) => {
         if (response.status === 200) {
@@ -66,7 +68,7 @@ const SignIn = () => {
       alert("Please fill in the input field.")
     } else {
       axios
-        .post("http://localhost:5000/user/reset", { email })
+        .post(`${DOMAIN}/user/reset`, { email })
         .then(response => {
           console.log("response data :", response.data)
           alert("Please check your Email")

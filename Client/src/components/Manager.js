@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 
+
 const Manager = () => {
     const { auth } = useAuth();
     console.log(auth);
@@ -28,7 +29,7 @@ const Manager = () => {
 
     const getProject = () => {
         axios
-            .get("http://localhost:5000/projectlist")
+            .get(`${DOMAIN}/projectlist`)
             .then(response => {
                 console.log("Response data:", response.data);
                 const allProject = response.data

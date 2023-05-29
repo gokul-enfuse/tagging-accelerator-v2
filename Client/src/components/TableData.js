@@ -11,7 +11,7 @@ const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value, record);
   axios
-    .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+    .put(`${DOMAIN}/updatetask/${record.task_id}`, {
       task_title: record.task_title,
       task_status: value,
       profile_id: record.profile_id,
@@ -115,7 +115,8 @@ console.log("selectedProject tabledata:",selectedProject)
   const getTask = (record) => {
 
     axios
-      .get(`http://localhost:5000/gettaskbyproject/${selectedProject}`)
+      .get(`${DOMAIN}/gettaskbyproject/${selectedProject}`)
+       
       .then(response => {
         console.log("Response data:", response.data);
         console.log("selectedProject table:", selectedProject);

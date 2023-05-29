@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 const { Option } = Select;
 
 
-
 const ReviewerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,7 +44,7 @@ const ReviewerData = () => {
 
     if (value === "Fail") {
       axios
-        .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+        .put(`${DOMAIN}/updatetask/${record.task_id}`, {
           record
           // task_title: record.task_title,
           // task_status: value,
@@ -60,6 +59,7 @@ const ReviewerData = () => {
       // alert("This task will not be sent to the tagger.");
       return;
     }
+     
   }
 
   const start = () => {
@@ -83,7 +83,7 @@ const ReviewerData = () => {
   // const getTask = () => {
 
   //   axios
-  //     .get("http://localhost:5000/completedtasks")
+  //     .get(`${DOMAIN}/completedtasks`)
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);
@@ -100,7 +100,7 @@ const ReviewerData = () => {
   const getReviewers = () => {
 
     axios
-      .get("http://localhost:5000/allprofiles")
+      .get(`${DOMAIN}/allprofiles`)
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", response.data);
@@ -116,7 +116,7 @@ const ReviewerData = () => {
     console.log("reviewerId", reviewerId, reviewerIdInfo, reviewers)
     if (reviewerId === "admin") {
       axios
-        .get(`http://localhost:5000/getreviewertask`)
+        .get(`${DOMAIN}/getreviewertask`)
         .then(response => {
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
@@ -131,7 +131,7 @@ const ReviewerData = () => {
       console.log("record is:", reviewerIdInfo)
     } else {
       axios
-        .post("http://localhost:5000/taskbyfilter", {
+        .post(`${DOMAIN}/taskbyfilter`, {
           "assignedTo": reviewerIdInfo
         })
         .then(response => {
@@ -166,7 +166,7 @@ const ReviewerData = () => {
       render: (text, record) => (
         <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
           <Option key="1" value="Fail" >Fail </Option>
-          <Option key="2" value="Pending" >Waiting for Review </Option>
+          <Option key="2" value="Pending" disabled>Waiting for Review </Option>
           <Option key="3" value="Pass" >Pass</Option>
 
         </Select>

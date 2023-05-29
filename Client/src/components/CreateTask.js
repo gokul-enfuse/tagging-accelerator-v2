@@ -35,7 +35,7 @@ const CreateTask = () => {
     console.log("formdata:", formData)
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let response = await fetch('http://localhost:5000/createtask', {
+        let response = await fetch(`${DOMAIN}/createtask`, {
             method: 'POST',
             body: JSON.stringify(formData),
             headers: {
@@ -59,8 +59,8 @@ const CreateTask = () => {
 
     const getTaggers = () => {
         axios
-            .get("http://localhost:5000/getalltaggers")
-            .then(res => {
+            .get(`${DOMAIN}/getalltaggers`)
+            .then(res=> {                
                 const allProfiles = res.data;
                 setTaggers(allProfiles);
             }).catch(error => console.error(error));
@@ -73,8 +73,8 @@ const CreateTask = () => {
 
     const getProject = () => {
         axios
-            .get(`http://localhost:5000/specificprojects`)
-            .then(res => {
+            .get(`${DOMAIN}/specificprojects`)
+            .then(res=> {                
                 const allProjects = res.data;
                 setProjects(allProjects);
             }).catch(error => console.error(error));

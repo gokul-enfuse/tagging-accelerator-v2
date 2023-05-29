@@ -51,7 +51,7 @@ const CreateProfileManager = () => {
         }
         console.log("formData before api:", formData)
 
-        const response = await fetch('http://localhost:5000/create/profile', {
+        const response = await fetch(`${DOMAIN}/create/profile`, {
             method: 'POST',
             body: JSON.stringify(formDataWithDetails),
             headers: {
@@ -78,7 +78,7 @@ const CreateProfileManager = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const response = await fetch('http://localhost:5000/allprojects');
+            const response = await fetch(`${DOMAIN}/allprojects`);
             const data = await response.json();
             console.log("data is:", data)
             setProjectList(data);

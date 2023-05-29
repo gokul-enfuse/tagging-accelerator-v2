@@ -5,11 +5,12 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 
+
 const ProfileData = () => {
     let [data, setData] = useState([])
     const getAllProfiles = () => {
         axios
-            .get("http://localhost:5000/allprofiles")
+            .get(`${DOMAIN}/allprofiles`)
             .then(response => {
                 console.log("Response data:", response.data);
                 const managerProfiles = response.data.length > 0 && response.data.filter(item => item.profile_role === 3 || item.profile_role === 4)
@@ -17,7 +18,7 @@ const ProfileData = () => {
                 setData(managerProfiles)
 
                 axios
-                    .get("http://localhost:5000/allprojects")
+                    .get(`${DOMAIN}/allprojects`)
                     .then(response => {
                         console.log("Response data projects:", response.data);
                         const allprojects = response.data

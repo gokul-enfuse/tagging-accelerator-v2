@@ -5,6 +5,7 @@ import 'antd/dist/antd.min.css'
 import axios from "axios";
 import { useEffect } from 'react';
 
+
 // let columns = [
 //     {
 //         title: "Manager's Full Name",
@@ -74,7 +75,7 @@ const ProfileData = () => {
     // };
     const getAllProfiles = () => {
         axios
-            .get("http://localhost:5000/allprofiles")
+            .get(`${DOMAIN}/allprofiles`)
             .then(response => {
                 console.log("Response data:", response.data);
                 {/*const managerProfiles = response.data.filter(item => item.profile_role === 2)*/ }
@@ -84,7 +85,7 @@ const ProfileData = () => {
                 setData(managerProfiles)
 
                 axios
-                    .get("http://localhost:5000/allprojects")
+                    .get(`${DOMAIN}/allprojects`)
                     .then(response => {
                         console.log("Response data projects:", response.data);
                         const allprojects = response.data

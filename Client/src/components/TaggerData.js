@@ -7,13 +7,16 @@ import axios from "axios";
 import { useEffect } from 'react';
 import { useRef } from 'react';
 
+
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value);
   record.task_status = value;
+  record.reviewer_task_status = "Waiting for review";
+
   console.log("record:", record)
   axios
-    .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+    .put(`${DOMAIN}/updatetask/${record.task_id}`, {
       "record": record,
     }).then(response => {
       console.log("response handlechange data is:", response);
@@ -87,7 +90,7 @@ const TaggerData = () => {
   // }
   const getTaggers = () => {
     axios
-      .get("http://localhost:5000/getalltaggers")
+      .get(`${DOMAIN}/getalltaggers`)
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", allProfiles);
@@ -99,7 +102,7 @@ const TaggerData = () => {
   const getTask = (taggerIdInfo, taggers) => {
     if (taggerId === "admin") {
       axios
-        .get("http://localhost:5000/getalltask")
+        .get(`${DOMAIN}/getalltask`)
         .then(response => {
           console.log("Response data:", response.data, "tagger data is:", taggers);
           const allTasks = response.data
@@ -116,7 +119,7 @@ const TaggerData = () => {
     } else {
       console.log("taggerIdInfo:", taggerIdInfo)
       axios
-        .post(`http://localhost:5000/taskbyfilter`, {
+        .post(`${DOMAIN}/taskbyfilter`, {
           "assignedTo": taggerIdInfo
 
         }).then(response => {
@@ -133,7 +136,7 @@ const TaggerData = () => {
   // const getFailedTask = () => {
 
   //   axios
-  //     .get("http://localhost:5000/failedtasks")
+  //     .get(`${DOMAIN}/failedtasks`)
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);
