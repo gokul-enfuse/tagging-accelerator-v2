@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const taskRouter = require("./TaskRouter.js");
 const profileRouter = require("./ProfileRouter.js");
 const projectRouter = require("./ProjectRouter.js");
+const emailRouter = require("./EmailRouter.js");
 
 const Port = process.env.PORT || 5000;
 
@@ -155,6 +156,7 @@ async function main() {
 app.use(taskRouter);
 app.use(profileRouter);
 app.use(projectRouter);
+app.use(emailRouter);
 
 
 app.listen(Port, () => {

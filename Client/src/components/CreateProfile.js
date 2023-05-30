@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-const localhost = '52.44.231.112';
+import { DOMAIN } from '../Constant';
+
 
 const CreateProfile = () => {
     const [formData, setFormData] = useState({
@@ -17,8 +18,10 @@ const CreateProfile = () => {
         setSelected(selectedValues)
         if (e.target.name) {
             setFormData(() => ({
+               
                 ...formData,
                 [e.target.name]: e.target.value,
+                
                 // projectNames: selectedValues,
             }))
         }
@@ -28,8 +31,8 @@ const CreateProfile = () => {
         e.preventDefault();
         formData.id = selected
         //console.log("formData:", formData)
-
-        const username = formData.email;
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const username = formData.fullName.split(' ').join('')+"."+ randomNumber;
         const password = Math.random().toString(36).slice(-8);
         /* if (!formData.fullName) {
             return
@@ -43,7 +46,7 @@ const CreateProfile = () => {
             confirmPassword: password,
             role: 2
         }
-        const response = await fetch(`http://${localhost}:5000/create/profile`, {
+        const response = await fetch(`${DOMAIN}/create/profile`, {
             method: 'POST',
             body: JSON.stringify(formDataWithDetails),
             headers: {
@@ -70,7 +73,7 @@ const CreateProfile = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const response = await fetch(`http://${localhost}:5000/allprojects`);
+            const response = await fetch(`${DOMAIN}/allprojects`);
             const data = await response.json();
             setProjectList(data);
         };

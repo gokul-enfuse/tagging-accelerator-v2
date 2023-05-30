@@ -5,13 +5,14 @@ import { ROLES } from './ROLES.js';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
-const localhost = '52.44.231.112';
+import { DOMAIN } from '../Constant.js';
+
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value, record);
   axios
-    .put(`http://${localhost}:5000/updatetask/${record.task_id}`, {
+    .put(`${DOMAIN}/updatetask/${record.task_id}`, {
       task_title: record.task_title,
       task_status: value,
       profile_id: record.profile_id,
@@ -62,12 +63,12 @@ let columns = [
 
 ]
 
-const TableData = () => {
+const TableData = ({ selectedProject }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   let [data, setData] = useState([])
-
+console.log("selectedProject tabledata:",selectedProject)
   const start = () => {
     setLoading(true);
     // ajax request after empty completing
@@ -112,26 +113,22 @@ const TableData = () => {
   //  return columnitem.title !== 'Assign To'
 
   // })
-  const getTask = () => {
+  const getTask = (record) => {
 
     axios
-      .get(`http://${localhost}:5000/getalltask`)
+      .get(`${DOMAIN}/gettaskbyproject/${selectedProject}`)
+       
       .then(response => {
         console.log("Response data:", response.data);
+        console.log("selectedProject table:", selectedProject);
         setData(response.data)
       })
       .catch(error => console.error(error));
   }
 
-
   useEffect(() => {
     getTask();
-  }, []);
-
-  useEffect(() => {
-    console.log(setData);
-  }, [setData]);
-
+  }, [selectedProject]);
 
 
   return (

@@ -6,22 +6,24 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { useRef } from 'react';
-const localhost = '52.44.231.112';
+import { DOMAIN } from '../Constant.js';
+
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
   console.log("value is:", value);
   record.task_status = value;
+  record.reviewer_task_status = "Waiting for review";
+
   console.log("record:", record)
   axios
-    .put(`http://${localhost}:5000/updatetask/${record.task_id}`, {
+    .put(`${DOMAIN}/updatetask/${record.task_id}`, {
       "record": record,
     }).then(response => {
       console.log("response handlechange data is:", response);
       alert(response.data.message);
     }).catch(error => console.error(error));
 }
-
 const columnsRow = [
   {
     title: 'Task ID',
@@ -35,7 +37,7 @@ const columnsRow = [
   },
   {
     title: 'Assign To',
-    dataIndex: 'profile_email',
+    dataIndex: 'profile_username',
     key: 'key',
   },
   {
@@ -44,9 +46,9 @@ const columnsRow = [
     key: 'key',
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-        <Option value="In Progress">reassigned</Option>
+        <Option value="Reassigned" disabled>reassigned</Option>
         <Option value="Completed" >Completed</Option>
-        <Option value="Waiting for Review" >Task done</Option>
+        <Option value="Done" disabled>Task done</Option>
       </Select>
     )
   },
@@ -55,10 +57,7 @@ const columnsRow = [
     dataIndex: 'createdDate',
     key: 'key'
   },
-
 ]
-
-
 const TaggerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -90,12 +89,9 @@ const TaggerData = () => {
   //     return item
   //   })
   // }
-
-
   const getTaggers = () => {
-
     axios
-      .get(`http://${localhost}:5000/getalltaggers`)
+      .get(`${DOMAIN}/getalltaggers`)
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", allProfiles);
@@ -104,18 +100,17 @@ const TaggerData = () => {
       })
       .catch(error => console.error(error));
   }
-
   const getTask = (taggerIdInfo, taggers) => {
     if (taggerId === "admin") {
       axios
-        .get(`http://${localhost}:5000/getalltask`)
+        .get(`${DOMAIN}/getalltask`)
         .then(response => {
           console.log("Response data:", response.data, "tagger data is:", taggers);
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
             return taggers.some(item2 => {
               console.log("item1 is:", item1, "item2 is:", item2);
-              return item1.assignedTo === item2.username
+              return item1.profile_id === item2.profile_id
             })
           });
           setData(filteredArray)
@@ -125,7 +120,7 @@ const TaggerData = () => {
     } else {
       console.log("taggerIdInfo:", taggerIdInfo)
       axios
-        .post(`http://${localhost}:5000/taskbyfilter`, {
+        .post(`${DOMAIN}/taskbyfilter`, {
           "assignedTo": taggerIdInfo
 
         }).then(response => {
@@ -142,7 +137,7 @@ const TaggerData = () => {
   // const getFailedTask = () => {
 
   //   axios
-  //     .get(`http://${localhost}:5000/failedtasks`)
+  //     .get(`${DOMAIN}/failedtasks`)
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);
