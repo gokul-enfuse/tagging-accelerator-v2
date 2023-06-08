@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import { useEffect } from 'react';
 import ReactDOM from "react-dom";
-const localhost = '52.44.231.112';
+import { DOMAIN } from '../Constant';
+
 
 const CreateProject = () => {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ const CreateProject = () => {
         e.preventDefault();
         console.log("formdata is:", formData)
 
-        await axios.get(`http://${localhost}:5000/allprojects`).then(async response => {
+        await axios.get(`${DOMAIN}/allprojects`).then(async response => {
             const allProjects = response.data
             console.log("res data: ", response.data)
             const projectNames = allProjects.map(project => project.project_Name);
@@ -41,7 +42,7 @@ const CreateProject = () => {
                 return;
             }
             else {
-                const response = await fetch(`http://${localhost}:5000/create/project`, {
+                const response = await fetch(`${DOMAIN}/create/project`, {
                     method: 'POST',
                     body: JSON.stringify(formData),
                     headers: {
@@ -64,7 +65,7 @@ const CreateProject = () => {
     // const getProjects = () => {
 
     //     axios
-    //         .get(`http://${localhost}:5000/allprojects`)
+    //         .get(`${DOMAIN}/allprojects`)
     //         .then(response => {
 
     //             const allProjects = response.data

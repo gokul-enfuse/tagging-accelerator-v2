@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-const localhost = '52.44.231.112';
+import { DOMAIN } from '../Constant';
+
 
 const CreateProfileManager = () => {
     const [formData, setFormData] = useState({
@@ -33,7 +34,8 @@ const CreateProfileManager = () => {
         formData.id = selected
         console.log("formData:", formData)
 
-        const username = formData.email;
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const username = formData.fullName.split(' ').join('') + "." + randomNumber;
         const password = Math.random().toString(36).slice(-8);
         /*  if (!formData.fullName) {
              return
@@ -50,7 +52,7 @@ const CreateProfileManager = () => {
         }
         console.log("formData before api:", formData)
 
-        const response = await fetch(`http://${localhost}:5000/create/profile`, {
+        const response = await fetch(`${DOMAIN}/create/profile`, {
             method: 'POST',
             body: JSON.stringify(formDataWithDetails),
             headers: {
@@ -77,7 +79,7 @@ const CreateProfileManager = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const response = await fetch(`http://${localhost}:5000/allprojects`);
+            const response = await fetch(`${DOMAIN}/allprojects`);
             const data = await response.json();
             console.log("data is:", data)
             setProjectList(data);
@@ -88,8 +90,8 @@ const CreateProfileManager = () => {
 
     return (
         <form onSubmit={handleSubmit} id='create-task'>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
-            <legend>Create Profile (Tagger & Reviewer):</legend>
+            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
+                <legend>Create Profile (Tagger & Reviewer):</legend>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 

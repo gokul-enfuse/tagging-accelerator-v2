@@ -41,6 +41,13 @@ taskRouter.get('/getalltask', async (req, res) => {
     let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
     await gettask(null, res, 'accelerator_tasks', join);
 });
+taskRouter.get('/gettaskbyproject/:projectId', async (req, res) => {
+    const projectId = req.params.projectId;
+    const condi = `accelerator_tasks.project_id = ${projectId}`;
+
+    let join = `accelerator_profile ON accelerator_tasks.project_id = accelerator_profile.project_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`; 
+    await gettask(condi, res, 'accelerator_tasks', join);
+}); 
 
 taskRouter.get('/getreviewertask', async (req, res) => {
     let join = `accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id`
@@ -64,7 +71,7 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     const task_id = req.params.id;
     const modifiedDate = new Date().toJSON();
 
-    sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+    sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not update the task.", error: error });
@@ -88,6 +95,7 @@ let gettask = (arg = null, res, table_name = null, join = null) => {
     if (arg != null) {
         sql += ` WHERE ${arg}`;
     }
+    console.log("sql:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });

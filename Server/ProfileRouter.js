@@ -1,8 +1,10 @@
 const express = require('express');
+var nodemailer = require('nodemailer');
+const conn = require('./mysqlConnection');
+var CryptoJS = require("crypto-js");
+
 const profileRouter = express.Router();
 profileRouter.use(express.json());
-const CryptoJS = require("crypto-js");
-const conn = require('./mysqlConnection');
 
 profileRouter.post('/create/profile', async (req, res) => {
     let table_name = process.env.PROFILE;
@@ -73,10 +75,49 @@ profileRouter.post("/api/login", (req, res) => {
     });
 });
 
+profileRouter.get('/api/forgotpassword/:email', (req, res) => {
+    const email = req.params.email;
+    let table_name = process.env.PROFILE;
+    const sql = `SELECT profile_id, profile_email, profile_name, profile_username, profile_confirmpassword from ${table_name} WHERE profile_email = '${email}'`;
+
+    conn.query(sql, (error, result) => {
+        if(error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            if(result.length) {
+                emailFunction(result[0].profile_email, result[0].profile_name, result[0].profile_id);
+                res.json(result);                
+            } else {
+                res.status(400).json({ message: "There is no data for specific search."});
+            }
+            
+        }
+    });
+});
+
+profileRouter.post('/api/resetpassword', (req, res) => {
+    const profile_id = req.body.pid;
+    const email = req.body.username;
+    const nPassword = CryptoJS.AES.encrypt(req.body.newpassword, process.env.PASSWORD_SECRET_KEY).toString();
+    const cPassword = req.body.confirmpassword;
+    
+    let table_name = process.env.PROFILE;
+    const sql = `UPDATE ${table_name} SET profile_password = '${nPassword}', profile_confirmpassword = '${cPassword}' WHERE profile_id = ${profile_id}`;
+    
+    conn.query(sql, (error, result) => {
+        if(error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            emailFunction(email, email, cPassword);
+            res.status(200).json({status: 200});            
+        }
+    });
+});
+
 profileRouter.get('/getalltaggers', async (req, res) => {
     let table_name = process.env.PROFILE;
     let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
-    getuser('profile_role = 3', res, table_name, join);
+    getuser('accelerator_profile.profile_role = 3', res, table_name, join);
 });
 
 profileRouter.get('/allprofiles', async (req, res) => {
@@ -93,6 +134,7 @@ let getuser = (arg = null, res, table_name = null ,join = null) => {
     if(arg) {
         sql += ` WHERE ${arg}`;
     }
+    // console.log("sql:", sql)
     conn.query(sql, (error, result) => {
         if(error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -104,6 +146,78 @@ let getuser = (arg = null, res, table_name = null ,join = null) => {
             }
             
         }
+    });
+}
+
+
+/**
+ * Method Name: Email
+ * Description: To send an email with spacific template pattern
+ * Created By: Vikas Bose | 03/04/2023
+ * Modified By: 
+ */
+let emailFunction = (email, username, password)=> {
+
+    var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'vikasr82@gmail.com',
+        pass: 'ispnurgwhzontnms'
+    }
+    });
+   // console.log(CryptoJS.AES.encrypt(email, "Key").toString(), CryptoJS.HmacSHA256(email, "key").toString());
+    let contentOne = `
+        <div>You recently requested to reset the password for your [${process.env.HOST}] account. Click the link below to proceed.</div>
+        <div><a href=${process.env.HOST}resetpassword/${password}/${email}>Reset Password</a></div>
+        <div>If you did not request a password reset, please ignore this email.</div>
+        <div>If you have any comments or questions do not hesitate to reach us at <a>[email to customer portal support team]</a></div>
+    `
+    let contentTwo = `
+        <div style='color:blue;padding:13px 0px 13px 0px' align='center'>UserName</div>
+        <div style='padding:13px 0px 13px 0px' align='center'>${email}</div>
+        <div style='color:blue;padding:13px 0px 13px 0px' align='center'>Password</div>
+        <div style='padding:13px 0px 13px 0px' align='center'>${password}</div>
+        <div style='padding:15px 0px 15px 0px' align='center'>Please click this link below and login with your credentials</div>
+        <div style='padding:13px 0px 13px 0px' align='center'><a href=${process.env.HOST}>Login Here</a></div>`
+    let mainContent = (typeof password === 'number')?contentOne : contentTwo;
+    let a = `<html lang="en">
+            <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <link rel="stylesheet" href="style.css" />
+            <title>Browser</title>
+            </head>
+
+            <body>
+            <div>
+                <div align='center'><img src='cid:bestWishBanner'></div>
+                <div style='width:500px;margin-left:400px;'>
+                    <h2 align='center'>Hi ${username}</h2>
+                    <p>                    
+                        ${mainContent}                    
+                    <div>Thanks</div>
+                    <div>The Enfuse[customer portal] Team</div>
+
+                    <div style='padding:20px 0px 20px 0px; background-color:black; height:45px;color:white;text-align:center'>Copyright © 2022 All Rights Reserved. EnFuse Solutions</div>
+                    </p>
+                </div>`;
+        a += `</div></body></html>`;
+    var mailOptions = {
+    from: 'vikasr82@gmail.com',
+    to: email,
+    subject: 'Enfuse Reset Password',
+    html: a
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+        console.log(error);
+    } else {
+        console.log('Email sent: ' + info.response);
+    }
     });
 }
 

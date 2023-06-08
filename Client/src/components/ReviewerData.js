@@ -5,9 +5,10 @@ import { ROLES } from './ROLES.js';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
+import { DOMAIN } from '../Constant.js';
 
 const { Option } = Select;
-const localhost = '52.44.231.112';
+
 
 const ReviewerData = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -23,18 +24,43 @@ const ReviewerData = () => {
     console.log("value is:", value);
     setSelectedStatus(value);
     record.task_status = value;
+    record.reviewer_profile_id = 0
+    record.task_role = 3
+    record.reviewer_task_status = value;
+    console.log("record 111:", record)
+    // if (record.task_status = "Waiting for Review") {
+    //   record.profile_id = 0
+    //   axios
+    //     .put(`http://localhost:5000/updatetask/${record.task_id}`, {
+    //       record
+    //       // task_title: record.task_title,
+    //       // task_status: value,
+    //       // profile_id: record.profile_id,
+    //       // task_role: record.task_role
+    //     }).then(response => {
+    //       console.log("response handlechange data is:", response);
+    //       alert(response.data.message);
+    //     }).catch(error => console.error(error));
+    // }
 
-    axios
-      .put(`http://${localhost}:5000/updatetask/${record.task_id}`, {
-        record
-        // task_title: record.task_title,
-        // task_status: value,
-        // profile_id: record.profile_id,
-        // task_role: record.task_role
-      }).then(response => {
-        console.log("response handlechange data is:", response);
-        alert(response.data.message);
-      }).catch(error => console.error(error));
+    if (value === "Fail") {
+      axios
+        .put(`${DOMAIN}/updatetask/${record.task_id}`, {
+          record
+          // task_title: record.task_title,
+          // task_status: value,
+          // profile_id: record.profile_id,
+          // task_role: record.task_role
+        }).then(response => {
+          console.log("response handlechange data is:", response);
+          alert(response.data.message);
+        }).catch(error => console.error(error));
+    }
+    if (value === "Pass") {
+      // alert("This task will not be sent to the tagger.");
+      return;
+    }
+     
   }
 
   const start = () => {
@@ -58,7 +84,7 @@ const ReviewerData = () => {
   // const getTask = () => {
 
   //   axios
-  //     .get(`http://${localhost}:5000/completedtasks`)
+  //     .get(`${DOMAIN}/completedtasks`)
   //     .then(response => {
   //       // if(response.data.assignedTo=== reviewerId){
   //       console.log("Response data:", response.data);
@@ -75,7 +101,7 @@ const ReviewerData = () => {
   const getReviewers = () => {
 
     axios
-      .get(`http://${localhost}:5000/allprofiles`)
+      .get(`${DOMAIN}/allprofiles`)
       .then(response => {
         const allProfiles = response.data
         console.log("response data is for reviewer", response.data);
@@ -91,7 +117,7 @@ const ReviewerData = () => {
     console.log("reviewerId", reviewerId, reviewerIdInfo, reviewers)
     if (reviewerId === "admin") {
       axios
-        .get(`http://${localhost}:5000/getreviewertask`)
+        .get(`${DOMAIN}/getreviewertask`)
         .then(response => {
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
@@ -106,7 +132,7 @@ const ReviewerData = () => {
       console.log("record is:", reviewerIdInfo)
     } else {
       axios
-        .post(`http://${localhost}:5000/taskbyfilter`, {
+        .post(`${DOMAIN}/taskbyfilter`, {
           "assignedTo": reviewerIdInfo
         })
         .then(response => {
@@ -140,9 +166,9 @@ const ReviewerData = () => {
 
       render: (text, record) => (
         <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-          <Option key="1" value="In Progress" >fail </Option>
-          <Option key="2" value="Completed" >Waiting for Review </Option>
-          <Option key="3" value="Waiting for Review" >pass</Option>
+          <Option key="1" value="Fail" >Fail </Option>
+          <Option key="2" value="Pending" disabled>Waiting for Review </Option>
+          <Option key="3" value="Pass" >Pass</Option>
 
         </Select>
       )

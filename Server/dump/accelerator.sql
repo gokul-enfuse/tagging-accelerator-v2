@@ -100,7 +100,10 @@ CREATE TABLE `accelerator_tasks` (
   `task_id` int(12) NOT NULL,
   `task_title` varchar(45) NOT NULL,
   `task_status` varchar(8) NOT NULL,
+  `reviewer_task_status` varchar(8) NOT NULL,
+  `project_id` int(5) NOT NULL,
   `profile_id` int(5) NOT NULL,
+  `reviewer_profile_id` int(5) NOT NULL,
   `task_role` int(5) NOT NULL,
   `createdDate` date NOT NULL,
   `modifiedDate` date NOT NULL

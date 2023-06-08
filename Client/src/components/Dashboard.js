@@ -17,7 +17,7 @@ import Reports from './Reports.js';
 import CreateProject from './CreateProject.js';
 import CreateProfileManager from './CreateProfileManager.js';
 import ProfileDetailsManager from './ProfileDetailsManager.js';
-
+import Forgotpassword from './Forgotpassword.js';
 
 
 
@@ -28,6 +28,7 @@ const Dashboard = () => {
       <Sidebar>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/resetpassword/:pid/:pemail" element={<Forgotpassword />} />
           {/* <Route path="/logout" element={<Logout />} /> */}
 
           <Route element={<RequireAuth />} >
