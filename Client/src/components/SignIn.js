@@ -17,6 +17,7 @@ const SignIn = () => {
   const { setAuth } = useAuth();
   const [isOpen] = useState(true);
   const [isEmailVisible, setIsEmailVisible] = useState(false);
+  const [buttonTitle, setButtonTitle] = useState('Login');
 
   let navigate = useNavigate();
   const location = useLocation();
@@ -28,38 +29,56 @@ const SignIn = () => {
     initialValues: {
       username: "",
       password: "",
+      email: ""
     },
     validationSchema: Yup.object({
-      password: Yup.string().min(5).required("Password is required"),
+      password: (!isEmailVisible)?Yup.string().min(5).required("Password is required"):'',
     }),
 
     onSubmit: (values) => {     
-      const baseURL = `${DOMAIN}/api/login`
+      let baseURL;
+      if(!isEmailVisible) {
+        baseURL = `${DOMAIN}/api/login`;
 
-      axios.post(baseURL, values).then((response) => {
-        if (response.status === 200) {
-          if (response.data.profile_role === 1) {
-            navigate("/admin");
-          } else if (response.data.profile_role === 3) {
-            navigate("/tagger");
-          } else if (response.data.profile_role === 4) {
-            navigate("/reviewer");
-          } else if (response.data.profile_role === 2) {
-            navigate("/manager");
+        axios.post(baseURL, values).then((response) => {
+          if (response.status === 200) {
+            if (response.data.profile_role === 1) {
+              navigate("/admin");
+            } else if (response.data.profile_role === 3) {
+              navigate("/tagger");
+            } else if (response.data.profile_role === 4) {
+              navigate("/reviewer");
+            } else if (response.data.profile_role === 2) {
+              navigate("/manager");
+            }
+          } else {
+            console.warn("check the response")
           }
-        } else {
-          console.warn("check the response")
-        }
-        setAuth(response.data);
-      }).catch((error) => {
-        alert(error.response.data.message);
-      });
+          setAuth(response.data);
+        }).catch((error) => {
+          alert(error.response.data.message);
+        });
       // navigate('/admin', { replace: false });
-      navigate(from, { replace: true });
+        navigate(from, { replace: true });
+      } else {
+         baseURL = `${DOMAIN}/api/forgotpassword/${values.email}`;
+         axios.get(baseURL).then(response => {
+            if (response.status === 200) {
+                alert("Password has been sent to your email id.");
+            } else {
+                console.warn("check the response")
+            }
+         }).catch(error => {
+           alert(error.response.data.message);
+         });
+         navigate('/', { replace: true });
+      } 
     }
   });
   function showEmailField() {
+    setButtonTitle('Submit');
     setIsEmailVisible(true);
+    validateInput();
   }
   function validateInput() {
     const email = document.getElementById("reset-email").value;
@@ -157,19 +176,19 @@ const SignIn = () => {
               placeholder="Enter your Email"
               className="textField"
               id="reset-email"
-            // onChange={formik.handleChange}
-            // onBlur={formik.handleBlur}
-            // value={formik.values.username}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+             value={formik.values.email}
             />
           )}
 
-          <div onClick={() => validateInput()} className="forgot-password" style={{ textAlign: "center" }}>
-
-            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#" onClick={showEmailField}>Click here</a></p>
-
+          <div className="forgot-password" style={{ textAlign: "center" }}>
+            {!isEmailVisible && (
+            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#" onClick={showEmailField}>Click here</a></p>)}
+            <input type="hidden" name="hidForgotPassword" id="hidForgotPassword" value={isEmailVisible} />
           </div>
 
-          <button type="submit">Login</button>
+          <button type="submit">{buttonTitle}</button>
 
         </form>
         {/* )} */}

@@ -114,6 +114,13 @@ const Sidebar = ({ children }) => {
       id: 5,
       icon: <FaTh />
     },
+    {
+      path: "/annotation",
+      id: 6,
+      name: "Annotation Tool",
+      id: 6,
+      icon: <FaTh />
+    },
 
   ]
 
@@ -123,7 +130,7 @@ const Sidebar = ({ children }) => {
     console.log("Logged out")
   }
 
-
+console.log(auth);
   return (
     <div className='container'>
       {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px" }} className='sidebar'>
