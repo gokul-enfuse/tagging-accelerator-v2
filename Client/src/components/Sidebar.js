@@ -90,6 +90,7 @@ const Sidebar = ({ children }) => {
           name: 'Assign To Reviewer',
           path: '/assigntoreviewer',
         },
+  
       ]
     },
     {
@@ -121,7 +122,13 @@ const Sidebar = ({ children }) => {
       id: 6,
       icon: <FaTh />
     },
-
+{
+      path: "/historicalrecords",
+      id: 7,
+      name: "Historical Records",
+      id: 7,
+      icon: <FaTh />
+    },
   ]
 
   const { auth, setAuth } = useAuth();

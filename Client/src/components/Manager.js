@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { DOMAIN } from '../Constant';
-
+import HistoricalRecords from './HistoricalRecords';
 
 const Manager = () => {
     const { auth } = useAuth();
@@ -92,6 +92,7 @@ const Manager = () => {
                 </Button>*/}
             </div>
             <TableData selectedProject={selectedProject} />
+          
         </div>
     )
 }

@@ -8,7 +8,7 @@ import useAuth from "../hooks/useAuth";
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import logo from './enfuse-logo.png';
-import google from './goggleSignin.png';
+// import google from './goggleSignin.png';
 import { DOMAIN } from "../Constant";
 
 

@@ -120,6 +120,7 @@ profileRouter.get('/getalltaggers', async (req, res) => {
     getuser('accelerator_profile.profile_role = 3', res, table_name, join);
 });
 
+
 profileRouter.get('/allprofiles', async (req, res) => {
     let table_name = process.env.PROFILE;
     let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;

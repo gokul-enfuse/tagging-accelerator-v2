@@ -88,7 +88,7 @@ const CreateProfile = () => {
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
                     {projectList.map((project) => (
-                        <option key={project.project_id} value={project.project_id} disabled={(project.project_status === 1)?'disabled':''}>
+                        <option key={project.project_id} value={project.project_id} >
                             {project.project_Name}
                         </option>
                     ))}

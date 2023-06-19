@@ -18,6 +18,9 @@ import CreateProject from './CreateProject.js';
 import CreateProfileManager from './CreateProfileManager.js';
 import ProfileDetailsManager from './ProfileDetailsManager.js';
 import Forgotpassword from './Forgotpassword.js';
+ 
+import HistoricalRecords from './HistoricalRecords.js';
+
 
 
 
@@ -43,6 +46,9 @@ const Dashboard = () => {
             <Route path="/createproject" element={<CreateProject />} />
             <Route path="/createprofilemanager" element={<CreateProfileManager />} />
             <Route path="/profiledetailsmanager" element={<ProfileDetailsManager />} />
+       
+            <Route path="/historicalrecords" element={<HistoricalRecords />} />
+
 
 
 
