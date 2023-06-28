@@ -188,8 +188,11 @@ taskRouter.get('/gettaskbyproject/:projectId', async (req, res) => {
     const projectId = req.params.projectId;
     const condi = `accelerator_tasks.project_id = ${projectId}`;
 
-    let join = `accelerator_profile ON accelerator_tasks.project_id = accelerator_profile.project_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`; 
-    await gettask(condi, res, 'accelerator_tasks', join);
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`; 
+    const sql= 
+    `SELECT accelerator_tasks.*, accelerator_profile.profile_username AS profile_username FROM accelerator_tasks INNER JOIN accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id WHERE accelerator_tasks.project_id =${projectId};`
+    await runsql(sql, res);
+
 }); 
 
 taskRouter.get('/getreviewertask', async (req, res) => {
@@ -264,7 +267,20 @@ let gettask = (arg = null, res, table_name = null, join = null) => {
     if (arg != null) {
         sql += ` WHERE ${arg}`;
     }
-    // console.log("sql:",sql)
+    console.log("sql:",sql)
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            res.json(result);
+        }
+    });
+}
+
+const runsql = (sql, res) => {
+    //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
+    
+    console.log("sql:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });

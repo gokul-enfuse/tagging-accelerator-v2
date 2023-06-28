@@ -38,7 +38,7 @@ let columns = [
   },
   {
     title: 'Assign To',
-    dataIndex: 'profile_email',
+    dataIndex: 'profile_username',
     key: 'key',
   },
   {

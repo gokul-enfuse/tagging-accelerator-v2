@@ -90,7 +90,12 @@ const Sidebar = ({ children }) => {
           name: 'Assign To Reviewer',
           path: '/assigntoreviewer',
         },
-  
+        {
+          path: "/historicalrecords",
+          id: 8,
+          name: "Historical Records",
+          icon: <FaTh />
+        },
       ]
     },
     {
@@ -138,9 +143,22 @@ const Sidebar = ({ children }) => {
   }
 
 console.log(auth);
+
+const sidebarStyle = {
+  height:
+    auth.profile_role === ROLES.MANAGER ? "100vh" :
+    auth.profile_role === ROLES.TAGGER ? "100vh" :
+    auth.profile_role === ROLES.REVIEWER ? "100vh" :
+    "auto",
+
+};
+
+
+ 
   return (
     <div className='container'>
-      {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px" }} className='sidebar'>
+      {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px", ...sidebarStyle }} className='sidebar'>
+      
         <div className='top-section'>
           <img style={{ display: isOpen ? "block" : "none" }} src={logo} alt='logo' />
           <div style={{ width: isOpen ? "300px" : "50px" }} className='bars'><FaBars onClick={toggle} /></div>
