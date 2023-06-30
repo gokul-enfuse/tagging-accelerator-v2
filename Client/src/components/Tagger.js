@@ -8,7 +8,7 @@ function Tagger() {
 
   return (
     <div>
-      <h1>Welcome,{auth.profile_name || ""}</h1>
+      <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>Welcome {auth.profile_name || ""}</h1>
       <TaggerData />
       </div>
   )
