@@ -48,9 +48,9 @@ let columns = [
 
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-        <Option key={1} value="In Progress">in progress</Option>
+         {/* <Option key={1} value="In Progress">in progress</Option>
         <Option key={2} value="Completed">Completed</Option>
-        <Option key={3} value="Waiting for Review">Waiting for Review</Option>
+        <Option key={3} value="Waiting for Review">Waiting for Review</Option>*/}
 
       </Select>
     )

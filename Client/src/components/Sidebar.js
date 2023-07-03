@@ -127,7 +127,7 @@ const Sidebar = ({ children }) => {
       id: 6,
       icon: <FaTh />
     },
-{
+    {
       path: "/historicalrecords",
       id: 7,
       name: "Historical Records",
@@ -142,26 +142,49 @@ const Sidebar = ({ children }) => {
     console.log("Logged out")
   }
 
-console.log(auth);
+  console.log(auth);
 
-const sidebarStyle = {
-  height:
-    auth.profile_role === ROLES.MANAGER ? "100vh" :
-    auth.profile_role === ROLES.TAGGER ? "100vh" :
-    auth.profile_role === ROLES.REVIEWER ? "100vh" :
-    "auto",
+  // const sidebarStyle = {
+  //   // height:
+  //   //   auth.profile_role === ROLES.MANAGER ? "100vh" :
+  //   //   auth.profile_role === ROLES.TAGGER ? "100vh" :
+  //   //   auth.profile_role === ROLES.REVIEWER ? "100vh" :
+  //   //   "auto",
 
-};
+  //   height:
+  //     auth.profile_role === ROLES.ADMIN ? "100vh" :
+  //       auth.profile_role === ROLES.MANAGER ? "calc(100vh - 100px)" :
+  //         auth.profile_role === ROLES.TAGGER ? "calc(100vh - 150px)" :
+  //           auth.profile_role === ROLES.REVIEWER ? "calc(100vh - 200px)" :
+  //             "auto",
+  //             // backgroundColor: isOpen ? 'lightblue' : 'transparent',
+  //             backgroundColor: 'lightblue',
+  // };
 
+  const sidebarStyle = {
+    height:
+      auth.profile_role === ROLES.ADMIN ? "100vh" :
+        auth.profile_role === ROLES.MANAGER ? "100vh" :
+          auth.profile_role === ROLES.TAGGER ? "100vh" :
+            auth.profile_role === ROLES.REVIEWER ? "100vh" :
+              "auto",
+  };                  
+  const logoStyle = {
+    display: isOpen ? 'block' : 'none',
+    maxHeight: '100px', // Adjust the maximum height as needed
+  };
+  const backgroundStyle = {
+    backgroundColor: 'lightblue',
+    height: isOpen ? '100%' : 'auto',
+  };
 
- 
   return (
     <div className='container'>
       {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px", ...sidebarStyle }} className='sidebar'>
-      
+
         <div className='top-section'>
           <img style={{ display: isOpen ? "block" : "none" }} src={logo} alt='logo' />
-          <div style={{ width: isOpen ? "300px" : "50px" }} className='bars'><FaBars onClick={toggle} /></div>
+          <div style={{ width: isOpen ? "300px" : "50px" }} className='bars' ><FaBars onClick={toggle} /></div>
         </div>
         <nav>
           <ul>
@@ -171,6 +194,7 @@ const sidebarStyle = {
                 <MenuItem key={item.id} item={item} />
               ))
             }
+
           </ul>
         </nav>
         {auth.profile_role &&
