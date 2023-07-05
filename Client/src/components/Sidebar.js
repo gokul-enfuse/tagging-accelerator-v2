@@ -42,6 +42,7 @@ const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
 
+  const { auth, setAuth } = useAuth();
   const menuItem = [
     {
       path: "/admin",
@@ -67,7 +68,6 @@ const Sidebar = ({ children }) => {
       path: "/manager",
       id: 2,
       name: "Manager",
-      id: 2,
       icon: <GrUserManager />,
       submenu: [
         {
@@ -90,19 +90,18 @@ const Sidebar = ({ children }) => {
           name: 'Assign To Reviewer',
           path: '/assigntoreviewer',
         },
-        {
-          path: "/historicalrecords",
-          id: 8,
-          name: "Historical Records",
-          icon: <FaTh />
-        },
+        // {
+        //   path: "/historicalrecords",
+        //   id: 8,
+        //   name: "Historical Records",
+        //   icon: <FaTh />
+        // },
       ]
     },
     {
       path: "/tagger",
       id: 3,
       name: "Tagger",
-      id: 3,
       icon: <MdDns />
 
     },
@@ -110,33 +109,29 @@ const Sidebar = ({ children }) => {
       path: "/reviewer",
       id: 4,
       name: "Reviewer",
-      id: 4,
       icon: <MdPreview />
     },
     {
       path: "/reports",
       id: 5,
       name: "Reports",
-      id: 5,
       icon: <FaTh />
     },
     {
       path: "/annotation",
       id: 6,
       name: "Annotation Tool",
-      id: 6,
       icon: <FaTh />
     },
-    {
-      path: "/historicalrecords",
-      id: 7,
-      name: "Historical Records",
-      id: 7,
-      icon: <FaTh />
-    },
+
   ]
 
-  const { auth, setAuth } = useAuth();
+  const historicalMenu = {
+    path: "/historicalrecords",
+    id: 7,
+    name: "Historical Records",
+    icon: <FaTh />
+  }
   const logout = () => {
     setAuth({})
     console.log("Logged out")
@@ -168,16 +163,15 @@ const Sidebar = ({ children }) => {
           auth.profile_role === ROLES.TAGGER ? "100vh" :
             auth.profile_role === ROLES.REVIEWER ? "100vh" :
               "auto",
-  };                  
-  const logoStyle = {
-    display: isOpen ? 'block' : 'none',
-    maxHeight: '100px', // Adjust the maximum height as needed
   };
-  const backgroundStyle = {
-    backgroundColor: 'lightblue',
-    height: isOpen ? '100%' : 'auto',
-  };
-
+  // const logoStyle = {
+  //   display: isOpen ? 'block' : 'none',
+  //   maxHeight: '100px', // Adjust the maximum height as needed
+  // };
+  // const backgroundStyle = {
+  //   backgroundColor: 'lightblue',
+  //   height: isOpen ? '100%' : 'auto',
+  // };
   return (
     <div className='container'>
       {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px", ...sidebarStyle }} className='sidebar'>
@@ -191,10 +185,12 @@ const Sidebar = ({ children }) => {
             {
               menuItem.map((item, index) => (
                 (auth.profile_role === ROLES.ADMIN || auth.profile_role === item.id) &&
-                <MenuItem key={item.id} item={item} />
+
+                <MenuItem key={item.id} item={item} profileRole={auth.profile_role} />
               ))
             }
-
+            {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+              <MenuItem key={historicalMenu.id} item={historicalMenu} profileRole={auth.profile_role} />}
           </ul>
         </nav>
         {auth.profile_role &&
