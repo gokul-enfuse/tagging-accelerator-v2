@@ -90,12 +90,7 @@ const Sidebar = ({ children }) => {
           name: 'Assign To Reviewer',
           path: '/assigntoreviewer',
         },
-        // {
-        //   path: "/historicalrecords",
-        //   id: 8,
-        //   name: "Historical Records",
-        //   icon: <FaTh />
-        // },
+
       ]
     },
     {
@@ -134,28 +129,7 @@ const Sidebar = ({ children }) => {
   }
   const logout = () => {
     setAuth({})
-    console.log("Logged out")
   }
-
-  console.log(auth);
-
-  // const sidebarStyle = {
-  //   // height:
-  //   //   auth.profile_role === ROLES.MANAGER ? "100vh" :
-  //   //   auth.profile_role === ROLES.TAGGER ? "100vh" :
-  //   //   auth.profile_role === ROLES.REVIEWER ? "100vh" :
-  //   //   "auto",
-
-  //   height:
-  //     auth.profile_role === ROLES.ADMIN ? "100vh" :
-  //       auth.profile_role === ROLES.MANAGER ? "calc(100vh - 100px)" :
-  //         auth.profile_role === ROLES.TAGGER ? "calc(100vh - 150px)" :
-  //           auth.profile_role === ROLES.REVIEWER ? "calc(100vh - 200px)" :
-  //             "auto",
-  //             // backgroundColor: isOpen ? 'lightblue' : 'transparent',
-  //             backgroundColor: 'lightblue',
-  // };
-
   const sidebarStyle = {
     height:
       auth.profile_role === ROLES.ADMIN ? "100vh" :
@@ -164,14 +138,6 @@ const Sidebar = ({ children }) => {
             auth.profile_role === ROLES.REVIEWER ? "100vh" :
               "auto",
   };
-  // const logoStyle = {
-  //   display: isOpen ? 'block' : 'none',
-  //   maxHeight: '100px', // Adjust the maximum height as needed
-  // };
-  // const backgroundStyle = {
-  //   backgroundColor: 'lightblue',
-  //   height: isOpen ? '100%' : 'auto',
-  // };
   return (
     <div className='container'>
       {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px", ...sidebarStyle }} className='sidebar'>
