@@ -120,8 +120,12 @@ console.log("selectedProject tabledata:",selectedProject)
        
       .then(response => {
         console.log("Response data:", response.data);
+        
+
         console.log("selectedProject table:", selectedProject);
-        setData(response.data)
+        const filteredData = response.data.filter(task => task.task_status !== "Pass" && task.task_status !== "Pass");
+        setData(filteredData)
+        console.log("filteredData:", filteredData);
       })
       .catch(error => console.error(error));
   }
