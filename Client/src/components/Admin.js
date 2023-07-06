@@ -27,7 +27,7 @@ function Admin() {
   }
   return (
     <div style={{ marginBottom: '400px', textAlign: 'center', alignItems: 'center' }}>
-      <h1 style={{ marginTop: 100 }}>Welcome, Admin</h1> <br />
+      <h1 style={{ marginTop: 100 }}>Welcome Admin</h1> <br />
       {/* <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProject}>Create Project</Button>
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleCreateProfile}>Create Profile</Button>        
         <Button variant="outlined" style={{ width: btnSize, margin: '8px' }} onClick={handleClick} >Create task</Button>

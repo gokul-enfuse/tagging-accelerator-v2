@@ -38,7 +38,7 @@ let columns = [
   },
   {
     title: 'Assign To',
-    dataIndex: 'profile_email',
+    dataIndex: 'profile_username',
     key: 'key',
   },
   {
@@ -48,9 +48,9 @@ let columns = [
 
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-        <Option key={1} value="In Progress">in progress</Option>
+         {/* <Option key={1} value="In Progress">in progress</Option>
         <Option key={2} value="Completed">Completed</Option>
-        <Option key={3} value="Waiting for Review">Waiting for Review</Option>
+        <Option key={3} value="Waiting for Review">Waiting for Review</Option>*/}
 
       </Select>
     )
@@ -149,7 +149,7 @@ console.log("selectedProject tabledata:",selectedProject)
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
       </div>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
+      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 2 }} />
     </div>
   );
 };
