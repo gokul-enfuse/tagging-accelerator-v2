@@ -365,7 +365,7 @@ const ReviewerData = () => {
           console.log("Response data is:", response.data);
           const allTasks = response.data
           const filteredArray = allTasks.filter(item1 => {
-              return item1.profile_id === reviewerIdInfo && item1.task_status !== 'Reassigned';
+              return item1.profile_id === reviewerIdInfo && item1.task_status !== 'Reassigned'  && item1.task_status !== 'Pass';
           });
           setData(filteredArray)
           // setData(response.data)
