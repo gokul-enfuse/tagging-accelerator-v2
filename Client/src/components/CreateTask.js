@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant';
-
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 
 const CreateTask = () => {
@@ -43,15 +44,16 @@ const CreateTask = () => {
                 'Content-Type': 'application/json'
             }
         })
+        
         const data = await response.json();
-        alert('Record added successfully');
+        // alert('Record added successfully');
         setFormData(defaultFormData)
         if (data.status === 200) {
-            alert('Record added successfully');
+            // alert('Record added successfully');
         }
         // navigate(previousRoute || '/');
         if (data.status === 200) {
-            alert('Record added successfully');
+            // alert('Record added successfully');
         }
         //navigate(previousRoute || '/');
         // document.getElementById("create-task").reset();
@@ -90,7 +92,14 @@ const CreateTask = () => {
     //     alert('Record added successfully');
     //     navigate(previousRoute || '/');
     // };
-
+    const showAlert = () => {
+        Swal.fire({
+          title: '',
+          text: 'Record added successfully',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
+      };
     return (
         <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
@@ -146,7 +155,7 @@ const CreateTask = () => {
 
                 </select><br />*/}
             </fieldset>
-            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Task</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }} onClick={showAlert}>Add Task</button>
 
         </form>
     );

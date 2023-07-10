@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.min.css';
 import axios from "axios";
 import { DOMAIN } from '../Constant';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
+
 
 const HistoricalRecords = () => {
     const [data, setData] = useState([]);
@@ -233,7 +236,7 @@ const handleTaskSubmit = () => {
             let temp = { ...isSubmitted };
             temp[response.data.task_id] = true;
             setIsSubmitted(temp);
-            alert("Success");
+            showAlert("Success");
           })
           .catch((error) => console.error(error));
         axios
@@ -245,7 +248,7 @@ const handleTaskSubmit = () => {
             let temp = { ...isSubmitted };
             temp[response.data.profile_id] = true;
             setIsSubmitted(temp);
-            alert("Success");
+            showAlert("Success");
           })
           .catch((error) => console.error(error));
       }
@@ -300,6 +303,15 @@ const handleTaskSubmit = () => {
         },
     ];
 
+    const showAlert = () => {
+      Swal.fire({
+        title: '',
+        text: 'Success',
+        icon: 'Success',
+        confirmButtonText: 'OK',
+      });
+    };
+
     return (
         <div>
             <div>
@@ -329,7 +341,16 @@ const handleTaskSubmit = () => {
                     Submit
                 </Button>
             </div>
-            <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 4 }} rowKey="task_id" rowSelection={rowSelection} />
+            
+            <div>
+            <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>
+               
+            </h1>
+            <div style={{ overflowY: 'scroll', height: '400px' }}>
+            <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 4 }} rowKey="task_id" rowSelection={rowSelection} />            </div>
+          </div>
+
+        
         </div>
     );
 };

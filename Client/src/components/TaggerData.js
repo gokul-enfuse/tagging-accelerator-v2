@@ -216,6 +216,8 @@ import { ROLES } from './ROLES.js';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { DOMAIN } from '../Constant.js';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const { Option } = Select;
 
@@ -274,7 +276,14 @@ const StatusSelect = ({ record }) => {
     if (value === "Completed") {
       setCompletedTaskIds([...completedTaskIds, record.task_id]);
     }
-
+    const showAlert = () => {
+      Swal.fire({
+        title: '',
+        text: 'Success',
+        icon: 'Record added successfully',
+        confirmButtonText: 'OK',
+      });
+    };
     // Update the task status in the backend
     axios
       .put(`${DOMAIN}/updatetask/${record.task_id}`, {
@@ -282,7 +291,7 @@ const StatusSelect = ({ record }) => {
       })
       .then((response) => {
         console.log("Response data:", response.data);
-        alert(response.data.message);
+        showAlert(response.data.message);
 
         // Remove the completed task from the tagger list
         const updatedData = data.filter((task) => task.task_id !== record.task_id);
@@ -389,8 +398,10 @@ const TaggerData = () => {
     getTaggers();
   }, []);
 
+
   return (
     <div>
+    
       <div
         style={{
           marginBottom: 16,

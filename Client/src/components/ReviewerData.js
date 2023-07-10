@@ -221,6 +221,8 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant.js';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const { Option } = Select;
 
@@ -269,7 +271,7 @@ const ReviewerData = () => {
           // task_role: record.task_role
         }).then(response => {
           console.log("response handlechange data is:", response);
-          alert(response.data.message);
+          showAlert(response.data.message);
         }).catch(error => console.error(error));
     }
     else {
@@ -283,7 +285,7 @@ const ReviewerData = () => {
           // task_role: record.task_role
         }).then(response => {
           console.log("response handlechange data is:", response);
-          alert(response.data.message);
+          showAlert(response.data.message);
         }).catch(error => console.error(error));
     }
 
@@ -414,6 +416,15 @@ const ReviewerData = () => {
   useEffect(() => {
     getReviewers();
   }, []);
+
+  const showAlert = () => {
+    Swal.fire({
+      title: '',
+      text: 'Success',
+      icon: 'Record added successfully',
+      confirmButtonText: 'OK',
+    });
+  };
 
   return (
     <div>

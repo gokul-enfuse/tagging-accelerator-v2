@@ -198,18 +198,45 @@ profileRouter.get('/allprofiles', async (req, res) => {
 //       res.status(500).json({ error: 'Failed to fetch manager name' });
 //     }
 //   });
+// profileRouter.get('/managername/:projectId', async (req, res) => {
+//     const { projectId } = req.params;
+//     let table_name = process.env.PROFILE;
+//     let condition = `
+//       ${table_name}.project_id = ${projectId}
+//       AND ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
+
+//     let query = `
+//       SELECT ${table_name}.profile_name AS manager_name
+//       FROM ${table_name}
+//       WHERE ${condition}`;
+//     console.log("query:", query)
+//     conn.query(query, (error, result) => {
+//         if (error) {
+//             res.status(400).json({ message: 'SQL error', Error: error });
+//         } else {
+//             if (result.length === 0) {
+//                 res.status(404).json({ message: 'No manager found for the specified project ID.' });
+//             } else {
+//                 const managerNames = result.map((row) => row.manager_name);
+//                 console.log('Manager name:', managerNames);
+//                 res.status(200).json({ manager_name: managerNames });
+//             }
+//         }
+//     });
+// });
+
 profileRouter.get('/managername/:projectId', async (req, res) => {
     const { projectId } = req.params;
     let table_name = process.env.PROFILE;
     let condition = `
-      ${table_name}.project_id = ${projectId}
-      AND ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
+      ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
 
     let query = `
       SELECT ${table_name}.profile_name AS manager_name
       FROM ${table_name}
-      WHERE ${condition}`;
-    console.log("query:", query)
+      WHERE FIND_IN_SET('${projectId}', ${table_name}.project_id) > 0
+      AND ${condition}`;
+    console.log("query:", query);
     conn.query(query, (error, result) => {
         if (error) {
             res.status(400).json({ message: 'SQL error', Error: error });
@@ -218,13 +245,12 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
                 res.status(404).json({ message: 'No manager found for the specified project ID.' });
             } else {
                 const managerNames = result.map((row) => row.manager_name);
-                console.log('Manager name:', managerNames);
-                res.status(200).json({ manager_name: managerNames });
+                console.log('Manager names:', managerNames);
+                res.status(200).json({ manager_names: managerNames });
             }
         }
     });
 });
-
 
 
 

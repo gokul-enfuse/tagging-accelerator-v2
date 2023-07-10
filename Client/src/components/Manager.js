@@ -435,7 +435,7 @@ const Manager = () => {
         axios
             .get(`${DOMAIN}/managername/${projectId}`)
             .then((response) => {
-                const manager = response.data.manager_name;
+                const manager = response.data.manager_names;
                 console.log("manager:", manager);
 
 

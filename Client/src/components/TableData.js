@@ -6,10 +6,20 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant.js';
-
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
+  
+  const showAlert = () => {
+    Swal.fire({
+      title: '',
+      text: 'Success',
+      icon: 'Record added successfully',
+      confirmButtonText: 'OK',
+    });
+  };
   console.log("value is:", value, record);
   axios
     .put(`${DOMAIN}/updatetask/${record.task_id}`, {
@@ -20,7 +30,7 @@ const handleStatusChange = (record, value, text) => {
     })
     .then(response => {
       console.log("response handlechange data is:", response);
-      alert(response.data.message);
+      showAlert(response.data.message);
     })
     .catch(error => console.error(error));
 

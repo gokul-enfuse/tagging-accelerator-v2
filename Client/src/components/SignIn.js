@@ -10,7 +10,9 @@ import axios from "axios";
 import logo from './enfuse-logo.png';
 // import google from './goggleSignin.png';
 import { DOMAIN } from "../Constant";
-
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
+import { message } from "antd";
 
 
 const SignIn = () => {
@@ -56,7 +58,7 @@ const SignIn = () => {
           }
           setAuth(response.data);
         }).catch((error) => {
-          alert(error.response.data.message);
+          showAlert(error.response.data.message);
         });
       // navigate('/admin', { replace: false });
         navigate(from, { replace: true });
@@ -64,12 +66,12 @@ const SignIn = () => {
          baseURL = `${DOMAIN}/api/forgotpassword/${values.email}`;
          axios.get(baseURL).then(response => {
             if (response.status === 200) {
-                alert("Password has been sent to your email id.");
+                showAlert("Password has been sent to your email id.");
             } else {
                 console.warn("check the response")
             }
          }).catch(error => {
-           alert(error.response.data.message);
+           showAlert(error.response.data.message);
          });
          navigate('/', { replace: true });
       } 
@@ -84,19 +86,26 @@ const SignIn = () => {
     const email = document.getElementById("reset-email").value;
     console.log("input:", email)
     if (email === "") {
-      alert("Please fill in the input field.")
+      showAlert("Please fill in the input field.")
     } else {
       axios
         .post(`${DOMAIN}/user/reset`, { email })
         .then(response => {
           console.log("response data :", response.data)
-          alert("Please check your Email")
+          showAlert("Please check your Email")
 
         })
         .catch(error => console.error(error));
     }
   }
-
+  const showAlert = (message) => {
+    Swal.fire({
+      title: '',
+      text: 'Success',
+      icon: message,
+      confirmButtonText: 'OK',
+    });
+  };
   return (
 
     <div className="container">

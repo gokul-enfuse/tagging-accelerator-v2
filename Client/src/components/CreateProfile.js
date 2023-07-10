@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant';
-
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const CreateProfile = () => {
     const [formData, setFormData] = useState({
@@ -55,7 +56,8 @@ const CreateProfile = () => {
         })
         const data = await response.json();
         console.log("data", data);
-        alert('Record added successfully');
+        // alert('Record added successfully');
+        showAlert();
         setFormData({
             id: [],
             fullName: '',
@@ -79,6 +81,14 @@ const CreateProfile = () => {
         };
         fetchProjects();
     }, []);
+    const showAlert = () => {
+        Swal.fire({
+          title: '',
+          text: 'Success',
+          icon: 'Record added successfully',
+          confirmButtonText: 'OK',
+        });
+      };
 
     return (
         <form onSubmit={handleSubmit} id='create-profile'>
@@ -98,7 +108,7 @@ const CreateProfile = () => {
                 <label><b>Email</b></label><br />
                 <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
             </fieldset>
-            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }} >Add Profile</button>
         </form>
     );
 };

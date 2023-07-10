@@ -7,7 +7,15 @@ import ProfileData from './ProfileData.js';
 function Reports() {
 
     return (
+      <div>
+      <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>
+         
+      </h1>
+      <div style={{ overflowY: 'scroll', height: '400px' }}>
       <ProfileData />
+      </div>
+    </div>
+      
     )
 }
 

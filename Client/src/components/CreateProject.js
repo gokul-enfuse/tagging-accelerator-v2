@@ -4,6 +4,8 @@ import axios from "axios";
 import { useEffect } from 'react';
 import ReactDOM from "react-dom";
 import { DOMAIN } from '../Constant';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 
 const CreateProject = () => {
@@ -38,7 +40,7 @@ const CreateProject = () => {
             console.log("res data: ", response.data)
             const projectNames = allProjects.map(project => project.project_Name);
             if (projectNames.includes(formData.projectName)) {
-                alert(`A project with name "${formData.projectName}" already exists. Please choose a different name.`);
+                showAlert(`A project with name "${formData.projectName}" already exists. Please choose a different name.`, 'error');
                 return;
             }
             else {
@@ -50,7 +52,7 @@ const CreateProject = () => {
                     }
                 })
                 const data = await response.json();
-                alert('Record added successfully');
+                showAlert('Record added successfully', "success");
                 setFormData(defaultFormValues)
             }
         });
@@ -84,7 +86,22 @@ const CreateProject = () => {
     // useEffect(() => {
     //     getProjects();
     // }, []);
-
+    // const showAlert = () => {
+    //     Swal.fire({
+    //       title: '',
+    //       text: 'Record added successfully',
+    //       icon: 'Record added successfully',
+    //       confirmButtonText: 'OK',
+    //     });
+    //   };
+    const showAlert = (message, icon) => {
+        Swal.fire({
+          title: '',
+          text: message,
+          icon: icon,
+          confirmButtonText: 'OK',
+        });
+      };
     return (
         <form onSubmit={handleSubmit} id='create-project'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>

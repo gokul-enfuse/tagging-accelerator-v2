@@ -298,6 +298,8 @@ import { Table, Button, Checkbox } from 'antd';
 import axios from "axios";
 import useAuth from '../hooks/useAuth.js';
 import { DOMAIN } from '../Constant.js';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const CompletedTaskData = () => {
   const { auth } = useAuth();
@@ -403,7 +405,8 @@ const CompletedTaskData = () => {
             let temp = { ...isSubmitted };
             temp[response.data._id] = true;
             setIsSubmitted(temp);
-            alert("success");
+            // alert("success");
+            showAlert();
           })
           .catch(error => console.error(error));
       }
@@ -434,6 +437,14 @@ const CompletedTaskData = () => {
   ];
   const handleAssignToChange = (e) => {
     setAssignedTo(e.target.value);
+  };
+  const showAlert = () => {
+    Swal.fire({
+      title: '',
+      text: 'Success',
+      icon: 'success',
+      confirmButtonText: 'OK',
+    });
   };
   return (
     <div>
