@@ -279,7 +279,7 @@ const StatusSelect = ({ record }) => {
     const showAlert = () => {
       Swal.fire({
         title: '',
-        text: 'Success',
+        text: 'Status changed succesfullly',
         icon: 'Record added successfully',
         confirmButtonText: 'OK',
       });

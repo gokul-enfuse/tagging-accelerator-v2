@@ -420,7 +420,7 @@ const ReviewerData = () => {
   const showAlert = () => {
     Swal.fire({
       title: '',
-      text: 'Success',
+      text: 'Status updated succesfully',
       icon: 'Record added successfully',
       confirmButtonText: 'OK',
     });

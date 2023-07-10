@@ -306,7 +306,7 @@ const handleTaskSubmit = () => {
     const showAlert = () => {
       Swal.fire({
         title: '',
-        text: 'Success',
+        text: 'Selected tasks reassigned succesfully',
         icon: 'Success',
         confirmButtonText: 'OK',
       });
