@@ -84,7 +84,7 @@ const CreateProfile = () => {
     const showAlert = () => {
         Swal.fire({
           title: '',
-          text: 'Success',
+          text: 'Profile created successfully',
           icon: 'Record added successfully',
           confirmButtonText: 'OK',
         });

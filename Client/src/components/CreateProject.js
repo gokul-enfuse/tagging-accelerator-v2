@@ -52,7 +52,7 @@ const CreateProject = () => {
                     }
                 })
                 const data = await response.json();
-                showAlert('Record added successfully', "success");
+                showAlert('Project added successfully', "success");
                 setFormData(defaultFormValues)
             }
         });

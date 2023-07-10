@@ -95,7 +95,7 @@ const CreateTask = () => {
     const showAlert = () => {
         Swal.fire({
           title: '',
-          text: 'Record added successfully',
+          text: 'Task added successfully',
           icon: 'success',
           confirmButtonText: 'OK',
         });

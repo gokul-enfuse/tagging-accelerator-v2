@@ -73,7 +73,7 @@ const CreateProfileManager = () => {
             password: '',
             confirmPassword: '',
         })
-        alert(data.message)
+        showAlert(data.message)
         // document.getElementById("create-task").reset();
     }
     const [projectList, setProjectList] = useState([]);
@@ -91,7 +91,7 @@ const CreateProfileManager = () => {
     const showAlert = () => {
         Swal.fire({
           title: '',
-          text: 'Success',
+          text: 'Profile created successfully',
           icon: 'Record added successfully',
           confirmButtonText: 'OK',
         });
