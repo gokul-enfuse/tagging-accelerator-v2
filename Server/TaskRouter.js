@@ -225,8 +225,21 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     const table_name = process.env.TASK;
     const task_id = req.params.id;
     const modifiedDate = new Date().toJSON();
+    console.log('Profile ID:', req.params.profile_id); // Add this console.log statement
+    console.log('task_title:', req.body.record.task_title);
+    console.log('task_title:', req.body.record.profile_id);
 
-    sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+
+    if(req.body.record.tagger_id){
+
+        sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,profile_id = ${req.body.record.tagger_id}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+        
+    }
+    else{
+        sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+
+    }
+    console.log("sql1:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not update the task.", error: error });
@@ -244,6 +257,7 @@ taskRouter.put('/updatetaskprofile/:profile_id', async (req, res) => {
     console.log('task_title:', req.body.record.task_title); 
 
     const sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, profile_id = '${req.body.record.profile_id}', modifiedDate = '${modifiedDate}' WHERE profile_id = ${profile_id}`;
+    console.log("sql2:",sql)
 
     conn.query(sql, (error, result) => {
         if (error) {

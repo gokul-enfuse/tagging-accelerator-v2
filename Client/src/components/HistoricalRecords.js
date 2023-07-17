@@ -221,8 +221,8 @@ const handleTaskSubmit = () => {
       const selectedRow = data.find((row) => row.task_id === key);
       if (selectedRow) {
         const updatedRow = { ...selectedRow };
-        updatedRow.profile_id = assignedTo;
-        updatedRow.profile_role = 3;
+        updatedRow.tagger_id = assignedTo;
+        // updatedRow.profile_role = 3;
         updatedRow.task_role = 3;
         updatedRow.task_status = "reassigned";
   
@@ -239,18 +239,18 @@ const handleTaskSubmit = () => {
             showAlert("Success");
           })
           .catch((error) => console.error(error));
-        axios
-          .put(`${DOMAIN}/updatetaskprofile/${selectedRow.profile_id}`, {
-            id: selectedRow.profile_id,
-            record: updatedRow,
-          })
-          .then((response) => {
-            let temp = { ...isSubmitted };
-            temp[response.data.profile_id] = true;
-            setIsSubmitted(temp);
-            showAlert("Success");
-          })
-          .catch((error) => console.error(error));
+        // axios
+        //   .put(`${DOMAIN}/updatetaskprofile/${selectedRow.profile_id}`, {
+        //     id: selectedRow.profile_id,
+        //     record: updatedRow,
+        //   })
+        //   .then((response) => {
+        //     let temp = { ...isSubmitted };
+        //     temp[response.data.profile_id] = true;
+        //     setIsSubmitted(temp);
+        //     showAlert("Success");
+        //   })
+        //   .catch((error) => console.error(error));
       }
     });
   };

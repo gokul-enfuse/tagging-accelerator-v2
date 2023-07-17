@@ -422,7 +422,7 @@ const TaggerData = () => {
         rowSelection={rowSelection}
         columns={columnsRow}
         dataSource={data}
-        pagination={{ pageSize: 2 }}
+        pagination={{ pageSize: 4 }}
       />
     </div>
   );
