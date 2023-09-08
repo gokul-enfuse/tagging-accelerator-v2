@@ -140,7 +140,7 @@ taskRouter.use(express.json());
 const conn = require('./mysqlConnection');
 
 taskRouter.post('/createtask', async (req, res) => {
-    let table_name = process.env.TASK;
+    let table_name = process.env.TASK;  
     // let task_id = req.body.taskId;
     let task_title = req.body.taskTitle;
     let task_status = (req.body.status)?req.body.status:null;
@@ -148,13 +148,15 @@ taskRouter.post('/createtask', async (req, res) => {
     let profile_id = (req.body.assignedTo)?req.body.assignedTo:0; //denoted to assigned to
     let reviewer_profile_id = (req.body.reviewer_profile_id)?req.body.reviewer_profile_id: 0;
     let task_role = (req.body.role) ? req.body.role : 3;
+    let task_mediatype = (req.body.mediaType) ? req.body.mediaType:null;
+
     let createdDate = req.body.creationDate;
     let modifiedDate = new Date().toJSON();
 
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
-    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role}, '${createdDate}', '${modifiedDate}')`;
+    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${createdDate}', '${modifiedDate}')`;
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not create user.", error: error });
@@ -271,6 +273,8 @@ taskRouter.get('/projectlist', async(req, res) => {
     let table_name = 'accelerator_project';
     await gettask(null, res, table_name, null);
 })
+
+
 
 let gettask = (arg = null, res, table_name = null, join = null) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate

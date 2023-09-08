@@ -386,7 +386,7 @@ const CompletedTaskData = () => {
   // };
 
 
-  const handleTaskSubmit = () => {
+  const handleTaskSubmit = () => { 
     selectedRowKeys.forEach(key => {
       const selectedRow = data.find(row => row.task_id === key);
       if (selectedRow) {

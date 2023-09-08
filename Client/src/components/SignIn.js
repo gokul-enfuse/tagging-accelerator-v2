@@ -63,17 +63,25 @@ const SignIn = () => {
       // navigate('/admin', { replace: false });
         navigate(from, { replace: true });
       } else {
-         baseURL = `${DOMAIN}/api/forgotpassword/${values.email}`;
-         axios.get(baseURL).then(response => {
-            if (response.status === 200) {
-                showAlert("Password has been sent to your email id.");
-            } else {
-                console.warn("check the response")
-            }
-         }).catch(error => {
-           showAlert(error.response.data.message);
-         });
-         navigate('/', { replace: true });
+        if (values.email){
+
+          baseURL = `${DOMAIN}/api/forgotpassword/${values.email}`;
+          axios.get(baseURL).then(response => {
+             if (response.status === 200) {
+                 showAlert("Password has been sent to your email id.");
+             } else {
+                 console.warn("check the response")
+             }
+          }).catch(error => {
+            showAlert(error.response.data.message);
+          });
+          navigate('/', { replace: true });
+
+        }
+        else{
+          showAlert("please enter your email");
+          
+        }
       } 
     }
   });
@@ -83,27 +91,34 @@ const SignIn = () => {
     validateInput();
   }
   function validateInput() {
-    const email = document.getElementById("reset-email").value;
+    // const email = document.getElementById("reset-email").value;
+    const email = formik.values.email;
     console.log("input:", email)
     if (email === "") {
-      showAlert("Please fill in the input field.")
+      showAlert("error","Please fill in the input field.",)
     } else {
       axios
         .post(`${DOMAIN}/user/reset`, { email })
         .then(response => {
           console.log("response data :", response.data)
-          showAlert("Please check your Email")
+          // showAlert("Please check your Email")
+          showAlert("error", "Please check your Email");
 
         })
         .catch(error => console.error(error));
     }
   }
-  const showAlert = (message) => {
+  const showAlert = (iconType,title, messageText) => {
     Swal.fire({
-      title: '',
-      text: 'Success',
-      icon: message,
-      confirmButtonText: 'OK',
+      // title: '',
+      // text: 'Success',
+      // icon: message,
+      // confirmButtonText: 'OK',
+
+      title: title,
+      text: messageText,
+      icon: iconType,
+      confirmButtonText: "Ok",
     });
   };
   return (
@@ -116,7 +131,7 @@ const SignIn = () => {
         {/* {isSubmitSuccess ? (
           <SubmitForm />
         ) : ( */}
-        <form onSubmit={formik.handleSubmit}>
+        <form >
 
           <div className='top-section'>
             <img style={{ width: isOpen ? "130px" : "50px" }} src={logo} alt='logo' />
@@ -126,6 +141,7 @@ const SignIn = () => {
           {/*<button type="button" className="google-button" style={ {background: "#fafafa"}}>
            <img src= {google} alt="Google Icon" className="google-icon" />
       </button>*/}
+         {/* Login page starts here*/}
           {!isEmailVisible && (
 
             <TextField
@@ -177,7 +193,7 @@ const SignIn = () => {
           {formik.touched.password && formik.errors.password ? (
             <div className="error_msg">{formik.errors.password}</div>
           ) : null}
-
+         {/* Forgotpassword view starts here*/}
           {isEmailVisible && (
             <TextField
               name="email"
@@ -197,7 +213,7 @@ const SignIn = () => {
             <input type="hidden" name="hidForgotPassword" id="hidForgotPassword" value={isEmailVisible} />
           </div>
 
-          <button type="submit">{buttonTitle}</button>
+          <button type="submit" onClick={formik.handleSubmit}>{buttonTitle}</button>
 
         </form>
         {/* )} */}
