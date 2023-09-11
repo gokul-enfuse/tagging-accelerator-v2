@@ -28,35 +28,64 @@ const CreateTask = () => {
     const [formData, setFormData] = useState(defaultFormData);
     const [taggers, setTaggers] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
 
 
-    // const handleChange = (e) => {
-    //     setFormData(() => ({
-
-    //         ...formData,
-    //         [e.target.name]: e.target.value
-    //     }))
-    // }
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+    const handleUpload = async () => {
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);    
+          try {
+            const response = await fetch('/api/upload', {
+              method: 'POST',
+              body: formData,
+            });
+    
+            if (response.ok) {
+              console.log('File uploaded successfully');
+            } else {
+              console.error('File upload failed');
+            }
+          } catch (error) {
+            console.error('File upload error:', error);
+          }
+        }
+    };
     const handleChange = (e) => {
-        if (e.target.name === "fileData") {
+        console.log("vikas=",e.target.fileData)
+        if (e.target.fileData === "fileData") {
             const file = e.target.files[0];
             const filename = file.name;
             const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-
+            //const fileData = [{'filename': filename, 'filepath': filepath}];
+            console.log("hello");
             setFormData({
-                ...formData,
-                filename,
-                filepath,
+                ...formData
             });
         } else {
+            console.log("world");
             setFormData({
                 ...formData,
                 [e.target.name]: e.target.value,
             });
         }
     };
-
-    console.log("formdata:", formData)
+    /* const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            const filename = selectedFile.name;
+            const filepath = selectedFile.webkitRelativePath || 'unknown';
+            setFormData({
+                ...formData,
+                fileData: { filename, filepath },
+            });
+           
+            console.log(formData);
+        }
+    }; */
     const handleSubmit = async (e) => {
         e.preventDefault();
         let response = await fetch(`${DOMAIN}/createtask`, {
@@ -110,10 +139,6 @@ const CreateTask = () => {
         getProject();
     }, []);
 
-    // const handleClick = () => {
-    //     alert('Record added successfully');
-    //     navigate(previousRoute || '/');
-    // };
     const showAlert = () => {
         Swal.fire({
             title: '',
@@ -123,43 +148,7 @@ const CreateTask = () => {
         });
     };
 
-    // const handleFileChange = (e) => {
-    //     const selectedFile = e.target.files[0];
-
-    //     console.log('Selected file:', selectedFile);
-    // };
-    // const handleFileChange = (e) => {
-    //     const selectedFile = e.target.files[0];
-
-    //     // Make sure a file was selected
-    //     if (selectedFile) {
-    //         const filename = selectedFile.name;
-    //         const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-
-    //         // Update fileData array with the new file data
-    //         setFormData({
-    //             ...formData,
-    //             fileData: [
-    //                 ...formData.fileData,
-    //                 { filename, filepath },
-    //             ], }); }
-    //         };
-    const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
-        if (selectedFile) {
-            const filename = selectedFile.name;
-            const filepath = selectedFile.webkitRelativePath || 'unknown';
-            setFormData({
-                ...formData,
-                fileData: [
-                    ...formData.fileData,
-                    { filename, filepath },
-                    console.log('Selected Filename:', filename),
-                    console.log('Selected Filepath:', filepath)
-                ],
-            });
-        }
-    };
+    
     return (
         <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
@@ -199,14 +188,12 @@ const CreateTask = () => {
                         {/* Add a file input */}
                         <label>Upload File</label><br />
                         <input
-
-                            // value={formData.fileData}
                             type="file"
                             name="fileData"
                             accept=".jpg, .jpeg, .png, .gif, .mp3, .pdf, .doc, .docx"
                             onChange={handleFileChange}
-                            id="fileInput"
-                        /><br />
+                            id="fileData"
+                        /><button onClick={handleUpload} style={{width:'150px', height:'25px', margin:'0px', lineHeight:'0px', fontSize:'15px'}}>Upload</button><br />
                     </div>
                 </div>
 
@@ -222,7 +209,8 @@ const CreateTask = () => {
 
 
                 <label>Media Type</label><br />
-                <select name="mediaType" value={formData.mediaType} onChange={handleChange}>
+                <select name="mediaType" id='mediaType' value={formData.mediaType} onChange={handleChange}>
+                    <option value="null">Select value</option>
                     <option value="image">Image</option>
                     <option value="audio">Audio</option>
                     <option value="video">Video</option>

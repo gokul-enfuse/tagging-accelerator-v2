@@ -239,7 +239,11 @@ const columnsRow = [
     dataIndex: 'profile_username',
     key: 'key',
   },
-
+  {
+    title: 'No Of Images',
+    dataIndex: 'task_filedata',
+    key: 'key',
+  },
   {
     title: 'Status',
     dataIndex: 'task_status',
