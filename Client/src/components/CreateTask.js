@@ -31,29 +31,29 @@ const CreateTask = () => {
     const [selectedFile, setSelectedFile] = useState(null);
 
 
-    const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
-    };
-    const handleUpload = async () => {
+    const handleFileChange = async (event) => {
+        const selectedFile = event.target.files[0];
         if (selectedFile) {
-          const formData = new FormData();
-          formData.append('file', selectedFile);    
-          try {
-            const response = await fetch('/api/upload', {
-              method: 'POST',
-              body: formData,
-            });
-    
-            if (response.ok) {
-              console.log('File uploaded successfully');
-            } else {
-              console.error('File upload failed');
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            console.log(formData);
+            try {
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+              });
+      
+              if (response.ok) {
+                console.log('File uploaded successfully');
+              } else {
+                console.error('File upload failed');
+              }
+            } catch (error) {
+              console.error('File upload error:', error);
             }
-          } catch (error) {
-            console.error('File upload error:', error);
-          }
         }
     };
+    
     const handleChange = (e) => {
         console.log("vikas=",e.target.fileData)
         if (e.target.fileData === "fileData") {
@@ -85,7 +85,7 @@ const CreateTask = () => {
            
             console.log(formData);
         }
-    }; */
+    }; */ 
     const handleSubmit = async (e) => {
         e.preventDefault();
         let response = await fetch(`${DOMAIN}/createtask`, {
@@ -150,7 +150,7 @@ const CreateTask = () => {
 
     
     return (
-        <form onSubmit={handleSubmit} id='create-task'>
+        <form onSubmit={handleSubmit} id='create-task' encType='multipart/form-data'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
                 <legend>Create Task:</legend>
                 <label>Assigned To</label><br />
@@ -193,7 +193,7 @@ const CreateTask = () => {
                             accept=".jpg, .jpeg, .png, .gif, .mp3, .pdf, .doc, .docx"
                             onChange={handleFileChange}
                             id="fileData"
-                        /><button onClick={handleUpload} style={{width:'150px', height:'25px', margin:'0px', lineHeight:'0px', fontSize:'15px'}}>Upload</button><br />
+                        /><br />
                     </div>
                 </div>
 

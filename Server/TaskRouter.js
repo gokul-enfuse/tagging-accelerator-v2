@@ -135,6 +135,7 @@
 
 const express = require('express');
 const mysql = require('mysql');
+const multer = require('multer');
 const taskRouter = express.Router();
 taskRouter.use(express.json());
 const conn = require('./mysqlConnection');
@@ -149,14 +150,14 @@ taskRouter.post('/createtask', async (req, res) => {
     let reviewer_profile_id = (req.body.reviewer_profile_id)?req.body.reviewer_profile_id: 0;
     let task_role = (req.body.role) ? req.body.role : 3;
     let task_mediatype = (req.body.mediaType) ? req.body.mediaType:null;
-
+    let task_filedata = (req.body.fileData) ? JSON.stringify(req.body.fileData):null;
     let createdDate = req.body.creationDate;
     let modifiedDate = new Date().toJSON();
 
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
-    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${createdDate}', '${modifiedDate}')`;
+    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_filedata, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${task_filedata}', '${createdDate}', '${modifiedDate}')`;
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not create user.", error: error });
@@ -165,6 +166,37 @@ taskRouter.post('/createtask', async (req, res) => {
         }
     });
 });
+/**
+ * File Upload
+ */
+let timeValue = 0;
+let fileName = "";
+const storageImage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "uploads/images");
+    },
+    filename: function (req, file, cb) {
+      const originalName = file.originalname;
+      const fileExtension = originalName.slice(originalName.lastIndexOf("."), originalName.length);
+      timeValue = Date.now();
+      fileName = `${file.fieldname}-${timeValue}${fileExtension}`;
+      cb(null, fileName);
+    }
+});
+
+const uploadImage = multer({
+    storage: storageImage
+}).single("image");
+
+taskRouter.post('/api/upload', uploadImage, (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+    res.status(200).json({ message: 'File uploaded successfully' });
+});
+/**
+ * End
+ */
 taskRouter.post('/taskbyfilter', async (req, res) => {
     const arg = `accelerator_tasks.profile_id = ${req.body.assignedTo}`;
     let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
