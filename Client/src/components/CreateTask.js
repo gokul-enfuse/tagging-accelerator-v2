@@ -38,30 +38,45 @@ const CreateTask = () => {
             formData.append('file', selectedFile);
             console.log(formData);
             try {
-              const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-              });
-      
-              if (response.ok) {
-                console.log('File uploaded successfully');
-              } else {
-                console.error('File upload failed');
-              }
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    console.log('File uploaded successfully');
+                } else {
+                    console.error('File upload failed');
+                }
             } catch (error) {
-              console.error('File upload error:', error);
+                console.error('File upload error:', error);
+                //   const formData = new FormData();
+                //   console.log("form data:",formData)
+                //   formData.append('file', selectedFile);    
+                //   try {
+                //     const response = await fetch('/api/upload', {
+                //       method: 'POST',
+                //       body: formData,
+                //     });
+
+                //     if (response.ok) {
+                //       console.log('File uploaded successfully');
+                //     } else {
+                //       console.error('File upload failed');
             }
         }
     };
-    
+
     const handleChange = (e) => {
-        console.log("vikas=",e.target.fileData)
+
+
+        console.log("vikas=", e.target.fileData)
         if (e.target.fileData === "fileData") {
             const file = e.target.files[0];
             const filename = file.name;
             const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
             //const fileData = [{'filename': filename, 'filepath': filepath}];
-            console.log("hello");
+            // console.log("hello");
             setFormData({
                 ...formData
             });
@@ -85,7 +100,7 @@ const CreateTask = () => {
            
             console.log(formData);
         }
-    }; */ 
+    }; */
     const handleSubmit = async (e) => {
         e.preventDefault();
         let response = await fetch(`${DOMAIN}/createtask`, {
@@ -148,7 +163,7 @@ const CreateTask = () => {
         });
     };
 
-    
+
     return (
         <form onSubmit={handleSubmit} id='create-task' encType='multipart/form-data'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>

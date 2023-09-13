@@ -221,8 +221,6 @@ import 'sweetalert2/dist/sweetalert2.css';
 
 const { Option } = Select;
 
-
-
 const columnsRow = [
   {
     title: 'Task ID',
@@ -239,11 +237,67 @@ const columnsRow = [
     dataIndex: 'profile_username',
     key: 'key',
   },
+  // {
+  //   title: 'No Of Images',
+  //   dataIndex: 'task_filedata',
+  //   key: 'key',
+  //   render: (text, record) => {
+  //     if (record.task_filedata) {
+  //       const taskData = JSON.parse(record.task_filedata);
+  //       return taskData.length;
+  //     }
+  //     return 0;
+  //   },
+    
+  // },
+
+  // {
+  //   title: 'No Of Images',
+  //   dataIndex: 'task_filedata',
+  //   key: 'key',
+  //   render: (text, record) => {
+  //     if (record.task_filedata) {
+  //       const taskData = JSON.parse(record.task_filedata);
+  //       const numImages = taskData.length;
+        
+  //        const handleClick = () => {
+  //          console.log(`Link clicked for task ID: ${record.task_id}`);
+  //       };
+  //               const linkUrl = `YOUR_LINK_URL/${record.task_id}`;
+  //       return (
+  //         <a href={linkUrl} onClick={handleClick}>
+  //           {numImages}
+  //         </a>
+  //       );
+  //     }
+  //     return 0;
+  //   },
+  // },
   {
     title: 'No Of Images',
     dataIndex: 'task_filedata',
     key: 'key',
+    render: (text, record) => {
+      if (record.task_filedata) {
+        const taskData = JSON.parse(record.task_filedata);
+        const numImages = taskData.length;
+        
+
+
+          const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`; // Replace OTHER_PORT with the port of the other app
+      
+        
+        return (
+          <a href={otherAppUrl}>
+            {numImages}
+          </a>
+        );
+      }
+      return 0;
+    },
   },
+  
+  
   {
     title: 'Status',
     dataIndex: 'task_status',
@@ -376,6 +430,8 @@ const TaggerData = () => {
             });
           });
           setData(filteredArray);
+          // console.log("first element:",(filteredArray[0].task_filedata).length )
+        console.log("json:",(JSON.parse((filteredArray[0].task_filedata ))).length)
           console.log("tasklist is:", filteredArray);
         })
         .catch((error) => console.error(error));
@@ -394,6 +450,7 @@ const TaggerData = () => {
               return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review" ;
           });
            setData(filteredArray);
+           
         })
         .catch((error) => console.error(error));
     }
@@ -402,6 +459,7 @@ const TaggerData = () => {
     getTaggers();
   }, []);
 
+  console.log("Data in TaggerData component:", data);
 
   return (
     <div>
@@ -434,26 +492,7 @@ const TaggerData = () => {
 
 export default TaggerData;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 // import { Button, Table, Select } from 'antd';
 // import React, { useState, useEffect } from 'react';
