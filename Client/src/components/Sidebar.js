@@ -113,8 +113,14 @@ const Sidebar = ({ children }) => {
       icon: <FaTh />
     },
     {
-      path: "/annotation",
+      path: "/bulkupload",
       id: 6,
+      name: "Bulk Upload",
+      icon: <FaTh />
+    },
+    {
+      path: "/annotation",
+      id: 7,
       name: "Annotation Tool",
       icon: <FaTh />
     },
@@ -123,7 +129,7 @@ const Sidebar = ({ children }) => {
 
   const historicalMenu = {
     path: "/historicalrecords",
-    id: 7,
+    id: 8,
     name: "Historical Records",
     icon: <FaTh />
   }

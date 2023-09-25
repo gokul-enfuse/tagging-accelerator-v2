@@ -20,6 +20,7 @@ import ProfileDetailsManager from './ProfileDetailsManager.js';
 import Forgotpassword from './Forgotpassword.js';
  
 import HistoricalRecords from './HistoricalRecords.js';
+import BulkUpload from './BulkUpload.js';
 
 
 
@@ -43,6 +44,7 @@ const Dashboard = () => {
             <Route path="/createprofile" element={<CreateProfile />} />
             <Route path="/assigntoreviewer" element={<AssignToReviewer />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/bulkupload" element={<BulkUpload />} />
             <Route path="/createproject" element={<CreateProject />} />
             <Route path="/createprofilemanager" element={<CreateProfileManager />} />
             <Route path="/profiledetailsmanager" element={<ProfileDetailsManager />} />
