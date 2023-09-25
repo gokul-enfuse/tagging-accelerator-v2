@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant';
-
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const CreateProfileManager = () => {
     const [formData, setFormData] = useState({
@@ -61,7 +62,7 @@ const CreateProfileManager = () => {
         });
         const data = await response.json();
         console.log(data);
-        alert('Record added successfully');
+        showAlert('Record added successfully');
         setFormData({
             id: [],
             fullName: '',
@@ -72,7 +73,7 @@ const CreateProfileManager = () => {
             password: '',
             confirmPassword: '',
         })
-        alert(data.message)
+        showAlert(data.message)
         // document.getElementById("create-task").reset();
     }
     const [projectList, setProjectList] = useState([]);
@@ -87,6 +88,14 @@ const CreateProfileManager = () => {
         fetchProjects();
     }, []);
 
+    const showAlert = () => {
+        Swal.fire({
+          title: '',
+          text: 'Profile created successfully',
+          icon: 'Record added successfully',
+          confirmButtonText: 'OK',
+        });
+      };
 
     return (
         <form onSubmit={handleSubmit} id='create-task'>

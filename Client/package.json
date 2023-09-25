@@ -15,6 +15,7 @@
     "axios": "^1.2.3",
     "crypto-js": "^4.1.1",
     "formik": "^2.2.9",
+    "jszip": "^3.10.1",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
     "react-awesome-reveal": "^4.1.0",
@@ -23,6 +24,7 @@
     "react-router-dom": "^6.7.0",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
   "scripts": {

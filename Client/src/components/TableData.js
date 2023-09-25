@@ -6,10 +6,20 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant.js';
-
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const { Option } = Select;
 const handleStatusChange = (record, value, text) => {
+  
+  const showAlert = () => {
+    Swal.fire({
+      title: '',
+      text: 'Success',
+      icon: 'Record added successfully',
+      confirmButtonText: 'OK',
+    });
+  };
   console.log("value is:", value, record);
   axios
     .put(`${DOMAIN}/updatetask/${record.task_id}`, {
@@ -20,7 +30,7 @@ const handleStatusChange = (record, value, text) => {
     })
     .then(response => {
       console.log("response handlechange data is:", response);
-      alert(response.data.message);
+      showAlert(response.data.message);
     })
     .catch(error => console.error(error));
 
@@ -38,7 +48,7 @@ let columns = [
   },
   {
     title: 'Assign To',
-    dataIndex: 'profile_email',
+    dataIndex: 'profile_username',
     key: 'key',
   },
   {
@@ -48,9 +58,9 @@ let columns = [
 
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
-        <Option key={1} value="In Progress">in progress</Option>
+         {/* <Option key={1} value="In Progress">in progress</Option>
         <Option key={2} value="Completed">Completed</Option>
-        <Option key={3} value="Waiting for Review">Waiting for Review</Option>
+        <Option key={3} value="Waiting for Review">Waiting for Review</Option>*/}
 
       </Select>
     )
@@ -120,8 +130,12 @@ console.log("selectedProject tabledata:",selectedProject)
        
       .then(response => {
         console.log("Response data:", response.data);
+        
+
         console.log("selectedProject table:", selectedProject);
-        setData(response.data)
+        const filteredData = response.data.filter(task => task.task_status !== "Pass" && task.task_status !== "Pass");
+        setData(filteredData)
+        console.log("filteredData:", filteredData);
       })
       .catch(error => console.error(error));
   }
@@ -149,7 +163,7 @@ console.log("selectedProject tabledata:",selectedProject)
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
       </div>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
+      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 2 }} />
     </div>
   );
 };

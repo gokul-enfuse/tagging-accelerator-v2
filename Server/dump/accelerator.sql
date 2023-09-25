@@ -27,6 +27,18 @@ SET time_zone = "+00:00";
 -- Table structure for table `accelerator_profile`
 --
 
+
+CREATE TABLE `accelerator_media_annotation` (
+  `Id` int(10) NOT NULL,
+  `mediaType` varchar(15) NOT NULL,
+  `fileName` varchar(25) NOT NULL,
+  `filePath` text NOT NULL,
+  `taggerId` int(25) NOT NULL,
+  `createdDate` date NOT NULL,
+  `modifiedDate` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+COMMIT;
+
 CREATE TABLE `accelerator_profile` (
   `profile_id` int(12) NOT NULL,
   `profile_name` varchar(45) NOT NULL,
@@ -105,8 +117,11 @@ CREATE TABLE `accelerator_tasks` (
   `profile_id` int(5) NOT NULL,
   `reviewer_profile_id` int(5) NOT NULL,
   `task_role` int(5) NOT NULL,
+  `task_mediatype` text NOT NULL,
+  `task_filedata`blob NOT NULL,
   `createdDate` date NOT NULL,
-  `modifiedDate` date NOT NULL
+  `modifiedDate` date NOT NULL,
+ 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
