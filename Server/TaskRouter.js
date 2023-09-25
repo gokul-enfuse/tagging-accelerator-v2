@@ -1,26 +1,34 @@
+ 
+
 const express = require('express');
 const mysql = require('mysql');
+const app = express();
+const cors = require('cors');
+const multer = require('multer');
+app.use(cors());
 const taskRouter = express.Router();
 taskRouter.use(express.json());
 const conn = require('./mysqlConnection');
 
-
 taskRouter.post('/createtask', async (req, res) => {
-    let table_name = process.env.TASK;
+    let table_name = process.env.TASK;  
     // let task_id = req.body.taskId;
     let task_title = req.body.taskTitle;
     let task_status = (req.body.status)?req.body.status:null;
     let project_id = (req.body.assignedProject)?req.body.assignedProject:0;
     let profile_id = (req.body.assignedTo)?req.body.assignedTo:0; //denoted to assigned to
-    let reviewer_profile_id	= (req.body.reviewer_profile_id)?req.body.reviewer_profile_id: 0;
+    let reviewer_profile_id = (req.body.reviewer_profile_id)?req.body.reviewer_profile_id: 0;
     let task_role = (req.body.role) ? req.body.role : 3;
+    let task_mediatype = (req.body.mediaType) ? req.body.mediaType:null;
+    let task_filedata = (req.body.fileData) ? req.body.fileData:null;
     let createdDate = req.body.creationDate;
     let modifiedDate = new Date().toJSON();
 
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
-    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role}, '${createdDate}', '${modifiedDate}')`;
+    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_filedata, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${task_filedata}', '${createdDate}', '${modifiedDate}')`;
+    console.log("sql q:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not create user.", error: error });
@@ -29,8 +37,51 @@ taskRouter.post('/createtask', async (req, res) => {
         }
     });
 });
+/**
+ * File Upload
+ */
+let timeValue = 0;
+let fileName = "";
+const storageImage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "uploads/images");
+    },
+    filename: function (req, file, cb) {
+      const originalName = file.originalname;
+      const fileExtension = originalName.slice(originalName.lastIndexOf("."), originalName.length);
+      timeValue = Date.now();
+      fileName = `${file.fieldname}-${timeValue}${fileExtension}`;
+      cb(null, fileName);
+    }
+});
+
+const uploadImage = multer({
+    storage: storageImage
+}).single("image");
+taskRouter.post('/api/upload', uploadImage, (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const filePath = req.file.path; // Change this path as per your actual file storage location
+    const fileName = req.file.filename; // Change this path as per your actual file storage location
+
+    console.log('File received:', req.file);
+    
+    console.log('File received:', req.file.filename);
 
 
+
+    const responseJson = {
+        message: 'File uploaded successfully',
+        filePath: filePath, // Include the file path in the response
+        fileName: fileName
+    };
+    res.status(200).json({ ...responseJson, message: 'File uploaded successfully' });
+});
+/**
+ * End
+ */
 taskRouter.post('/taskbyfilter', async (req, res) => {
     const arg = `accelerator_tasks.profile_id = ${req.body.assignedTo}`;
     let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
@@ -38,19 +89,37 @@ taskRouter.post('/taskbyfilter', async (req, res) => {
 });
 
 taskRouter.get('/getalltask', async (req, res) => {
-    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`;
     await gettask(null, res, 'accelerator_tasks', join);
 });
+
+taskRouter.get('/getreviewername', async (req, res) => {
+    let join = `accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id`;
+    await gettask(null, res, 'accelerator_tasks', join);
+});
+
+taskRouter.get('/gettaggername', async (req, res) => {
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`;
+    await gettask(null, res, 'accelerator_tasks', join);
+});
+
 taskRouter.get('/gettaskbyproject/:projectId', async (req, res) => {
     const projectId = req.params.projectId;
     const condi = `accelerator_tasks.project_id = ${projectId}`;
 
-    let join = `accelerator_profile ON accelerator_tasks.project_id = accelerator_profile.project_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`; 
-    await gettask(condi, res, 'accelerator_tasks', join);
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`; 
+    const sql= 
+    `SELECT accelerator_tasks.*, accelerator_profile.profile_username AS profile_username FROM accelerator_tasks INNER JOIN accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id WHERE accelerator_tasks.project_id =${projectId};`
+    await runsql(sql, res);
+
 }); 
 
 taskRouter.get('/getreviewertask', async (req, res) => {
     let join = `accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id`
+    await gettask(null, res, 'accelerator_tasks', join);
+});
+taskRouter.get('/gettaggertask', async (req, res) => {
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
     await gettask(null, res, 'accelerator_tasks', join);
 });
 
@@ -64,14 +133,32 @@ taskRouter.get('/completedtasks', async (req, res) => {
     let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
     await gettask(condi, res, 'accelerator_tasks', join);
 })
+taskRouter.get('/passtasks', async (req, res) => {
+    const condi = `task_status = 'Pass'`;
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`
+    await gettask(condi, res, 'accelerator_tasks', join);
+})
 
 
 taskRouter.put('/updatetask/:id', async (req, res) => {
     const table_name = process.env.TASK;
     const task_id = req.params.id;
     const modifiedDate = new Date().toJSON();
+    console.log('Profile ID:', req.params.profile_id); // Add this console.log statement
+    console.log('task_title:', req.body.record.task_title);
+    console.log('task_title:', req.body.record.profile_id);
 
-    sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+
+    if(req.body.record.tagger_id){
+
+        sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,profile_id = ${req.body.record.tagger_id}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+        
+    }
+    else{
+        sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
+
+    }
+    console.log("sql1:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not update the task.", error: error });
@@ -80,11 +167,31 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
         }
     });
 });
+taskRouter.put('/updatetaskprofile/:profile_id', async (req, res) => {
+    const table_name = process.env.TASK;
+    const profile_id = req.params.profile_id;
+    const modifiedDate = new Date().toJSON();
 
+    console.log('Profile ID:', req.params.profile_id); // Add this console.log statement
+    console.log('task_title:', req.body.record.task_title); 
+
+    const sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, profile_id = '${req.body.record.profile_id}', modifiedDate = '${modifiedDate}' WHERE profile_id = ${profile_id}`;
+    console.log("sql2:",sql)
+
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(400).json({ message: "Could not update the task.", error: error });
+        } else {
+            res.status(200).json({ message: "Task updated.", rs: result });
+        }
+    });
+});
 taskRouter.get('/projectlist', async(req, res) => {
     let table_name = 'accelerator_project';
     await gettask(null, res, table_name, null);
 })
+
+
 
 let gettask = (arg = null, res, table_name = null, join = null) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
@@ -105,6 +212,19 @@ let gettask = (arg = null, res, table_name = null, join = null) => {
     });
 }
 
+const runsql = (sql, res) => {
+    //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
+    
+    console.log("sql:",sql)
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            res.json(result);
+        }
+    });
+}
+
 let deletetask = (arg = null, res, table_name = null) => {
     let sql = `DELETE * FROM ${table_name} WHERE ${arg}`;
     conn.query(sql, (error, result) => {
@@ -115,7 +235,4 @@ let deletetask = (arg = null, res, table_name = null) => {
         }
     });
 }
-
-
-
 module.exports = taskRouter;

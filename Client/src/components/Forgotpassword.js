@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import logo from './enfuse-logo.png';
-import google from './goggleSignin.png';
+// import google from './goggleSignin.png';
 import { DOMAIN } from "../Constant";
 
 
