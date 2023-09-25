@@ -30,93 +30,6 @@ const CreateTask = () => {
     const [projects, setProjects] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
 
-
-    // const handleFileChange = async (event) => {
-    //     const selectedFile = event.target.files[0];
-    //     if (selectedFile) {
-    //         const formData = new FormData();
-    //         formData.append('image', selectedFile);
-    //         // console.log(formData);
-    //         const formDataObject = {};
-    //         formData.forEach((value, key) => {
-    //             formDataObject[key] = value;
-    //         });
-    //         console.log(formDataObject);
-    //         try {
-    //             const response = await fetch('http://localhost:5000/api/upload', {
-    //                 method: 'POST',
-    //                 body: formDataObject,
-    //                 // headers: {
-    //                 //     'Content-Type': 'application/json'
-    //                 // }
-    //             });
-
-    //             if (response.ok) {
-    //                 console.log('File uploaded successfully');
-    //             } else {
-    //                 console.error('File upload failed');
-    //                 console.error('Fetch error:', response.statusText);
-    //             }
-    //         } catch (error) {
-    //             console.error('File upload error:', error);
-    //             //   const formData = new FormData();
-    //             //   console.log("form data:",formData)
-    //             //   formData.append('file', selectedFile);    
-    //             //   try {
-    //             //     const response = await fetch('/api/upload', {
-    //             //       method: 'POST',
-    //             //       body: formData,
-    //             //     });
-
-    //             //     if (response.ok) {
-    //             //       console.log('File uploaded successfully');
-    //             //     } else {
-    //             //       console.error('File upload failed');
-    //         }
-    //     }
-    // };
-
-
-    // const handleFileChange = async (event) => {
-    //     const selectedFile = event.target.files[0];
-    //     if (selectedFile) {
-    //         const formData = new FormData();
-    //         formData.append('image', selectedFile);
-    //         // const formDataObject = {};
-    //         // formData.forEach((value, key) => {
-    //         //     formDataObject[key] = value;
-    //         // });
-
-    //         console.log("formDataObject:", formData);
-    //         try {
-    //             console.log('Sending data to server:', formData);
-    //             const response = await axios.post('http://localhost:5000/api/upload', formData);
-    //             console.log('Server response:', response.data);
-    //             if (response.status === 200) {
-    //                 console.log('File uploaded successfully');
-    //                 console.log('File path:', response.data.filePath);
-    //                 console.log('File name:', response.data.fileName);
-
-    //                 setFormData({
-    //                     ...formData,
-    //                     fileData: [
-    //                         {
-    //                             filename: response.data.fileName,
-    //                             filepath: response.data.filePath,
-    //                         },
-    //                     ],
-    //                 });
-    //                 console.log("filedata:", formData.fileData)
-    //             } else {
-    //                 console.error('File upload failed');
-    //             }
-    //         } catch (error) {
-    //             console.error('File upload error:', error);
-    //         }
-    //     }
-    // };
-
-
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
@@ -151,121 +64,8 @@ const CreateTask = () => {
         }
     };
 
-
-
-    // const handleChange = (e) => {
-
-
-    //     console.log("vikas=", e.target.fileData)
-    //     if (e.target.fileData === "fileData") {
-    //         const file = e.target.files[0];
-    //         const filename = file.name;
-    //         const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-    //         //const fileData = [{'filename': filename, 'filepath': filepath}];
-    //         // console.log("hello");
-    //         setFormData({
-    //             ...formData
-    //         });
-    //     } else {
-    //         console.log("world");
-    //         setFormData({
-    //             ...formData,
-    //             [e.target.name]: e.target.value,
-    //         });
-    //     }
-    // };
-
-
-
-    // const handleChange = (e) => {
-    //     if (e.target.name === 'fileData') {
-    //         if (e.target.files.length > 0) {
-    //             const file = e.target.files[0];
-    //             const filename = file.name;
-    //             const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-    //             const updatedFileData = [
-    //                 {
-    //                     filename: filename,
-    //                     filepath: filepath,
-    //                 },
-    //             ];
-    //             setFormData({
-    //                 ...formData,
-    //                 fileData: updatedFileData,
-    //             });
-    //         } else {
-    //             // If no file is selected, set fileData to an empty array
-    //             setFormData({
-    //                 ...formData,
-    //                 fileData: [],
-    //             });
-    //         }
-    //     } else {
-    //         // Handle other form field changes
-    //         setFormData({
-    //             ...formData,
-    //             [e.target.name]: e.target.value,
-    //         });
-    //     }
-    // };
-
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target;
-
-    //     setFormData((prevData) => ({
-    //         ...prevData,
-    //         [name]: value,
-    //     }));
-    //     console.log("formdata:", formData)
-    //     // For the 'fileData' field, handle it separately
-    //     if (name === 'fileData' && e.target.files.length > 0) {
-    //         const file = e.target.files[0];
-    //         const filename = file.name;
-    //         const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-    //         const updatedFileData = [
-    //             {
-    //                 filename: filename,
-    //                 filepath: filepath,
-    //             },
-    //         ];
-
-    //         setFormData((prevData) => ({
-    //             ...prevData,
-    //             fileData: updatedFileData,
-    //         }));
-    //     }
-    // };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        // if (name === 'fileData') {
-        //     if (e.target.files.length > 0) {
-        //         const file = e.target.files[0];
-        //         const filename = file.name;
-        //         const filepath = file.filePath;  
-        //         const updatedFileData = [
-        //             {
-        //                 filename: filename,
-        //                 filepath: filepath,
-        //             },
-        //         ];
-        //         console.log("formdata1:", formData)
-        //         setFormData((a) => ({
-
-        //             ...formData,
-        //             fileData: updatedFileData,
-        //         }));
-
-        //     } else {
-        //         // If no file is selected, set fileData to an empty array
-        //         setFormData((prevData) => ({
-        //             ...formData,
-        //             fileData: [],
-        //         }));
-        //     }
-        // } else {
-        // Handle other form field changes
         setFormData((prevData) => ({
             ...formData,
             [name]: value,
@@ -275,20 +75,6 @@ const CreateTask = () => {
 
     console.log("formdata:", formData); // This will correctly log the updated formData
 
-
-    /* const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0];
-        if (selectedFile) {
-            const filename = selectedFile.name;
-            const filepath = selectedFile.webkitRelativePath || 'unknown';
-            setFormData({
-                ...formData,
-                fileData: { filename, filepath },
-            });
-           
-            console.log(formData);
-        }
-    }; */
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("handlesubmit formdata:", formData)
@@ -354,7 +140,7 @@ const CreateTask = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} id='create-task' encType='multipart/form-data'>
+        <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
                 <legend>Create Task:</legend>
                 <div style={{ flex: 1 }}>
