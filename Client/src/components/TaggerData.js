@@ -273,27 +273,54 @@ const columnsRow = [
   //     return 0;
   //   },
   // },
+  // {
+  //   title: 'No Of Images',
+  //   dataIndex: 'task_filedata',
+  //   key: 'key',
+  //   render: (text, record) => {
+  //     if (record.task_filedata) {
+  //       console.log("record.task_filedata:",record.task_filedata)
+
+  //       const taskData = JSON.parse(record.task_filedata);
+  //       const numImages = taskData.length;
+  //         const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`; // Replace OTHER_PORT with the port of the other app
+  //       return (
+  //         <a href={otherAppUrl}>
+  //           {numImages}
+  //         </a>
+  //       );
+  //     }
+  //     return 0;
+  //   },
+  // },
   {
     title: 'No Of Images',
     dataIndex: 'task_filedata',
     key: 'key',
     render: (text, record) => {
-      if (record.task_filedata) {
-        const taskData = JSON.parse(record.task_filedata);
-        const numImages = taskData.length;
-        
-
-
-          const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`; // Replace OTHER_PORT with the port of the other app
-      
-        
-        return (
-          <a href={otherAppUrl}>
-            {numImages}
-          </a>
-        );
+      try {
+        if (record.task_filedata) {
+          console.log("record.task_filedata:",record.task_filedata)
+          const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/'));         
+          const updatedTaskData = taskData.map(item => ({
+            ...item,
+            filepath: item.filepath.replace(/\\/g, '/')
+          }));
+          console.log("updatedTaskData:", updatedTaskData)
+          const numImages = updatedTaskData.length;
+          const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`;
+  
+          return (
+            <a href={otherAppUrl}>
+              {numImages}
+            </a>
+          );
+        }
+        return 0;
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return 0; // or display an error message
       }
-      return 0;
     },
   },
   

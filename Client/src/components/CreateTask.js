@@ -133,7 +133,7 @@ const CreateTask = () => {
                     const updatedFileData = [
                         {
                             filename: response.data.fileName,
-                            filepath: response.data.filePath,
+                            filepath: response.data.filePath.replace(/\\/g, '/'),
                         },
                     ];
                     console.log("formdata file:", formData)
@@ -150,9 +150,6 @@ const CreateTask = () => {
             }
         }
     };
-
-
-
     // const handleChange = (e) => {
 
 
@@ -298,7 +295,7 @@ const CreateTask = () => {
             fileData: JSON.stringify(formData.fileData),
         };
 
-        
+
         console.log("formDataToSend:", formDataToSend)
         let response = await fetch(`${DOMAIN}/createtask`, {
             method: 'POST',
