@@ -126,105 +126,7 @@ profileRouter.get('/allprofiles', async (req, res) => {
     let table_name = process.env.PROFILE;
     let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
     getuser(null, res, table_name, join);
-});
-
-// profileRouter.get('/managername/:projectId', async (req, res) => {
-//     const { projectId } = req.params.projectId;
-//     let table_name = process.env.PROFILE;
-//     let join = `
-//     //   INNER JOIN accelerator_project ON ${table_name}.project_id = accelerator_project.project_id
-//       INNER JOIN accelerator_role ON ${table_name}.profile_role = accelerator_role.role_name`;
-// //   console.log("response:",accelerator_role.role_name)
-//     // Add the condition to filter by project ID
-//     let condition = `
-//       accelerator_profile.project_id = ${projectId}
-//       AND ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
-
-//     let query = `SELECT ${table_name}.profile_name AS manager_name
-//       FROM ${table_name}
-//       ${join}
-//       WHERE ${condition}`;
-//       getuser(null, res, table_name, join); 
-//     // Execute the query and handle the response accordingly
-//     // ...
-//   });
-
-// profileRouter.get('/managername/:projectId', async (req, res) => {
-//     const { projectId } = req.params;
-//     let table_name = process.env.PROFILE;
-//     let join = `
-//       INNER JOIN accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
-
-//     let condition = `
-//       ${table_name}.project_id = ${projectId}
-//       AND ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
-
-//     let query = `
-//       SELECT ${table_name}.profile_fullname AS manager_name
-//       FROM ${table_name}
-//       ${join}
-//       WHERE ${condition}`;
-
-//     // Execute the query and handle the response accordingly
-//     try {
-//       const result = await pool.query(query);
-//       res.json(result.rows[0]);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ error: 'Failed to fetch manager name' });
-//     }
-//   });
-
-// profileRouter.get('/managername/:projectId', async (req, res) => {
-//     const { projectId } = req.params.projectId;
-//     const  managername  = req.params.managername;
-
-//     let table_name = process.env.PROFILE;
-//     let condition = `
-//       ${table_name}.project_id = ${projectId}
-//       AND ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
-
-//     let query = `
-//       SELECT ${table_name}.profile_name AS manager_name
-//       FROM ${table_name}
-//       WHERE ${condition}`;
-//   console.log("manager name:", req.params.managername)
-//     // Execute the query and handle the response accordingly
-//     try {
-//       const result = await pool.query(query);
-//       res.json(result.rows[0]);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ error: 'Failed to fetch manager name' });
-//     }
-//   });
-// profileRouter.get('/managername/:projectId', async (req, res) => {
-//     const { projectId } = req.params;
-//     let table_name = process.env.PROFILE;
-//     let condition = `
-//       ${table_name}.project_id = ${projectId}
-//       AND ${table_name}.profile_role = 2`; // Assuming profile_role = 2 corresponds to managers
-
-//     let query = `
-//       SELECT ${table_name}.profile_name AS manager_name
-//       FROM ${table_name}
-//       WHERE ${condition}`;
-//     console.log("query:", query)
-//     conn.query(query, (error, result) => {
-//         if (error) {
-//             res.status(400).json({ message: 'SQL error', Error: error });
-//         } else {
-//             if (result.length === 0) {
-//                 res.status(404).json({ message: 'No manager found for the specified project ID.' });
-//             } else {
-//                 const managerNames = result.map((row) => row.manager_name);
-//                 console.log('Manager name:', managerNames);
-//                 res.status(200).json({ manager_name: managerNames });
-//             }
-//         }
-//     });
-// });
-
+});  
 profileRouter.get('/managername/:projectId', async (req, res) => {
     const { projectId } = req.params;
     let table_name = process.env.PROFILE;
@@ -251,10 +153,7 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
         }
     });
 });
-
-
-
-
+ 
 let getuser = (arg = null, res, table_name = null, join = null) => {
     let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, ${table_name}.project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, project_name, role_name from ${table_name}`;
     if (join != null) {
@@ -277,7 +176,6 @@ let getuser = (arg = null, res, table_name = null, join = null) => {
         }
     });
 }
-
 
 /**
  * Method Name: Email
