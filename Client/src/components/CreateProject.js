@@ -56,52 +56,18 @@ const CreateProject = () => {
                 setFormData(defaultFormValues)
             }
         });
-
-
         // navigate(previousRoute || '/');
         //navigate(previousRoute || '/');
         // document.getElementById("create-project").reset();
     }
-    // const [projects, setProjects] = useState([]);
-
-    // const getProjects = () => {
-
-    //     axios
-    //         .get(`${DOMAIN}/allprojects`)
-    //         .then(response => {
-
-    //             const allProjects = response.data
-    //             console.log("response data is", response.data);
-
-    //             const projectlist = allProjects.filter((item) => {
-    //                 return item.projectName === "Tagger"
-    //             })
-
-    //             console.log("tagger list is", projectlist);
-    //             setProjects(projectlist)
-    //         })
-    //         .catch(error => console.error(error));
-    // }
-
-    // useEffect(() => {
-    //     getProjects();
-    // }, []);
-    // const showAlert = () => {
-    //     Swal.fire({
-    //       title: '',
-    //       text: 'Record added successfully',
-    //       icon: 'Record added successfully',
-    //       confirmButtonText: 'OK',
-    //     });
-    //   };
     const showAlert = (message, icon) => {
         Swal.fire({
-          title: '',
-          text: message,
-          icon: icon,
-          confirmButtonText: 'OK',
+            title: '',
+            text: message,
+            icon: icon,
+            confirmButtonText: 'OK',
         });
-      };
+    };
     return (
         <form onSubmit={handleSubmit} id='create-project'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
@@ -111,7 +77,6 @@ const CreateProject = () => {
                 {/*<label><b>Manager</b></label><br />
                 <input type="text" placeholder="First name" name="firstName" value={formData.firstName} onChange={handleChange}></input> <br /><br />
         <input type="text" placeholder="Last name" name="lastName" value={formData.lastName} onChange={handleChange}></input><br />*/}
-
                 <label><b>Client</b></label><br />
                 <input type="text" name="client" value={formData.client} onChange={handleChange}></input><br />
                 <label><b>Domain</b></label><br />
@@ -131,7 +96,6 @@ const CreateProject = () => {
                 </select> */}
             </fieldset>
             <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Project</button>
-
         </form>
     );
 }

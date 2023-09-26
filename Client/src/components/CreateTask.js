@@ -6,9 +6,7 @@ import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 
-
 const CreateTask = () => {
-
     const navigate = useNavigate();
     const location = useLocation();
     const previousRoute = location.state?.previousRoute;
@@ -63,100 +61,14 @@ const CreateTask = () => {
             }
         }
     };
-    // const handleChange = (e) => {
-
-
-    //     console.log("vikas=", e.target.fileData)
-    //     if (e.target.fileData === "fileData") {
-    //         const file = e.target.files[0];
-    //         const filename = file.name;
-    //         const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-    //         //const fileData = [{'filename': filename, 'filepath': filepath}];
-    //         // console.log("hello");
-    //         setFormData({
-    //             ...formData
-    //         });
-    //     } else {
-    //         console.log("world");
-    //         setFormData({
-    //             ...formData,
-    //             [e.target.name]: e.target.value,
-    //         });
-    //     }
-    // };
-
-
-
-    // const handleChange = (e) => {
-    //     if (e.target.name === 'fileData') {
-    //         if (e.target.files.length > 0) {
-    //             const file = e.target.files[0];
-    //             const filename = file.name;
-    //             const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-    //             const updatedFileData = [
-    //                 {
-    //                     filename: filename,
-    //                     filepath: filepath,
-    //                 },
-    //             ];
-    //             setFormData({
-    //                 ...formData,
-    //                 fileData: updatedFileData,
-    //             });
-    //         } else {
-    //             // If no file is selected, set fileData to an empty array
-    //             setFormData({
-    //                 ...formData,
-    //                 fileData: [],
-    //             });
-    //         }
-    //     } else {
-    //         // Handle other form field changes
-    //         setFormData({
-    //             ...formData,
-    //             [e.target.name]: e.target.value,
-    //         });
-    //     }
-    // };
-
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target;
-
-    //     setFormData((prevData) => ({
-    //         ...prevData,
-    //         [name]: value,
-    //     }));
-    //     console.log("formdata:", formData)
-    //     // For the 'fileData' field, handle it separately
-    //     if (name === 'fileData' && e.target.files.length > 0) {
-    //         const file = e.target.files[0];
-    //         const filename = file.name;
-    //         const filepath = "path"; // Replace 'path' with the actual path where you want to store the file
-    //         const updatedFileData = [
-    //             {
-    //                 filename: filename,
-    //                 filepath: filepath,
-    //             },
-    //         ];
-
-    //         setFormData((prevData) => ({
-    //             ...prevData,
-    //             fileData: updatedFileData,
-    //         }));
-    //     }
-    // };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...formData,
             [name]: value,
         }));
-
     };
-
     console.log("formdata:", formData); // This will correctly log the updated formData
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("handlesubmit formdata:", formData)
@@ -165,8 +77,6 @@ const CreateTask = () => {
             status: 'To Do',
             fileData: JSON.stringify(formData.fileData),
         };
-
-
         console.log("formDataToSend:", formDataToSend)
         let response = await fetch(`${DOMAIN}/createtask`, {
             method: 'POST',
@@ -176,10 +86,8 @@ const CreateTask = () => {
             }
         })
         const data = await response.json();
-        // alert('Record added successfully');
         setFormData(defaultFormData)
-        if (data.status === 200) {
-            // alert('Record added successfully');
+        if (data.status === 200) {  
         }
         // navigate(previousRoute || '/');
         if (data.status === 200) {
@@ -220,13 +128,11 @@ const CreateTask = () => {
             confirmButtonText: 'OK',
         });
     };
-
     return (
         <form onSubmit={handleSubmit} id='create-task'>
             <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
                 <legend>Create Task:</legend>
                 <div style={{ flex: 1 }}>
-
                     {/* Add a file input */}
                     <label>Upload File</label><br />
                     <input
@@ -238,19 +144,16 @@ const CreateTask = () => {
                     /><br />
                 </div>
                 <label>Assigned To</label><br />
-
                 <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '230px' }}>
                     <option key={0} value={0}>
                         select
                     </option>
                     {taggers.length > 0 && taggers.map((tagger) => (
                         <option key={tagger.profile_id} value={tagger.profile_id}>
-
                             {tagger.profile_username}
                         </option>
                     ))}</select><br />
                 <label>Assigned Project</label><br />
-
                 <select name="assignedProject" id="assignedProject" value={formData.assignedProject} onChange={handleChange} style={{ width: '230px' }}>
                     <option key={0} value={0}>
                         select
@@ -267,20 +170,7 @@ const CreateTask = () => {
                 <label>Creaton Date</label><br />
                 <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-
                 </div>
-
-                {/*<input type="text" name="assignedTo" value={formData.assignedTo} onChange={handleChange}></input><br />*/}
-                {/* <label>Role</label><br />
-                <select name="role" value={formData.role} onChange={handleChange}>
-                    <option key={""} value={""}>
-                        select
-                    </option>
-                    <option value="tagger">Tagger</option>
-                    <option value="reviewer">Reviewer</option>
-                </select><br />*/}
-
-
                 <label>Media Type</label><br />
                 <select name="mediaType" id='mediaType' value={formData.mediaType} onChange={handleChange}>
                     <option value="null">Select value</option>
@@ -291,10 +181,7 @@ const CreateTask = () => {
                 </select><br />
             </fieldset>
             <button type="submit" style={{ width: '800px', marginLeft: '0px' }} onClick={showAlert}>Add Task</button>
-
         </form>
     );
 };
-
-
 export default CreateTask;
