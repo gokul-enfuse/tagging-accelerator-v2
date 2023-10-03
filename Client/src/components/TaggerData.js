@@ -29,23 +29,24 @@ const columnsRow = [
   },
   {
     title: 'No Of Images',
-    dataIndex: 'task_filedata',
+    dataIndex: 'task_filename',
     key: 'key',
     render: (text, record) => {
       try {
-        if (record.task_filedata) {
-          console.log("record.task_filedata:",record.task_filedata)
-          const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/'));         
-          const updatedTaskData = taskData.map(item => ({
-            ...item,
-            filepath: item.filepath.replace(/\\/g, '/')
-          }));
-          console.log("updatedTaskData:", updatedTaskData)
-          const numImages = updatedTaskData.length;
-          const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`;
+        if (record.task_filename) {
+          console.log("record.task_filedata:",record.task_filename)
+          //const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/')); 
+		  const taskData = [];
+		  taskData.push(record.task_filename); 	
+          /*const updatedTaskData = taskData.map(item => {
+			  console.log(item);
+		  });*/
+          console.log("updatedTaskData:", taskData.length)
+          const numImages = taskData.length;
+          const otherAppUrl = `http://localhost:3001/${record.profile_id}/${record.task_mediatype}`;
   
           return (
-            <a href={otherAppUrl}>
+            <a href={otherAppUrl} target="_blank">
               {numImages}
             </a>
           );
