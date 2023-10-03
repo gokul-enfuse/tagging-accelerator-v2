@@ -20,14 +20,15 @@ taskRouter.post('/createtask', async (req, res) => {
     let reviewer_profile_id = (req.body.reviewer_profile_id)?req.body.reviewer_profile_id: 0;
     let task_role = (req.body.role) ? req.body.role : 3;
     let task_mediatype = (req.body.mediaType) ? req.body.mediaType:null;
-    let task_filedata = (req.body.fileData) ? req.body.fileData:null;
+    let task_filename = (req.body.filename) ? req.body.filename:null;
+	let task_filepath = (req.body.filepath) ? req.body.filepath:null;
     let createdDate = req.body.creationDate;
     let modifiedDate = new Date().toJSON();
 
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
-    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_filedata, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${task_filedata}', '${createdDate}', '${modifiedDate}')`;
+    sql = `INSERT INTO ${table_name} (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_filename, task_filepath, createdDate, modifiedDate) VALUES ('${task_title}', '${task_status}', ${project_id}, ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${task_filename}', '${task_filepath}', '${createdDate}', '${modifiedDate}')`;
     console.log("sql q:",sql)
     conn.query(sql, (error, result) => {
         if (error) {

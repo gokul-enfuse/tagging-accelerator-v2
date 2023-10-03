@@ -20,7 +20,8 @@ const CreateTask = () => {
         role: 3,
         creationDate: '',
         mediaType: '',
-        fileData: [],
+        fileName: '',
+		filePath: ''
     }
     // console.log("locaton state is:", location.state)
     const [formData, setFormData] = useState(defaultFormData);
@@ -50,7 +51,8 @@ const CreateTask = () => {
                     console.log("formdata file:", formData)
                     setFormData({
                         ...formData,
-                        fileData: updatedFileData,
+                        filename: response.data.fileName,
+						filepath: response.data.filePath.replace(/\\/g, '/')
                     });
                     console.log("Updated fileData:", updatedFileData);
                 } else {
@@ -75,7 +77,8 @@ const CreateTask = () => {
         const formDataToSend = {
             ...formData,
             status: 'To Do',
-            fileData: JSON.stringify(formData.fileData),
+            fileName: formData.filename,
+			filePath: FormData.filepath
         };
         console.log("formDataToSend:", formDataToSend)
         let response = await fetch(`${DOMAIN}/createtask`, {
