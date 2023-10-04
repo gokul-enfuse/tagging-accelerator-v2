@@ -40,7 +40,7 @@ const CreateTask = () => {
                 console.log('Server response:', response.data);
                 if (response.status === 200) {
                     console.log('File uploaded successfully');
-                    console.log('File path:', response.data.filePath);
+                    console.log('File path:', "http://localhost:5000/"+response.data.filePath.replace(/\\/g, '/'));
                     console.log('File name:', response.data.fileName);
                     const updatedFileData = [
                         {
@@ -52,7 +52,7 @@ const CreateTask = () => {
                     setFormData({
                         ...formData,
                         filename: response.data.fileName,
-						filepath: response.data.filePath.replace(/\\/g, '/')
+						filepath: "http://localhost:5000/"+response.data.filePath.replace(/\\/g, '/')
                     });
                     console.log("Updated fileData:", updatedFileData);
                 } else {
