@@ -21,13 +21,14 @@ const CreateTask = () => {
         creationDate: '',
         mediaType: '',
         fileName: '',
-		filePath: ''
+        filePath: ''
     }
     // console.log("locaton state is:", location.state)
     const [formData, setFormData] = useState(defaultFormData);
     const [taggers, setTaggers] = useState([]);
     const [projects, setProjects] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [isFormValid, setIsFormValid] = useState(false);
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
@@ -36,11 +37,11 @@ const CreateTask = () => {
             formData.append('image', selectedFile);
             try {
                 console.log('Sending data to server:', formData);
-                const response = await axios.post('http://localhost:5000/api/upload', formData);
+                const response = await axios.post('http://localhost:3030/api/upload', formData);
                 console.log('Server response:', response.data);
                 if (response.status === 200) {
                     console.log('File uploaded successfully');
-                    console.log('File path:', "http://localhost:5000/"+response.data.filePath.replace(/\\/g, '/'));
+                    console.log('File path:', "http://localhost:3030/" + response.data.filePath.replace(/\\/g, '/'));
                     console.log('File name:', response.data.fileName);
                     const updatedFileData = [
                         {
@@ -52,9 +53,12 @@ const CreateTask = () => {
                     setFormData({
                         ...formData,
                         filename: response.data.fileName,
-						filepath: "http://localhost:5000/"+response.data.filePath.replace(/\\/g, '/')
+                        filepath: "http://localhost:3030/" + response.data.filePath.replace(/\\/g, '/')
                     });
                     console.log("Updated fileData:", updatedFileData);
+
+                    validateForm();
+
                 } else {
                     console.error('File upload failed');
                 }
@@ -62,6 +66,7 @@ const CreateTask = () => {
                 console.error('File upload error:', error);
             }
         }
+
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -69,16 +74,37 @@ const CreateTask = () => {
             ...formData,
             [name]: value,
         }));
+        validateForm();
     };
     console.log("formdata:", formData); // This will correctly log the updated formData
+    const validateForm = () => {
+        if (formData.taskTitle &&
+            formData.assignedProject &&
+            formData.assignedTo &&
+            formData.creationDate &&
+            formData.mediaType &&
+            formData.filename &&
+            formData.filepath) {            
+            setIsFormValid(true);
+        }
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Call validateForm here to check the form's validity only when it's submitted
+        validateForm();
+        if (isFormValid) {
+            // Display an error message or alert
+            alert("Please fill in all required fields.");
+            return;
+        }
+
         console.log("handlesubmit formdata:", formData)
         const formDataToSend = {
             ...formData,
             status: 'To Do',
             fileName: formData.filename,
-			filePath: FormData.filepath
+            filePath: FormData.filepath
         };
         console.log("formDataToSend:", formDataToSend)
         let response = await fetch(`${DOMAIN}/createtask`, {
@@ -90,7 +116,7 @@ const CreateTask = () => {
         })
         const data = await response.json();
         setFormData(defaultFormData)
-        if (data.status === 200) {  
+        if (data.status === 200) {
         }
         // navigate(previousRoute || '/');
         if (data.status === 200) {
@@ -98,6 +124,7 @@ const CreateTask = () => {
         }
         //navigate(previousRoute || '/');
         // document.getElementById("create-task").reset();
+        showAlert();
     }
     const getTaggers = () => {
         axios
@@ -111,6 +138,7 @@ const CreateTask = () => {
         console.log("Vikas=", event.target.value);
         getProject(event.target.value);
     };
+
     const getProject = () => {
         axios
             .get(`${DOMAIN}/specificprojects`)
@@ -123,6 +151,7 @@ const CreateTask = () => {
         getTaggers();
         getProject();
     }, []);
+
     const showAlert = () => {
         Swal.fire({
             title: '',
@@ -183,7 +212,8 @@ const CreateTask = () => {
                     <option value="document">Document</option>
                 </select><br />
             </fieldset>
-            <button type="submit" style={{ width: '800px', marginLeft: '0px' }} onClick={showAlert}>Add Task</button>
+
+            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Task</button>
         </form>
     );
 };
