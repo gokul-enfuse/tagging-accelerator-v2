@@ -154,42 +154,66 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
     });
 });
 
-profileRouter.post('/storePort', async (req, res) => {
-    const { appPort } = req.body;
-    let table_name = process.env.PORT_URL;
-    const  appname = "tagging-tool";
-    await postPort(appname, res, appPort, table_name);
-    console.log("Received port:", port)
-    // res.json({ message: 'Port stored successfully' })
-})
 
+
+profileRouter.post('/storePort', async (req, res) => {
+    const { port } = req.body;
+    let table_name = process.env.PORT_URL;
+    const appname = "tagging-tool";
+    await postPort(appname, res, port, table_name);
+    console.log("Received port:", port); // Change from 'port' to 'appPort'
+    // res.json({ message: 'Port stored successfully' })
+});
 let postPort = (appname, res, appPort, table_name) => {
-    let sql = `SELECT count(id) from ${table_name} WHERE appName = ${appname}`;
-    conn.query(sql, (error, result) => {
+    let countSql = `SELECT count(id) as count FROM ${table_name} WHERE appName = ?`;
+    conn.query(countSql, [appname], (error, result) => {
         if (error) {
             res.status(400).json({ message: "No data available.", error: error });
-        }
-        if (result) {
-            let updateQuery = `UPDATE ${table_name} SET appPort = ${appPort} WHERE appName = ${appname}`;
-            conn.query(updateQuery, (error, result) => {
-                if (error) {
-                    res.status(400).json({ message: "Port not found", error: error });
-                } else {
-                    res.status(200).json({ message: "Port created.", rs: result });
-                }
-            });
         } else {
-            let insertQuery = `INSERT into ${table_name} values (${appname}, ${appPort})`;
-            conn.query(insertQuery, (error, result) => {
-                if (error) {
-                    res.status(400).json({ message: "Insertion fail", error: error });
-                } else {
-                    res.status(200).json({ message: "Insert data.", rs: result });
-                }
-            });
+            const count = result[0].count;
+            if (count > 0) {
+                let updateQuery = `UPDATE ${table_name} SET appPort = ? WHERE appName = ?`;
+                conn.query(updateQuery, [appPort, appname], (error, result) => {
+                    if (error) {
+                        res.status(400).json({ message: "Port not found", error: error });
+                    } else {
+                        res.status(200).json({ message: "Port updated.", rs: result });
+                    }
+                });
+            } else {
+                let insertQuery = `INSERT INTO ${table_name} (appName, appPort) VALUES (?, ?)`;
+                conn.query(insertQuery, [appname, appPort], (error, result) => {
+                    if (error) {
+                        res.status(400).json({ message: "Insertion fail", error: error });
+                    } else {
+                        res.status(200).json({ message: "Insert data.", rs: result });
+                    }
+                });
+            }
+        }
+    })
+}
+const table_name = "app1url";
+profileRouter.get('/getPort', async (req, res) => {
+    const appname = "tagging-toolV2"; // Change this to the desired appName
+
+    // Call a function to retrieve the appPort based on the appname
+    await getPort(appname, res);
+});
+let getPort = (appname, res) => {
+    let selectQuery = `SELECT appPort FROM ${table_name} WHERE appName = ?`;
+    conn.query(selectQuery, [appname], (error, result) => {
+        if (error) {
+            res.status(400).json({ message: "Error retrieving port", error: error });
+        } else if (result.length > 0) {
+            res.status(200).json({ message: "Port retrieved successfully", appPort: result[0].appPort });
+        } else {
+            res.status(404).json({ message: "Port not found for the specified appName" });
         }
     });
 }
+
+
 
 let getuser = (arg = null, res, table_name = null, join = null) => {
     let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, ${table_name}.project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, project_name, role_name from ${table_name}`;

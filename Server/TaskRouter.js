@@ -69,6 +69,7 @@ taskRouter.post('/api/upload', uploadImage, (req, res) => {
     console.log('File received:', req.file);
 
     console.log('File received:', req.file.filename);
+    console.log('FIle recived:',req.file.path);
 
 
 
@@ -202,7 +203,7 @@ taskRouter.post('/api/excelupload', (req, res) => {
 
         dataArray.forEach((data) => {
             const task_title = data.task_title || '';
-            const task_status = data.task_status || 'To Do';
+            const task_status = data.task_status || null;
             const project_id = `'${data.projectid || ''}'`;
             const profile_id = data.profile_id || 0;
             const reviewer_profile_id = data.reviewer_profile_id || 0;
@@ -266,7 +267,7 @@ taskRouter.get('/gettaskbyproject/:projectId', async (req, res) => {
     const condi = `accelerator_tasks.project_id = ${projectId}`;
 
     let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id AND accelerator_tasks.task_role = accelerator_profile.profile_role`;
-    const sql =
+    const sql=
         `SELECT accelerator_tasks.*, accelerator_profile.profile_username AS profile_username FROM accelerator_tasks INNER JOIN accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id WHERE accelerator_tasks.project_id =${projectId};`
     await runsql(sql, res);
 
@@ -307,16 +308,16 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     console.log('task_title:', req.body.record.profile_id);
 
 
-    if (req.body.record.tagger_id) {
+    if(req.body.record.tagger_id){
 
         sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,profile_id = ${req.body.record.tagger_id}, modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
 
     }
-    else {
+    else{
         sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role} ,modifiedDate = '${req.body.record.modifiedDate}' WHERE task_id=${task_id}`;
 
     }
-    console.log("sql1:", sql)
+    console.log("sql1:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(400).json({ message: "Could not update the task.", error: error });
@@ -334,7 +335,7 @@ taskRouter.put('/updatetaskprofile/:profile_id', async (req, res) => {
     console.log('task_title:', req.body.record.task_title);
 
     const sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, profile_id = '${req.body.record.profile_id}', modifiedDate = '${modifiedDate}' WHERE profile_id = ${profile_id}`;
-    console.log("sql2:", sql)
+    console.log("sql2:",sql)
 
     conn.query(sql, (error, result) => {
         if (error) {
@@ -344,11 +345,10 @@ taskRouter.put('/updatetaskprofile/:profile_id', async (req, res) => {
         }
     });
 });
-taskRouter.get('/projectlist', async (req, res) => {
+taskRouter.get('/projectlist', async(req, res) => {
     let table_name = 'accelerator_project';
     await gettask(null, res, table_name, null);
 })
-
 let gettask = (arg = null, res, table_name = null, join = null) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
     let sql = `SELECT * from ${table_name}`;
@@ -358,7 +358,7 @@ let gettask = (arg = null, res, table_name = null, join = null) => {
     if (arg != null) {
         sql += ` WHERE ${arg}`;
     }
-    console.log("sql:", sql)
+    console.log("sql:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -371,7 +371,7 @@ let gettask = (arg = null, res, table_name = null, join = null) => {
 const runsql = (sql, res) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
 
-    console.log("sql:", sql)
+    console.log("sql:",sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
