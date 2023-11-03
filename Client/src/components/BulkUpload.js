@@ -26,10 +26,97 @@ function BulkUpload() {
     const isColumnFilled = (worksheet, column) => {
         // ... Your existing Excel validation code ...
     };
+    // const handleFileChange = async (event) => {
+    //     const file = event.target.files[0];
+    //     if (file) {
+
+    //         if (isExcelFile(file)) {
+    //             try {
+    //                 const workbook = await readExcelFile(file);
+    //                 const sheetName = workbook.SheetNames[0]; // Use the first sheet name
+    //                 const worksheet = workbook.Sheets[sheetName];
+    //                 const range = XLSX.utils.decode_range(worksheet['!ref']);
+    //                 if (range.e.r > range.s.r) {
+    //                     // There is at least one data row, check columns 'A' and 'B'
+    //                     let isCol1Filled = false;
+    //                     let isCol2Filled = false;
+    //                     let isCol4Filled = false;
+    //                     let isCol5Filled = false;
+    //                     let isCol6Filled = false;
+    //                     let isCol7Filled = false;
+    //                     let isCol8Filled = false;
+    //                     let isCol9Filled = false;
+
+
+    //                     for (let rowIndex = range.s.r + 1; rowIndex <= range.e.r; rowIndex++) {
+    //                         const cellA = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
+    //                         const cellB = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 1 })];
+    //                         const cellD = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 3 })];
+    //                         const cellE = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 4 })];
+    //                         const cellF = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 5 })];
+    //                         const cellG = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 6 })];
+    //                         const cellH = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 7 })];
+    //                         const cellI = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 8 })];
+
+    //                         if (cellA && cellA.v) {
+    //                             isCol1Filled = true;
+    //                         }
+
+    //                         if (cellB && cellB.v) {
+    //                             isCol2Filled = true;
+    //                         }
+
+    //                         if (cellD && cellD.v) {
+    //                             isCol4Filled = true;
+    //                         }
+    //                         if (cellE && cellE.v) {
+    //                             isCol5Filled = true;
+    //                         }
+    //                         if (cellF && cellF.v) {
+    //                             isCol6Filled = true;
+    //                         }
+    //                         if (cellG && cellG.v) {
+    //                             isCol7Filled = true;
+    //                         }
+    //                         if (cellH && cellH.v) {
+    //                             isCol8Filled = true;
+    //                         }
+    //                         if (cellI && cellI.v) {
+    //                             isCol9Filled = true;
+    //                         }
+
+    //                         if (isCol1Filled, isCol2Filled, isCol4Filled, isCol5Filled, isCol6Filled, isCol7Filled, isCol8Filled && isCol9Filled) {
+    //                             break; // Both columns are filled, no need to check further
+    //                         }
+    //                     }
+    //                     if (isCol1Filled, isCol2Filled, isCol4Filled, isCol5Filled, isCol6Filled, isCol7Filled, isCol8Filled && isCol9Filled) {
+    //                         console.log('All Columns are filled.');
+    //                         setExcelFile(file);
+    //                         console.log('Excel file selected:', excelFile);
+    //                     } else {
+    //                         console.log('All columns are not filled.');
+    //                         alert('Please upload a valid Excel file with data.');
+    //                     }
+    //                 } else {
+    //                     console.log('No data rows found below the headers.');
+    //                     alert('Please upload a valid Excel file with data.');
+    //                 }
+    //                 // ... Your existing Excel validation code ...
+    //             } catch (error) {
+    //                 alert('An error occurred while processing the Excel file.');
+    //                 console.error(error);
+    //             }
+    //         } else {
+    //             alert('Please upload a valid Excel file with data.');
+    //             // Clear the file input field
+    //             event.target.value = '';
+    //         }
+    //     }
+    // };
+
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         if (file) {
-
             if (isExcelFile(file)) {
                 try {
                     const workbook = await readExcelFile(file);
@@ -37,39 +124,67 @@ function BulkUpload() {
                     const worksheet = workbook.Sheets[sheetName];
                     const range = XLSX.utils.decode_range(worksheet['!ref']);
                     if (range.e.r > range.s.r) {
-                        // There is at least one data row, check columns 'A' and 'B'
-                        let isCol1Filled = false;
-                        let isCol2Filled = false;
-
+                        // There is at least one data row, check columns A, B, D, E, F, G, H, and I
+                        let isColAEmpty = true;
+                        let isColBEmpty = true;
+                        let isColDEmpty = true;
+                        let isColEEmpty = true;
+                        let isColFEmpty = true;
+                        let isColGEmpty = true;
+                        let isColHEmpty = true;
+                        let isColIEmpty = true;
+    
                         for (let rowIndex = range.s.r + 1; rowIndex <= range.e.r; rowIndex++) {
                             const cellA = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
                             const cellB = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 1 })];
-
+                            const cellC = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 2 })];
+                            const cellD = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 3 })];
+                            const cellE = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 4 })];
+                            const cellF = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 5 })];
+                            const cellG = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 6 })];
+                            const cellH = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 7 })];
+                            const cellI = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 8 })];
+    
                             if (cellA && cellA.v) {
-                                isCol1Filled = true;
+                                isColAEmpty = false;
                             }
-
+    
                             if (cellB && cellB.v) {
-                                isCol2Filled = true;
+                                isColBEmpty = false;
                             }
-
-                            if (isCol1Filled && isCol2Filled) {
-                                break; // Both columns are filled, no need to check further
+    
+                            if (cellD && cellD.v) {
+                                isColDEmpty = false;
+                            }
+                            if (cellE && cellE.v) {
+                                isColEEmpty = false;
+                            }
+                            if (cellF && cellF.v) {
+                                isColFEmpty = false;
+                            }
+                            if (cellG && cellG.v) {
+                                isColGEmpty = false;
+                            }
+                            if (cellH && cellH.v) {
+                                isColHEmpty = false;
+                            }
+                            if (cellI && cellI.v) {
+                                isColIEmpty = false;
                             }
                         }
-                        if (isCol1Filled && isCol2Filled) {
-                            console.log('Columns A and B are filled.');
+    
+                        if (isColAEmpty || isColBEmpty || isColDEmpty || isColEEmpty || isColFEmpty || isColGEmpty || isColHEmpty || isColIEmpty) {
+                            console.log('Some required columns are empty.');
+                            alert('Please fill all required columns (A, B, D, E, F, G, H, I) in the Excel file.');
+                        } else {
+                            console.log('All required columns are filled.');
                             setExcelFile(file);
                             console.log('Excel file selected:', excelFile);
-                        } else {
-                            console.log('Columns A and/or B are not filled.');
-                            alert('Please upload a valid Excel file with data.');
                         }
                     } else {
                         console.log('No data rows found below the headers.');
                         alert('Please upload a valid Excel file with data.');
                     }
-                    // ... Your existing Excel validation code ...
                 } catch (error) {
                     alert('An error occurred while processing the Excel file.');
                     console.error(error);
@@ -81,6 +196,12 @@ function BulkUpload() {
             }
         }
     };
+    
+    
+
+
+
+
     const handleZipFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
