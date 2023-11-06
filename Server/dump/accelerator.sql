@@ -207,6 +207,17 @@ CREATE TABLE `taggingimagessubcategory` (
 --
 -- Indexes for table `accelerator_profile`
 --
+
+CREATE TABLE `app1url` (
+  `id` int(20) NOT NULL,
+  `appName` varchar(225) NOT NULL,
+  `appPort`int(20) NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+ALTER TABLE `app1url`
+  ADD PRIMARY KEY (`id`);
+
+
 ALTER TABLE `accelerator_profile`
   ADD PRIMARY KEY (`profile_id`);
 
