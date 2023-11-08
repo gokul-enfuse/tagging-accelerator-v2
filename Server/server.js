@@ -8,12 +8,11 @@ const bodyParser = require('body-parser');
 const taskRouter = require("./TaskRouter.js");
 const profileRouter = require("./ProfileRouter.js");
 const projectRouter = require("./ProjectRouter.js");
+const PortConnection = require("./PortConnection.js");
+
 const emailRouter = require("./EmailRouter.js");
 
-const Port = process.env.PORT || 5000;
-
-
-
+const Port = process.env.PORT || 3030;
 app.use(express.json());
 app.use(cors());
 app.use(express.static(__dirname));
@@ -24,8 +23,6 @@ async function main() {
   await mongoose.connect(process.env.URL);
   console.log('db connected')
 } */
-
-
 
 // let refreshTokens = [];
 
@@ -153,12 +150,16 @@ async function main() {
 //   refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 //   res.status(200).json("You logged out successfully.");
 // });
+app.post('/api/getCurrentURL', (req, res) => {
+  console.log("req:", req)
+  res.json({ message: 'Home URL received and processed on the server' })
 
+})
 app.use(taskRouter);
 app.use(profileRouter);
 app.use(projectRouter);
 app.use(emailRouter);
-
+// app.use(PortConnection);
 
 app.listen(Port, () => {
   console.log('server started', Port)
