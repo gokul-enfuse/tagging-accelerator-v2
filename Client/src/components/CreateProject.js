@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
+import '../App.css';
 
 
 const CreateProject = () => {
@@ -69,9 +70,11 @@ const CreateProject = () => {
         });
     };
     return (
-        <form onSubmit={handleSubmit} id='create-project'>
-            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
-                <legend>Create Project:</legend>
+        <form className='projectContainer' onSubmit={handleSubmit} id='create-project'>
+            {/* <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}> */}
+                {/* <legend>Create Project:</legend> */}
+            <div className='project_content'>
+                <h1>Create Project</h1>
                 <label><b>Project Name </b></label><br />
                 <input type="text" name="projectName" value={formData.projectName} onChange={e => handleChange(e, true)} ></input><br />
                 {/*<label><b>Manager</b></label><br />
@@ -94,8 +97,11 @@ const CreateProject = () => {
                     <option value="0">false</option>
                     <option value="1">true</option>
                 </select> */}
-            </fieldset>
-            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Project</button>
+            {/* </fieldset> */}
+            </div>
+            <div className='project_button_cont'>
+                <button type="submit" style={{ width: '100px', marginLeft: '0px' }}>Add Project</button>
+            </div>
         </form>
     );
 }

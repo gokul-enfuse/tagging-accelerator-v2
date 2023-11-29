@@ -127,6 +127,7 @@ profileRouter.get('/allprofiles', async (req, res) => {
     let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
     getuser(null, res, table_name, join);
 });
+
 profileRouter.get('/managername/:projectId', async (req, res) => {
     const { projectId } = req.params;
     let table_name = process.env.PROFILE;
@@ -154,52 +155,44 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
     });
 });
 
-// profileRouter.post('/storePort', async (req, res) => {
-//     const { appPort } = req.body;
-//     let table_name = process.env.PORT_URL;
-//     const  appname = "tagging-tool";
-//     await postPort(appname, res, appPort, table_name);
-//     console.log("Received port:", port)
-//     // res.json({ message: 'Port stored successfully' })
-// })
+profileRouter.get('/getPort', (req, res) => {
+    const { appName } = req.query; // Assuming you send appName as a query parameter
+    console.log(appName)
+    let table_name = process.env.ACCELERATOR_APP1URL;
+    if (!appName) {
+        return res.status(400).json({ message: "appName parameter is missing." });
+    }    
+    const selectPortSql = `SELECT appPort FROM ${table_name} WHERE appName = ?`;
+    conn.query(selectPortSql, [appName], (error, result) => {
+        if (error) {
+            return res.status(400).json({ message: "Error retrieving appPort", error: error });
+        }
 
-// let postPort = (appname, res, appPort, table_name) => {
-//     let sql = `SELECT count(id) from ${table_name} WHERE appName = ${appname}`;
-//     conn.query(sql, (error, result) => {
-//         if (error) {
-//             res.status(400).json({ message: "No data available.", error: error });
-//         }
-//         if (result) {
-//             let updateQuery = `UPDATE ${table_name} SET appPort = ${appPort} WHERE appName = ${appname}`;
-//             conn.query(updateQuery, (error, result) => {
-//                 if (error) {
-//                     res.status(400).json({ message: "Port not found", error: error });
-//                 } else {
-//                     res.status(200).json({ message: "Port created.", rs: result });
-//                 }
-//             });
-//         } else {
-//             let insertQuery = `INSERT into ${table_name} values (${appname}, ${appPort})`;
-//             conn.query(insertQuery, (error, result) => {
-//                 if (error) {
-//                     res.status(400).json({ message: "Insertion fail", error: error });
-//                 } else {
-//                     res.status(200).json({ message: "Insert data.", rs: result });
-//                 }
-//             });
-//         }
-//     });
-// }
-
+        if (result.length > 0) {
+            const appPort = result[0].appPort;
+            res.status(200).json({ message: "AppPort retrieved.", appPort: appPort });
+        } else {
+            res.status(404).json({ message: "App name not found in the database." });
+        }
+    });
+});
 
 profileRouter.post('/storePort', async (req, res) => {
     const { port } = req.body;
-    let table_name = process.env.PORT_URL;
+    let table_name = process.env.ACCELERATOR_APP1URL;
     const appname = "tagging-tool";
     await postPort(appname, res, port, table_name);
     console.log("Received port:", port); // Change from 'port' to 'appPort'
     // res.json({ message: 'Port stored successfully' })
 });
+
+/**
+ * 
+ * @param {*} appname 
+ * @param {*} res 
+ * @param {*} appPort 
+ * @param {*} table_name 
+ */
 let postPort = (appname, res, appPort, table_name) => {
     let countSql = `SELECT count(id) as count FROM ${table_name} WHERE appName = ?`;
     conn.query(countSql, [appname], (error, result) => {
@@ -230,8 +223,13 @@ let postPort = (appname, res, appPort, table_name) => {
     });
 }
 
-
-
+/**
+ * 
+ * @param {*} arg 
+ * @param {*} res 
+ * @param {*} table_name 
+ * @param {*} join 
+ */
 let getuser = (arg = null, res, table_name = null, join = null) => {
     let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, ${table_name}.project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, project_name, role_name from ${table_name}`;
     if (join != null) {

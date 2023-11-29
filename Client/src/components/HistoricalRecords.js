@@ -5,6 +5,7 @@ import axios from "axios";
 import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
+import SearchBar from './SearchBar';
 
 
 const HistoricalRecords = () => {
@@ -163,8 +164,14 @@ const HistoricalRecords = () => {
   return (
     <div>
       <div>
+        <SearchBar/>
+      </div>
+    
+    <div>
+      <div>
         <label style={{ marginTop: 20 }}>Assign to a Tagger</label><br />
         <select
+        className='historicalrecords'
           name="assignedTo"
           style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}
           value={assignedTo}
@@ -191,12 +198,13 @@ const HistoricalRecords = () => {
       </div>
 
       <div>
-        <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>
+        <h1 style={{ marginBottom: '20px', textAlign: 'center', alignItems: 'center', marginTop: 26 }}>
 
         </h1>
-        <div style={{ overflowY: 'scroll', height: '400px' }}>
+        <div style={{ overflowY: 'scroll', height: '356px' }}>
           <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 4 }} rowKey="task_id" rowSelection={rowSelection} />            </div>
       </div>
+    </div>
     </div>
   );
 };
