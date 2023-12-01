@@ -8,16 +8,16 @@ import { DOMAIN } from '../Constant.js';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import { useLocation } from 'react-router-dom'
+
 const { Option } = Select;
+
 const TaggerData = () => {
-  
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   const taggerId = auth.profile_username === "admin" ? auth.profile_username : auth.profile_id;
   const [data, setData] = useState([]);
   const [url, setUrl] = useState("");
-  const [portNumber, setPortNumber] = useState();
   let currentPort;
 
   const location = useLocation();
@@ -26,12 +26,13 @@ const TaggerData = () => {
   const porturl = new URL(currentURL);
   const appPort = porturl.port;
 
-  console.log("port:", appPort, portNumber);
+  console.log("port:", appPort);
+
 
   const columnsRow = [
     {
-      title: 'Profile ID',
-      dataIndex: 'profile_id',
+      title: 'Task ID',
+      dataIndex: 'task_id',
       key: 'key'
     },
     {
@@ -44,7 +45,7 @@ const TaggerData = () => {
       dataIndex: 'profile_username',
       key: 'key',
       render: (text, pname) => (
-          <AssignTo pname={pname} />
+        <AssignTo pname={pname} />
       )
     },
     {
@@ -60,16 +61,9 @@ const TaggerData = () => {
             taskData.push(record.task_filename);
             console.log("record:", record);
 
-
-            /*const updatedTaskData = taskData.map(item => {
-          console.log(item);
-        });*/
-            // console.log("taggerid:", taggerId);
-            // console.log("auth.username:", auth.username); 
-
             console.log("updatedTaskData:", taskData.length)
             const numImages = taskData.length;
-            const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
+            const otherAppUrl = `http://localhost:3002/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
             return (
               <a href={otherAppUrl} target="_blank">
                 {numImages}
@@ -81,8 +75,9 @@ const TaggerData = () => {
           console.error("Error parsing JSON:", error);
           return 0; // or display an error message
         }
-      }
+      },
     },
+
     {
       title: 'Status',
       dataIndex: 'task_status',
@@ -98,99 +93,99 @@ const TaggerData = () => {
       key: 'key'
     },
   ];
-  const AssignTo = ({pname}) => {
-      const defaultFormData = {
-        taskTitle: '',
-        taskId: '',
-        status: 'To do',
-        assignedProject: '',
-        assignedTo: '',
-        reviewer_profile_id: '',
-        role: 3,
-        creationDate: '',
-        mediaType: '',
-        fileName: '',
-        filePath: ''
+
+  const AssignTo = ({ pname }) => {
+    const defaultFormData = {
+      taskTitle: '',
+      taskId: '',
+      status: 'To do',
+      assignedProject: '',
+      assignedTo: '',
+      reviewer_profile_id: '',
+      role: 3,
+      creationDate: '',
+      mediaType: '',
+      fileName: '',
+      filePath: ''
     }
+    const [formData, setFormData] = useState(defaultFormData);
+    const [taggers, setTaggers] = useState([]);
 
-  const [formData, setFormData] = useState(defaultFormData);
-  const [taggers, setTaggers] = useState([]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
         ...formData,
         [name]: value,
-    }));
-};
-const getTaggers = () => {
-  axios
-      .get(`${DOMAIN}/getalltaggers`)
-      .then(res => {
+      }));
+    };
+    const getTaggers = () => {
+      axios
+        .get(`${DOMAIN}/getalltaggers`)
+        .then(res => {
           const allProfiles = res.data;
           setTaggers(allProfiles);
-      }).catch(error => console.error(error));
-}
-useEffect(() => {
-  getTaggers();
-}, []);
-
-return (
-  <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '150px' ,height:'30px'}}>
-                    {/* <option key={0} value={0}>
-                        Select
-                    </option> */}
-                    { (taggers.length > 0 && taggers.map((tagger) => (
-                      <option key={tagger.profile_id} value={tagger.profile_id}>
-                          {tagger.profile_username}
-                      </option>
-                  )))}</select>
-);
-}
-
-const StatusSelect = ({ record }) => {
-  const [taskStatus, setTaskStatus] = useState({});
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    setTaskStatus((prevState) => ({
-      ...prevState,
-      [record.task_id]: record.task_status || "Todo"
-    }));
-  }, [record]);
-
-  const [completedTaskIds, setCompletedTaskIds] = useState([]);
-
-  const handleStatusChange = (value) => {
-    record.task_status = value;
-    const updatedTaskStatus = { ...taskStatus, [record.task_id]: value };
-    setTaskStatus(updatedTaskStatus);
-    if (value === "Completed") {
-      setCompletedTaskIds([...completedTaskIds, record.task_id]);
+        }).catch(error => console.error(error));
     }
-    const showAlert = () => {
-      Swal.fire({
-        title: '',
-        text: 'Status changed succesfullly',
-        icon: 'Record added successfully',
-        confirmButtonText: 'OK',
-      });
-    };
-    // Update the task status in the backend
-    axios
-      .put(`${DOMAIN}/updatetask/${record.task_id}`, {
-        record: { ...record, task_status: "Completed", reviewer_task_status: "Waiting for review" },
-      })
-      .then((response) => {
-        console.log("Response data:", response.data);
-        showAlert(response.data.message);
+    useEffect(() => {
+      getTaggers();
+    }, []);
 
-        // Remove the completed task from the tagger list
-        const updatedData = data.filter((task) => task.task_id !== record.task_id);
-        setData(updatedData);
-      })
-      .catch((error) => console.error(error));
-  };
+    return (
+      <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '150px', height: '30px' }}>
+        {/* <option key={0} value={0}>
+                          Select
+                      </option> */}
+        {(taggers.length > 0 && taggers.map((tagger) => (
+          <option key={tagger.profile_id} value={tagger.profile_id}>
+            {tagger.profile_username}
+          </option>
+        )))}</select>
+    );
+  }
+
+  const StatusSelect = ({ record }) => {
+    const [taskStatus, setTaskStatus] = useState({});
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+      setTaskStatus((prevState) => ({
+        ...prevState,
+        [record.task_id]: record.task_status || "Todo"
+      }));
+    }, [record]);
+
+    const [completedTaskIds, setCompletedTaskIds] = useState([]);
+
+    const handleStatusChange = (value) => {
+      record.task_status = value;
+      const updatedTaskStatus = { ...taskStatus, [record.task_id]: value };
+      setTaskStatus(updatedTaskStatus);
+      if (value === "Completed") {
+        setCompletedTaskIds([...completedTaskIds, record.task_id]);
+      }
+      const showAlert = () => {
+        Swal.fire({
+          title: '',
+          text: 'Status changed succesfullly',
+          icon: 'Record added successfully',
+          confirmButtonText: 'OK',
+        });
+      };
+      // Update the task status in the backend
+      axios
+        .put(`${DOMAIN}/updatetask/${record.task_id}`, {
+          record: { ...record, task_status: "Completed", reviewer_task_status: "Waiting for review" },
+        })
+        .then((response) => {
+          console.log("Response data:", response.data);
+          showAlert(response.data.message);
+
+          // Remove the completed task from the tagger list
+          const updatedData = data.filter((task) => task.task_id !== record.task_id);
+          setData(updatedData);
+        })
+        .catch((error) => console.error(error));
+    };
 
     axios.post(`${DOMAIN}/storePort`, { port: appPort })
       .then((response) => {
@@ -219,13 +214,6 @@ const StatusSelect = ({ record }) => {
       </Select>
     );
   };
-const TaggerData = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { auth } = useAuth();
-  const taggerId = auth.profile_username === "admin" ? auth.profile_username : auth.profile_id;
-  const [data, setData] = useState([]);
-
   const start = () => {
     setLoading(true);
     // ajax request after empty completing
@@ -259,22 +247,27 @@ const TaggerData = () => {
   };
 
   const getTask = (taggerIdInfo, taggers) => {
-    if (taggerId === "admin") {
+    console.log("taggerId:", taggerId);
+    console.log("taggerIdInfo:", taggerIdInfo);
+    console.log("auth.role:", auth.profile_role);
+
+
+    if (taggerId === "admin" || auth.profile_role === 2) {
       axios
         .get(`${DOMAIN}/getalltask`)
         .then((response) => {
-          console.log("Response data:", response.data, "tagger data is:", taggers);
+          console.log("Response data all task:", response.data, "tagger data is:", taggers);
           const allTasks = response.data;
           const filteredArray = allTasks.filter((item1) => {
             return taggers.some((item2) => {
               console.log("item1 is:", item1, "item2 is:", item2);
-              return item1.profile_id === item2.profile_id && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review" ;
+              return item1.profile_id === item2.profile_id && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
 
             });
           });
           setData(filteredArray);
           // console.log("first element:",(filteredArray[0].task_filedata).length )
-        console.log("json:",(JSON.parse((filteredArray[0].task_filedata ))).length)
+          console.log("json:", (JSON.parse((filteredArray[0].task_filedata))).length)
           console.log("tasklist is:", filteredArray);
         })
         .catch((error) => console.error(error));
@@ -289,40 +282,23 @@ const TaggerData = () => {
           console.log("Response data is:", response.data);
           const allTasks = response.data;
           const filteredArray = allTasks.filter((item1) => {
-             console.log("response.data:", response.data)
-              return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review" ;
+            console.log("response.data:", response.data)
+            return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
           });
-           setData(filteredArray);
-           
+          setData(filteredArray);
+
         })
         .catch((error) => console.error(error));
     }
   };
-
-  const showCustomeAlert = (error) => {
-    Swal.fire({
-      title: '',
-      text: error,
-      icon: 'Record added successfully...',
-      confirmButtonText: 'OK',
-    });
-  };
   useEffect(() => {
     getTaggers();
-    
-    axios.get(`${DOMAIN}/getPort?appName=tagging-toolV2`)
-    .then(result => {
-      setPortNumber(result['data'].appPort);
-    }).catch(error => {
-      showCustomeAlert(error)
-    })
   }, []);
 
   console.log("Data in TaggerData component:", data);
 
   return (
     <div>
-    
       <div
         style={{
           marginBottom: 16,
@@ -348,7 +324,5 @@ const TaggerData = () => {
     </div>
   );
 };
-
-}
 
 export default TaggerData;
