@@ -444,7 +444,7 @@ const CreateTask = () => {
                 <br />
                 <label>Task Title</label>
                 <br />
-                <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange} required />
+                <input type="text" name="taskTitle" value={formData.taskTitle} maxLength={20} onChange={handleChange} required />
                 <br />
                 <label>Creation Date</label>
                 <br />
@@ -476,8 +476,9 @@ const CreateTask = () => {
 
             <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>
                 Add Task
-            </button>
-        </form>
+            </button>      
+                </form>
+
     );
 };
 

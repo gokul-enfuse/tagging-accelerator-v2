@@ -23,7 +23,6 @@ taskRouter.post('/createtask', async (req, res) => {
     let task_filepath = (req.body.filepath) ? req.body.filepath : null;
     let createdDate = req.body.creationDate;
     let modifiedDate = new Date().toJSON();
-
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
@@ -37,6 +36,8 @@ taskRouter.post('/createtask', async (req, res) => {
         }
     });
 });
+
+
 /**
  * File Upload
  */
@@ -259,7 +260,7 @@ taskRouter.post('/api/excelupload', (req, res) => {
             const task_filename = data.task_filename || null;
             const task_filepath = data.task_filepath || null;
             const createdDate = data.createdDate;
-            const modifiedDate = new Date().toJSON();
+            const modifiedDate = data.modifiedDate;
 
             const sql = "INSERT INTO ?? (task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_filename, task_filepath, createdDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             const values = [table_name, task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_filename, task_filepath, createdDate, modifiedDate];
@@ -388,6 +389,131 @@ taskRouter.get('/projectlist', async (req, res) => {
     let table_name = 'accelerator_project';
     await gettask(null, res, table_name, null);
 })
+taskRouter.get('/getmismatchedidtask', async (req, res) => {
+    let table_name = 'accelerator_tasks'
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`;
+    let additionalCondition = 'accelerator_profile.profile_id IS NULL';
+    await getmismatchedidtask(null, res, 'accelerator_tasks', join, additionalCondition);
+});
+
+taskRouter.post('/updateAssignment/:id', async (req, res) => {
+
+    const table_name = process.env.TASK;
+    const task_id = req.params.id;
+    const modifiedDate = new Date().toJSON();
+
+    // let sql;
+
+    // if (req.body.record.tagger_id) {
+    //     sql = `
+    //         UPDATE ${table_name} 
+    //         SET 
+    //             task_title = '${req.body.record.task_title}', 
+    //             task_status = '${req.body.record.task_status}', 
+    //             reviewer_task_status = '${req.body.record.reviewer_task_status}', 
+    //             reviewer_profile_id = ${req.body.record.reviewer_profile_id}, 
+    //             task_role = ${req.body.record.task_role}, 
+    //             profile_id = ${req.body.record.tagger_id}, 
+    //             modifiedDate = '${modifiedDate}' 
+    //         WHERE task_id = ${task_id}
+    //     `;
+    // } else {
+    //     sql = `
+    //         UPDATE ${table_name} 
+    //         SET 
+    //             task_title = '${req.body.record.task_title}', 
+    //             task_status = '${req.body.record.task_status}', 
+    //             reviewer_task_status = '${req.body.record.reviewer_task_status}', 
+    //             reviewer_profile_id = ${req.body.record.reviewer_profile_id}, 
+    //             task_role = ${req.body.record.task_role}, 
+    //             modifiedDate = '${modifiedDate}' 
+    //         WHERE task_id = ${task_id}
+    //     `;
+    // }
+
+    let taggerId = req.body.record && req.body.record.tagger_id ? `, profile_id = ${req.body.record.assignedTo}` : '';
+    console.log("taggerid:", req.body.assignedTo);
+    const sql = `
+    UPDATE ${table_name} 
+    SET 
+        task_title = '${req.body.record.task_title}', 
+        task_status = '${req.body.record.task_status}', 
+        reviewer_task_status = '${req.body.record.reviewer_task_status}', 
+        reviewer_profile_id = ${req.body.record.reviewer_profile_id}, 
+        task_role = ${req.body.record.task_role}, 
+         profile_id = ${req.body.assignedTo}, 
+        modifiedDate = '${modifiedDate}' 
+        ${taggerId}
+    WHERE task_id = ${task_id}
+`;
+    console.log("SQL query:", sql);
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(400).json({ message: "Could not update the task.", error: error });
+        } else {
+            res.status(200).json({ message: "Task updated.", rs: result });
+        }
+    });
+});
+
+let getmismatchedidtask = (arg = null, res, table_name = null, join = null, additionalCondition = '') => {
+    // task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate
+    // let sql = `SELECT * FROM ${table_name}`;
+
+    // if (join !== null) {
+    //     sql += ` LEFT JOIN ${join}`;
+    // }
+
+    // if (arg !== null || additionalCondition !== '') {
+    //     sql += ` WHERE ${arg ? `${arg} AND ` : ''}${additionalCondition}`;
+    // }
+
+    // console.log("sql:", sql);
+
+    // conn.query(sql, (error, result) => {
+    //     if (error) {
+    //         res.status(404).json({ message: "Data not found.", error: error });
+    //     } else {
+    //         res.json(result);
+    //     }
+    // });
+
+    let sql = `
+  SELECT
+    accelerator_tasks.task_id,
+    accelerator_tasks.task_title,
+     accelerator_tasks.task_mediatype,
+    accelerator_tasks.task_filename,
+    accelerator_tasks.task_filepath,
+    accelerator_tasks.task_status,
+    accelerator_tasks.profile_id,
+    accelerator_tasks.task_role,
+    accelerator_tasks.createdDate,
+    accelerator_tasks.modifiedDate,
+    accelerator_tasks.project_id,
+    accelerator_tasks.createdDate AS profile_createdDate,
+    accelerator_tasks.modifiedDate AS profile_modifiedDate
+  FROM
+    accelerator_tasks
+  LEFT JOIN
+    accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id
+  WHERE
+    ${arg ? `${arg} AND ` : ''}
+    ${additionalCondition}
+`;
+
+    console.log("sql:", sql);
+
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            res.json(result);
+        }
+    });
+
+};
+
 
 let gettask = (arg = null, res, table_name = null, join = null) => {
     //task_id, task_title, task_status, profile_id, task_role, createdDate, modifiedDate

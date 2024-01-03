@@ -38,7 +38,7 @@ CREATE TABLE `accelerator_app1url` (
 --
 
 INSERT INTO `accelerator_app1url` (`id`, `appName`, `appPort`) VALUES
-(5, 'tagging-toolV2', 3000);
+(5, 'tagging-tool', 3000);
 
 -- --------------------------------------------------------
 

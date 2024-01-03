@@ -94,13 +94,6 @@ const Sidebar = ({ children }) => {
       ]
     },
     {
-      path: "/tagger",
-      id: 3,
-      name: "Tagger",
-      icon: <MdDns />
-
-    },
-    {
       path: "/reviewer",
       id: 4,
       name: "Reviewer",
@@ -133,6 +126,13 @@ const Sidebar = ({ children }) => {
     name: "Historical Records",
     icon: <FaTh />
   }
+
+  const tagger = {
+    path: "/tagger",
+      id: 3,
+      name: "Tagger",
+      icon: <MdDns />
+  }
   const logout = () => {
     setAuth({})
   }
@@ -163,6 +163,10 @@ const Sidebar = ({ children }) => {
             }
             {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
               <MenuItem key={historicalMenu.id} item={historicalMenu} profileRole={auth.profile_role} />}
+
+              {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+                <MenuItem key={tagger.id} item={tagger} profileRole={auth.profile_role} />}
+
           </ul>
         </nav>
         {auth.profile_role &&
