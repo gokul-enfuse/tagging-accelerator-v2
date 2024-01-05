@@ -121,10 +121,10 @@ const CompletedTaskData = () => {
     });
   };
   return (
-    <div>
+    <div className='completedTaskData'>
       <div>
-        <label style={{ marginTop: 20 }}>Assign to a reviewer</label><br />
-        <select
+        <label style={{ marginTop: 20, color:'white' }}>Assign to a reviewer</label><br />
+        <select className='assignedToReviewer'
           name="assignedTo"
           style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}
           value={assignedTo}
@@ -155,6 +155,7 @@ const CompletedTaskData = () => {
         pagination={{ pageSize: 4 }}
         rowSelection={rowSelection}
         rowKey="task_id"
+        // style={{height:100}}
       />
     </div>
   );
