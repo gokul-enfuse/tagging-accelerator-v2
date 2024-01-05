@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
+// import '../app.css'
 
 const CreateProfile = () => {
     const [formData, setFormData] = useState({
@@ -91,9 +92,11 @@ const CreateProfile = () => {
       };
 
     return (
-        <form onSubmit={handleSubmit} id='create-profile'>
-            <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}>
-                <legend>Create Profile:</legend>
+        <form className='profileContainer' onSubmit={handleSubmit} id='create-profile'>
+            {/* <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}> */}
+                {/* <legend>Create Profile:</legend> */}
+                <div className='profile_content'>
+                <h1>Create Profile</h1>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
@@ -107,8 +110,11 @@ const CreateProfile = () => {
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
                 <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
-            </fieldset>
-            <button type="submit" style={{ width: '800px', marginLeft: '0px' }} >Add Profile</button>
+                </div>
+            {/* </fieldset> */}
+            <div className='profile_button_cont'>
+                <button type="submit" style={{ width: '800px', marginLeft: '0px' }} >Add Profile</button>
+            </div>
         </form>
     );
 };

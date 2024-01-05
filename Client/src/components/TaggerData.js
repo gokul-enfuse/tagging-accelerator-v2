@@ -7,157 +7,22 @@ import axios from "axios";
 import { DOMAIN } from '../Constant.js';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
-import { useLocation } from 'react-router-dom'
-
-const { Option } = Select;
-
-// const columnsRow = [
-//   {
-//     title: 'Task ID',
-//     dataIndex: 'task_id',
-//     key: 'key'
-//   },
-//   {
-//     title: 'Task Title',
-//     dataIndex: 'task_title',
-//     key: 'key'
-//   },
-//   {
-//     title: 'Assign To',
-//     dataIndex: 'profile_username',
-//     key: 'key',
-//   },
-//   {
-//     title: 'No Of Images',
-//     dataIndex: 'task_filename',
-//     key: 'key',
-//     render: (text, record) => {
-//       try {
-//         if (record.task_filename) {
-//           console.log("record.task_filedata:",record.task_filename)
-//           //const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/')); 
-// 		  const taskData = [];
-// 		  taskData.push(record.task_filename); 	
-//           /*const updatedTaskData = taskData.map(item => {
-// 			  console.log(item);
-// 		  });*/
-//           console.log("updatedTaskData:", taskData.length)
-//           const numImages = taskData.length;
-//           const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`;
-
-//           return (
-//             <a href={otherAppUrl} target="_blank">
-//               {numImages}
-//             </a>
-//           );
-//         }
-//         return 0;
-//       } catch (error) {
-//         console.error("Error parsing JSON:", error);
-//         return 0; // or display an error message
-//       }
-//     },
-//   },
-
-
-//   {
-//     title: 'Status',
-//     dataIndex: 'task_status',
-//     key: 'key',
-//     render: (text, record) => (
-//       <StatusSelect record={record} />
-//     )
-//   },
-
-//   {
-//     title: 'Created Date',
-//     dataIndex: 'createdDate',
-//     key: 'key'
-//   },
-// ];
-
-// const StatusSelect = ({ record }) => {
-//   const [taskStatus, setTaskStatus] = useState({});
-//   const [data, setData] = useState([])
-
-//   useEffect(() => {
-//     setTaskStatus((prevState) => ({
-//       ...prevState,
-//       [record.task_id]: record.task_status || "Todo"
-//     }));
-//   }, [record]);
-
-//   const [completedTaskIds, setCompletedTaskIds] = useState([]);
-
-//   const handleStatusChange = (value) => {
-//     record.task_status = value;
-//     const updatedTaskStatus = { ...taskStatus, [record.task_id]: value };
-//     setTaskStatus(updatedTaskStatus);
-//     if (value === "Completed") {
-//       setCompletedTaskIds([...completedTaskIds, record.task_id]);
-//     }
-//     const showAlert = () => {
-//       Swal.fire({
-//         title: '',
-//         text: 'Status changed succesfullly',
-//         icon: 'Record added successfully',
-//         confirmButtonText: 'OK',
-//       });
-//     };
-//     // Update the task status in the backend
-//     axios
-//       .put(`${DOMAIN}/updatetask/${record.task_id}`, {
-//         record: { ...record, task_status: "Completed", reviewer_task_status: "Waiting for review" },
-//       })
-//       .then((response) => {
-//         console.log("Response data:", response.data);
-//         showAlert(response.data.message);
-
-//         // Remove the completed task from the tagger list
-//         const updatedData = data.filter((task) => task.task_id !== record.task_id);
-//         setData(updatedData);
-//       })
-//       .catch((error) => console.error(error));
-//   };
-
-
-//   return (
-//     <Select
-//       value={taskStatus[record.task_id]}
-//       style={{ width: 120 }}
-//       onChange={handleStatusChange}
-//     >
-//       <Option value="Reassigned" disabled>
-//         reassigned
-//       </Option>
-//       <Option value="Completed">Completed</Option>
-//       <Option value="Done" disabled>
-//         Task done
-//       </Option>
-//     </Select>
-//   );
-// };
+import { useLocation } from 'react-router-dom';
 
 const TaggerData = () => {
+  const { Option } = Select;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   const taggerId = auth.profile_username === "admin" ? auth.profile_username : auth.profile_id;
   const [data, setData] = useState([]);
   const [url, setUrl] = useState("");
+  const [portNumber, setPortNumber] = useState();
   let currentPort;
-
-  const location = useLocation();
-
-  const currentURL = window.location.href;
-  const porturl = new URL(currentURL);
-  const appPort = porturl.port;
-
-  console.log("port:", appPort);
-
-
-
-
+  let location = useLocation();
+  let currentURL = window.location.href;
+  let porturl = new URL(currentURL);
+  let appPort = porturl.port;
   const columnsRow = [
     {
       title: 'Task ID',
@@ -173,6 +38,9 @@ const TaggerData = () => {
       title: 'Assign To',
       dataIndex: 'profile_username',
       key: 'key',
+      render: (text, pname) => (
+        <AssignTo pname={pname} />
+      )
     },
     {
       title: 'No Of Images',
@@ -186,17 +54,9 @@ const TaggerData = () => {
             const taskData = [];
             taskData.push(record.task_filename);
             console.log("record:", record);
-
-
-            /*const updatedTaskData = taskData.map(item => {
-          console.log(item);
-        });*/
-            // console.log("taggerid:", taggerId);
-            // console.log("auth.username:", auth.username); 
-
             console.log("updatedTaskData:", taskData.length)
             const numImages = taskData.length;
-            const otherAppUrl = `http://localhost:3002/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
+            const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
             return (
               <a href={otherAppUrl} target="_blank">
                 {numImages}
@@ -210,62 +70,7 @@ const TaggerData = () => {
         }
       },
     },
-    // {
-    //   title: 'No Of Images',
-    //   dataIndex: 'task_filename',
-    //   key: 'key',
-    //   render: (text, record) => {
-    //     try {
-    //       if (record.task_filename) {
-    //         console.log("record ", record)
-    //         axios
-    //           .get(`${DOMAIN}/allprojects`)
-    //           .then(response => {
-    //             console.log("Response data projects:", response.data);
-    //             const allProjects = response.data;
-    //             const recordProjectId = record.project_id;
-    //             const matchingProject = allProjects.find((project) => {
-    //               console.log("recordProjectId:", recordProjectId);
-    //               console.log("project:", project);
-    //               console.log("project.project_id:", project.project_id);
-    //               console.log(project.project_id === recordProjectId)
-    //               return project.project_id.toString() === recordProjectId.toString()
-    //             });
-    //             if (matchingProject) {
-    //               console.log("matching project:", matchingProject)
-    //               const projectName = matchingProject.project_Name;
-    //               console.log("Matching Project Name:", projectName);
-    //               const otherAppUrl = `http://localhost:3002/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}&projectName=${projectName}`;
-    //               setUrl(otherAppUrl);
-    //             } else {
-    //               console.log("No matching project found for record.project_id:", recordProjectId);
-    //             }
-    //           })
-    //           .catch(error => console.error(error));
-    //         //const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/')); 
-    //         const taskData = [];
-    //         taskData.push(record.task_filename);
-    //         /*const updatedTaskData = taskData.map(item => {
-    //       console.log(item);
-    //     });*/
-    //         console.log("taggerid:", taggerId);
-    //         console.log("auth.username:", auth.username);
-    //         console.log("updatedTaskData:", taskData.length)
-    //         console.log("updatedTaskData:", taskData.length)
-    //         const numImages = taskData.length;
-    //         return (
-    //           <a href={url} target="_blank">
-    //             {numImages}
-    //           </a>
-    //         );
-    //       }
-    //       return 0;
-    //     } catch (error) {
-    //       console.error("Error parsing JSON:", error);
-    //       return 0; // or display an error message
-    //     }
-    //   },
-    // },
+
     {
       title: 'Status',
       dataIndex: 'task_status',
@@ -282,9 +87,61 @@ const TaggerData = () => {
     },
   ];
 
+    
+
+  const AssignTo = ({ pname }) => {
+    const defaultFormData = {
+      taskTitle: '',
+      taskId: '',
+      status: 'To do',
+      assignedProject: '',
+      assignedTo: '',
+      reviewer_profile_id: '',
+      role: 3,
+      creationDate: '',
+      mediaType: '',
+      fileName: '',
+      filePath: ''
+    }
+    let [formData, setFormData] = useState(defaultFormData);
+    let [taggers, setTaggers] = useState([]);
+  
+    let handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...formData,
+        [name]: value,
+      }));
+    };
+    let getTaggers = () => {
+      axios
+        .get(`${DOMAIN}/getalltaggers`)
+        .then(res => {
+          const allProfiles = res.data;
+          setTaggers(allProfiles);
+      }).catch(error => console.error(error));
+    }
+
+    useEffect(() => {
+        getTaggers();
+    }, []);
+
+  return (
+    <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '150px' ,height:'30px'}}>
+                      {/* <option key={0} value={0}>
+                          Select
+                      </option> */}
+                      { (taggers.length > 0 && taggers.map((tagger) => (
+                        <option key={tagger.profile_id} value={tagger.profile_id}>
+                            {tagger.profile_username}
+                        </option>
+                    )))}</select>
+  );
+};
+
   const StatusSelect = ({ record }) => {
     const [taskStatus, setTaskStatus] = useState({});
-    const [data, setData] = useState([])
+    const [data, setData] = useState([]);
 
     useEffect(() => {
       setTaskStatus((prevState) => ({
@@ -293,7 +150,7 @@ const TaggerData = () => {
       }));
     }, [record]);
 
-    const [completedTaskIds, setCompletedTaskIds] = useState([]);
+   const [completedTaskIds, setCompletedTaskIds] = useState([]);
 
     const handleStatusChange = (value) => {
       record.task_status = value;
@@ -319,11 +176,11 @@ const TaggerData = () => {
           console.log("Response data:", response.data);
           showAlert(response.data.message);
 
-          // Remove the completed task from the tagger list
-          const updatedData = data.filter((task) => task.task_id !== record.task_id);
-          setData(updatedData);
-        })
-        .catch((error) => console.error(error));
+            // Remove the completed task from the tagger list
+            const updatedData = data.filter((task) => task.task_id !== record.task_id);
+            setData(updatedData);
+          })
+          .catch((error) => console.error(error));
     };
 
     axios.post(`${DOMAIN}/storePort`, { port: appPort })
@@ -337,22 +194,23 @@ const TaggerData = () => {
         // Handle the error as needed
       })
 
-    return (
-      <Select
-        value={taskStatus[record.task_id]}
-        style={{ width: 120 }}
-        onChange={handleStatusChange}
-      >
-        <Option value="Reassigned" disabled>
-          reassigned
-        </Option>
-        <Option value="Completed">Completed</Option>
-        <Option value="Done" disabled>
-          Task done
-        </Option>
-      </Select>
-    );
+      return (
+        <Select
+          value={taskStatus[record.task_id]}
+          style={{ width: 120 }}
+          onChange={handleStatusChange}
+        >
+          <Option value="Reassigned" disabled>
+            reassigned
+          </Option>
+          <Option value="Completed">Completed</Option>
+          <Option value="Done" disabled>
+            Task done
+          </Option>
+        </Select>
+      );
   };
+
   const start = () => {
     setLoading(true);
     // ajax request after empty completing
@@ -386,6 +244,11 @@ const TaggerData = () => {
   };
 
   const getTask = (taggerIdInfo, taggers) => {
+    console.log("taggerId:", taggerId);
+    console.log("taggerIdInfo:", taggerIdInfo);
+    console.log("auth.role:", auth.profile_role);
+
+
     if (taggerId === "admin") {
       axios
         .get(`${DOMAIN}/getalltask`)
@@ -425,15 +288,30 @@ const TaggerData = () => {
         .catch((error) => console.error(error));
     }
   };
+
+  const showCustomeAlert = (error) => {
+    Swal.fire({
+      title: '',
+      text: error,
+      icon: 'Record added successfully...',
+      confirmButtonText: 'OK',
+    });
+  };
   useEffect(() => {
     getTaggers();
+
+    axios.get(`${DOMAIN}/getPort?appName=tagging-toolV2`)
+    .then(result => {
+      setPortNumber(result['data'].appPort);
+    }).catch(error => {
+      showCustomeAlert(error)
+    })
   }, []);
 
   console.log("Data in TaggerData component:", data);
 
   return (
     <div>
-
       <div
         style={{
           marginBottom: 16,

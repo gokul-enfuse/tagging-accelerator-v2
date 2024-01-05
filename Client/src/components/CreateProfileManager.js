@@ -98,9 +98,10 @@ const CreateProfileManager = () => {
       };
 
     return (
-        <form onSubmit={handleSubmit} id='create-task'>
-            <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}>
-                <legend>Create Profile (Tagger & Reviewer):</legend>
+        <form className='create_tagger_reviewrs_container' onSubmit={handleSubmit} id='create-task'>
+            {/* <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}> */}
+            <div className='create_tagger_reviewrs_content'>
+                <h1>Create Profile (Tagger & Reviewer):</h1>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
 
@@ -121,8 +122,11 @@ const CreateProfileManager = () => {
                     <option value="3">Tagger</option>
                     <option value="4">Reviewer</option>
                 </select><br />
-            </fieldset>
-            <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
+                </div>
+            {/* </fieldset> */}
+            <div className='create_tagger_reviewrs_button_cont'>
+                <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
+            </div>
         </form>
     );
 };

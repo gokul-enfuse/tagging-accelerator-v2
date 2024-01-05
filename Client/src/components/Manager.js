@@ -4,6 +4,7 @@ import axios from 'axios';
 import { DOMAIN } from '../Constant';
 import TableData from './TableData';
 import useAuth from '../hooks/useAuth.js';
+import SearchBar from './SearchBar';
 
 const Manager = () => {
     const [projectList, setProjectList] = useState([]);
@@ -78,14 +79,19 @@ const Manager = () => {
     };
 
     return (
+        <div style={{height:'95vh'}}>
+            <div>
+            <SearchBar/>
+            </div>
+        
         <div>
-            <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>
+            <h1 style={{color:'white' ,marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>
                 Welcome {auth.profile_fullname}
             </h1>
             <div>
-                <label style={{ marginTop: 20 }}>Assigned to Project</label>
+                <label style={{ marginTop: 20 ,color:'white'}}>Assigned to Project</label>
                 <br />
-                <select
+                <select className='assignedToProject'
                     name='assignedTo'
                     style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}
                     onChange={handleProjectChange}
@@ -103,9 +109,10 @@ const Manager = () => {
             </div>
             {auth.profile_role !== 2 && (
                 <div>
-                    <strong>Manager Name:</strong> {managerName}
+                    <strong style={{color:'white'}}>Manager Name:</strong> {managerName}
                 </div>)}
             {selectedProject && <TableData selectedProject={selectedProject} />}
+        </div>
         </div>
     );
 };

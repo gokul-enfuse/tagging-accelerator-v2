@@ -325,7 +325,7 @@ function BulkUpload() {
         console.log('4ZIP file selected:', zipFile);
     }, [zipFile]);
     return (
-        <div>
+        <div className='bulkupload'>
             {/* Download button at the top */}
             <button
                 id="downloadTopButton"
