@@ -17,6 +17,7 @@ profileRouter.post('/create/profile', async (req, res) => {
     let profile_confirmpassword = (req.body.confirmPassword) ? req.body.confirmPassword : null;
     let profile_role = (req.body.role) ? req.body.role : 0;
     let project_id = (req.body.id) ? req.body.id : 0;
+    let profile_login_session = (req.body.role > 2)? 0 : 1;
     let createdDate = new Date().toJSON();
     let modifiedDate = new Date().toJSON();
 
@@ -32,7 +33,7 @@ profileRouter.post('/create/profile', async (req, res) => {
             if (result[0].c > 0) {
                 sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = '${project_id}', modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`;
             } else {
-                sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, '${project_id}', '${createdDate}', '${modifiedDate}')`;
+                sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, profile_login_session, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, '${project_id}', '${profile_login_session}', '${createdDate}', '${modifiedDate}')`;
             }
             conn.query(sql, (error, result) => {
                 if (error) {
@@ -67,6 +68,16 @@ profileRouter.post("/api/login", (req, res) => {
                 ).toString(CryptoJS.enc.Utf8);
                 if (decryptedPassword !== req.body.password) {
                     return res.status(401).json({ message: "Incorrect password" });
+                }
+                if(result[0].profile_role > 2) {
+                    updateLoginSessionFun(table_name, result[0].profile_id, 1)
+                        .then(result => {
+                            console.log(result);
+                        }).catch(error => {
+                            //return res.status(404).json({message: error.sqlMessage});
+                            console.log(error.sqlMessage);
+                            return;
+                        });
                 }
                 res.status(200).json(result[0]);
             } else {
@@ -185,6 +196,12 @@ profileRouter.post('/storePort', async (req, res) => {
     console.log("Received port:", port); // Change from 'port' to 'appPort'
     // res.json({ message: 'Port stored successfully' })
 });
+
+profileRouter.put('/logout/:profile_id', (req, res) => {
+    let { profile_id } = req.params;
+    let login_session = req.body.profil_login_session;
+    updateLoginSessionFun('accelerator_profile', profile_id, login_session);
+})
 
 /**
  * 
@@ -322,6 +339,20 @@ let emailFunction = (email, username, password) => {
             console.log('Email sent: ' + info.response);
         }
     });
+}
+
+let updateLoginSessionFun = (table_name, profile_id, login_session) => {
+    let sql= `update ${table_name} set profile_login_session = ${login_session}, modifiedDate = '${new Date().toJSON()}'  WHERE profile_id = ${profile_id}`;
+    return new Promise((resolve, reject) => {
+
+        conn.query(sql, (error, result) => {
+            if(error) {
+                return reject(error);
+            }
+            return resolve(result);
+        });
+
+    });    
 }
 
 module.exports = profileRouter;

@@ -1,13 +1,14 @@
 import { Button, Table, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
-import 'antd/dist/antd.min.css';
-import { ROLES } from './ROLES.js';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
-import { DOMAIN } from '../Constant.js';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import { useLocation } from 'react-router-dom';
+import 'antd/dist/antd.min.css';
+import { DOMAIN } from '../Constant.js';
+import { ROLES } from './ROLES.js';
+
 
 const TaggerData = () => {
   const { Option } = Select;
@@ -23,6 +24,7 @@ const TaggerData = () => {
   let currentURL = window.location.href;
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
+  
   const columnsRow = [
     {
       title: 'Task ID',
@@ -49,14 +51,11 @@ const TaggerData = () => {
       render: (text, record) => {
         try {
           if (record.task_filename) {
-            console.log("record.task_filedata:", record.task_filename)
-            //const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/')); 
+            //const taskData = JSON.parse(record.task_filename.replace(/\\/g, '/')); 
             const taskData = [];
             taskData.push(record.task_filename);
-            console.log("record:", record);
-            console.log("updatedTaskData:", taskData.length)
             const numImages = taskData.length;
-            const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
+            const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${taggerId}`;
             return (
               <a href={otherAppUrl} target="_blank">
                 {numImages}
@@ -185,13 +184,12 @@ const TaggerData = () => {
 
     axios.post(`${DOMAIN}/storePort`, { port: appPort })
       .then((response) => {
-        console.log("appPort:", appPort);
         // Handle the response if needed
         console.log("Port stored in the backend:", response.data);
       })
       .catch((error) => {
-        console.error("Error storing port in the backend:", error);
         // Handle the error as needed
+        console.error("Error storing port in the backend:", error);
       })
 
       return (
@@ -221,7 +219,6 @@ const TaggerData = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -237,49 +234,34 @@ const TaggerData = () => {
       .get(`${DOMAIN}/getalltaggers`)
       .then((response) => {
         const allProfiles = response.data;
-        console.log("response data is for reviewer", allProfiles);
         getTask(taggerId, allProfiles);
       })
       .catch((error) => console.error(error));
   };
 
   const getTask = (taggerIdInfo, taggers) => {
-    console.log("taggerId:", taggerId);
-    console.log("taggerIdInfo:", taggerIdInfo);
-    console.log("auth.role:", auth.profile_role);
-
-
     if (taggerId === "admin") {
       axios
         .get(`${DOMAIN}/getalltask`)
         .then((response) => {
-          console.log("Response data all task:", response.data, "tagger data is:", taggers);
           const allTasks = response.data;
           const filteredArray = allTasks.filter((item1) => {
             return taggers.some((item2) => {
-              console.log("item1 is:", item1, "item2 is:", item2);
               return item1.profile_id === item2.profile_id && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
-
             });
           });
           setData(filteredArray);
-          // console.log("first element:",(filteredArray[0].task_filedata).length )
-          console.log("json:", (JSON.parse((filteredArray[0].task_filedata))).length)
-          console.log("tasklist is:", filteredArray);
+          console.log("json:", ((filteredArray[0].task_filename)).length)
         })
         .catch((error) => console.error(error));
-      console.log("record is:", taggerIdInfo);
     } else {
-      console.log("taggerIdInfo:", taggerIdInfo);
       axios
         .post(`${DOMAIN}/taskbyfilter`, {
           assignedTo: taggerIdInfo,
         })
         .then((response) => {
-          console.log("Response data is:", response.data);
           const allTasks = response.data;
           const filteredArray = allTasks.filter((item1) => {
-            console.log("response.data:", response.data)
             return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
           });
           setData(filteredArray);
@@ -307,8 +289,6 @@ const TaggerData = () => {
       showCustomeAlert(error)
     })
   }, []);
-
-  console.log("Data in TaggerData component:", data);
 
   return (
     <div>

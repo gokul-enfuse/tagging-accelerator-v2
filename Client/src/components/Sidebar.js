@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
 import logo from './enfuse-logo.png';
-import { FaTh, FaAdn, FaBars } from "react-icons/fa";
-import { MdDns, MdPreview } from 'react-icons/md';
-import { GrUserManager } from 'react-icons/gr';
 import useAuth from "../hooks/useAuth";
 import Button from '@mui/material/Button';
+import axios from 'axios';
 import { ROLES } from './ROLES';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import customAdminIcon from '../Icons/admin_logo.png';
@@ -15,6 +13,10 @@ import customReviewerIcon from '../Icons/reviewer_logo.png';
 import customAnnotationToolIcon from '../Icons/annotation_tool_logo.png';
 import customReportsIcon from '../Icons/reports_logo.png';
 import customHistoricalRecordsIcon from '../Icons/historical_records_logo.png';
+import { DOMAIN } from '../Constant.js';
+import { FaTh, FaAdn, FaBars } from "react-icons/fa";
+import { MdDns, MdPreview } from 'react-icons/md';
+import { GrUserManager } from 'react-icons/gr';
 
 const MenuItem = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +50,6 @@ const MenuItem = ({ item }) => {
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
-
   const { auth, setAuth } = useAuth();
   const menuItem = [
     {
@@ -149,6 +150,8 @@ const Sidebar = ({ children }) => {
     icon: <img src={customHistoricalRecordsIcon} width={'35px'} alt="Historical Records Icon" />,
   }
   const logout = () => {
+    let profil_id = auth.profile_id;
+    axios.put(`${DOMAIN}/logout/${profil_id}`, {profil_login_session: 0})
     setAuth({})
   }
   const sidebarStyle = {
