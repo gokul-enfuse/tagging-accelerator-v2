@@ -5,6 +5,7 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant.js';
+import SearchBar from './SearchBar.js';
 
 
 const ProfileData = () => {
@@ -71,6 +72,11 @@ const ProfileData = () => {
 
     return (
         <div>
+            <div>
+                <SearchBar/>
+            </div>
+        
+        <div className='profileDetails'>
             <div
                 style={{
                     marginBottom: 16,
@@ -84,6 +90,7 @@ const ProfileData = () => {
                 </span>
             </div>
             <Table columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
+        </div>
         </div>
     );
 }

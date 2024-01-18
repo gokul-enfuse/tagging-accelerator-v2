@@ -7,138 +7,10 @@ import axios from "axios";
 import { DOMAIN } from '../Constant.js';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
-import { useLocation } from 'react-router-dom'
-
-const { Option } = Select;
-
-// const columnsRow = [
-//   {
-//     title: 'Task ID',
-//     dataIndex: 'task_id',
-//     key: 'key'
-//   },
-//   {
-//     title: 'Task Title',
-//     dataIndex: 'task_title',
-//     key: 'key'
-//   },
-//   {
-//     title: 'Assign To',
-//     dataIndex: 'profile_username',
-//     key: 'key',
-//   },
-//   {
-//     title: 'No Of Images',
-//     dataIndex: 'task_filename',
-//     key: 'key',
-//     render: (text, record) => {
-//       try {
-//         if (record.task_filename) {
-//           console.log("record.task_filedata:",record.task_filename)
-//           //const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/')); 
-// 		  const taskData = [];
-// 		  taskData.push(record.task_filename); 	
-//           /*const updatedTaskData = taskData.map(item => {
-// 			  console.log(item);
-// 		  });*/
-//           console.log("updatedTaskData:", taskData.length)
-//           const numImages = taskData.length;
-//           const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}`;
-
-//           return (
-//             <a href={otherAppUrl} target="_blank">
-//               {numImages}
-//             </a>
-//           );
-//         }
-//         return 0;
-//       } catch (error) {
-//         console.error("Error parsing JSON:", error);
-//         return 0; // or display an error message
-//       }
-//     },
-//   },
-
-
-//   {
-//     title: 'Status',
-//     dataIndex: 'task_status',
-//     key: 'key',
-//     render: (text, record) => (
-//       <StatusSelect record={record} />
-//     )
-//   },
-
-//   {
-//     title: 'Created Date',
-//     dataIndex: 'createdDate',
-//     key: 'key'
-//   },
-// ];
-
-// const StatusSelect = ({ record }) => {
-//   const [taskStatus, setTaskStatus] = useState({});
-//   const [data, setData] = useState([])
-
-//   useEffect(() => {
-//     setTaskStatus((prevState) => ({
-//       ...prevState,
-//       [record.task_id]: record.task_status || "Todo"
-//     }));
-//   }, [record]);
-
-//   const [completedTaskIds, setCompletedTaskIds] = useState([]);
-
-//   const handleStatusChange = (value) => {
-//     record.task_status = value;
-//     const updatedTaskStatus = { ...taskStatus, [record.task_id]: value };
-//     setTaskStatus(updatedTaskStatus);
-//     if (value === "Completed") {
-//       setCompletedTaskIds([...completedTaskIds, record.task_id]);
-//     }
-//     const showAlert = () => {
-//       Swal.fire({
-//         title: '',
-//         text: 'Status changed succesfullly',
-//         icon: 'Record added successfully',
-//         confirmButtonText: 'OK',
-//       });
-//     };
-//     // Update the task status in the backend
-//     axios
-//       .put(`${DOMAIN}/updatetask/${record.task_id}`, {
-//         record: { ...record, task_status: "Completed", reviewer_task_status: "Waiting for review" },
-//       })
-//       .then((response) => {
-//         console.log("Response data:", response.data);
-//         showAlert(response.data.message);
-
-//         // Remove the completed task from the tagger list
-//         const updatedData = data.filter((task) => task.task_id !== record.task_id);
-//         setData(updatedData);
-//       })
-//       .catch((error) => console.error(error));
-//   };
-
-
-//   return (
-//     <Select
-//       value={taskStatus[record.task_id]}
-//       style={{ width: 120 }}
-//       onChange={handleStatusChange}
-//     >
-//       <Option value="Reassigned" disabled>
-//         reassigned
-//       </Option>
-//       <Option value="Completed">Completed</Option>
-//       <Option value="Done" disabled>
-//         Task done
-//       </Option>
-//     </Select>
-//   );
-// };
+import { useLocation } from 'react-router-dom';
 
 const TaggerData = () => {
+  const { Option } = Select;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
@@ -146,18 +18,12 @@ const TaggerData = () => {
   const [data, setData] = useState([]);
   const [url, setUrl] = useState("");
   const [mismatchedTasks, setMismatchedTasks] = useState([]);
-
+  const [portNumber, setPortNumber] = useState();
   let currentPort;
-
-  const location = useLocation();
-
-  const currentURL = window.location.href;
-  const porturl = new URL(currentURL);
-  const appPort = porturl.port;
-
-  console.log("port:", appPort);
-
-
+  let location = useLocation();
+  let currentURL = window.location.href;
+  let porturl = new URL(currentURL);
+  let appPort = porturl.port;
   const columnsRow = [
     // {
     //   title: 'Task ID',
@@ -201,7 +67,7 @@ const TaggerData = () => {
     //   key: 'key',
     //   render: (text, record, index) => {
     //     const uniqueTitles = Array.from(new Set(record.task_title.split(',')));
-    
+
     //     return (
     //       <div style={{ marginBottom: '8px', display: 'flex', flexWrap: 'wrap' }}>
     //         {uniqueTitles.map((titlePart, titleIndex) => (
@@ -220,7 +86,7 @@ const TaggerData = () => {
       key: 'key',
       render: (text, record) => {
         const taskTitles = record.task_title.split(',');
-    
+
         return (
           <div style={{ marginBottom: '8px', display: 'flex', flexWrap: 'wrap' }}>
             {taskTitles.map((titlePart, titleIndex) => (
@@ -232,7 +98,7 @@ const TaggerData = () => {
         );
       },
     },
-    
+
     {
       title: 'Assign To',
       dataIndex: 'profile_username',
@@ -241,58 +107,6 @@ const TaggerData = () => {
         <AssignTo pname={pname} record={record} mismatchedTasks={mismatchedTasks} />
       )
     },
-    // {
-    //   title: 'No Of Images',
-    //   dataIndex: 'task_filename',
-    //   key: 'key',
-    //   render: (text, record) => {
-    //     try {
-    //       if (record.task_filename) {
-    //         console.log("record.task_filedata:", record.task_filename)
-    //         //const taskData = JSON.parse(record.task_filedata.replace(/\\/g, '/')); 
-    //         const taskData = [];
-    //         taskData.push(record.task_filename);
-    //         console.log("record:", record);
-
-    //         console.log("updatedTaskData:", taskData.length)
-    //         const numImages = taskData.length;
-    //         const otherAppUrl = `http://localhost:3002/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
-    //         return (
-    //           <a href={otherAppUrl} target="_blank">
-    //             {numImages}
-    //           </a>
-    //         );
-    //       }
-    //       return 0;
-    //     } catch (error) {
-    //       console.error("Error parsing JSON:", error);
-    //       return 0; // or display an error message
-    //     }
-    //   },
-    // },
-
-    // {
-    //   title: 'No Of Items',
-    //   dataIndex: 'task_filename',
-    //   key: 'key',
-    //   render: (text, record) => {
-    //     try {
-    //       const numImages = record.task_filename || 0;
-    //       const otherAppUrl = `http://localhost:3001/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
-          
-    //       return (
-    //         <a href={otherAppUrl} target="_blank">
-    //           {numImages}
-    //         </a>
-    //       );
-    //     } catch (error) {
-    //       console.error("Error rendering number of images:", error);
-    //       return 0; // or display an error message
-    //     }
-    //   },
-    // },
-
-
     {
       title: 'No Of Items',
       dataIndex: 'task_filename',
@@ -300,18 +114,19 @@ const TaggerData = () => {
       render: (text, record) => {
         try {
           let numImages = 0;
-    
-          if (auth.profile_role === 3) {
+
+          if (auth.profile_role === 3 ||auth.profile_role === 1 ||auth.profile_role === 2) {
+            numImages = record.task_filename || 0; }
             // Individual tagger logic (assuming each image corresponds to a task)
-            numImages = 1;
-          } else {
-            // Admin/Manager logic (counting the number of images)
-            // numImages = record.task_filename ? 1 : 0;
-             numImages = record.task_filename || 0;
-          }
-    
-          const otherAppUrl = `http://localhost:3000/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
-    
+            // numImages = 1;
+          // } else {
+          //   // Admin/Manager logic (counting the number of images)
+          //   // numImages = record.task_filename ? 1 : 0;
+             
+          // }
+          // numImages = record.task_filename || 0;
+
+          const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?username=${taggerId}&taggerName=${record.profile_fullname}`;
           return (
             <a href={otherAppUrl} target="_blank">
               {numImages}
@@ -323,7 +138,7 @@ const TaggerData = () => {
         }
       },
     },
-    
+
     {
       title: 'Status',
       dataIndex: 'task_status',
@@ -339,10 +154,63 @@ const TaggerData = () => {
       key: 'key'
     },
   ];
- 
+
+
+
+
+  //   const AssignTo = ({ pname }) => {
+  //     const defaultFormData = {
+  //       taskTitle: '',
+  //       taskId: '',
+  //       status: 'To do',
+  //       assignedProject: '',
+  //       assignedTo: '',
+  //       reviewer_profile_id: '',
+  //       role: 3,
+  //       creationDate: '',
+  //       mediaType: '',
+  //       fileName: '',
+  //       filePath: ''
+  //     }
+  //     let [formData, setFormData] = useState(defaultFormData);
+  //     let [taggers, setTaggers] = useState([]);
+
+  //     let handleChange = (e) => {
+  //       const { name, value } = e.target;
+  //       setFormData((prevData) => ({
+  //         ...formData,
+  //         [name]: value,
+  //       }));
+  //     };
+  //     let getTaggers = () => {
+  //       axios
+  //         .get(`${DOMAIN}/getalltaggers`)
+  //         .then(res => {
+  //           const allProfiles = res.data;
+  //           setTaggers(allProfiles);
+  //       }).catch(error => console.error(error));
+  //     }
+
+  //     useEffect(() => {
+  //         getTaggers();
+  //     }, []);
+
+  //   return (
+  //     <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '150px' ,height:'30px'}}>
+  //                       {/* <option key={0} value={0}>
+  //                           Select
+  //                       </option> */}
+  //                       { (taggers.length > 0 && taggers.map((tagger) => (
+  //                         <option key={tagger.profile_id} value={tagger.profile_id}>
+  //                             {tagger.profile_username}
+  //                         </option>
+  //                     )))}</select>
+  //   );
+  // };
+
   const StatusSelect = ({ record }) => {
     const [taskStatus, setTaskStatus] = useState({});
-    const [data, setData] = useState([])
+    const [data, setData] = useState([]);
 
     useEffect(() => {
       setTaskStatus((prevState) => ({
@@ -411,6 +279,7 @@ const TaggerData = () => {
       </Select>
     );
   };
+
   const start = () => {
     setLoading(true);
     // ajax request after empty completing
@@ -449,6 +318,21 @@ const TaggerData = () => {
     console.log("auth.role:", auth.profile_role);
 
 
+    if (taggerId === "admin") {
+      axios
+        .get(`${DOMAIN}/getalltask`)
+        .then((response) => {
+          console.log("Response data all task:", response.data, "tagger data is:", taggers);
+          const allTasks = response.data;
+          const filteredArray = allTasks.filter((item1) => {
+            return taggers.some((item2) => {
+              console.log("item1 is:", item1, "item2 is:", item2);
+              return item1.profile_id === item2.profile_id && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
+            })
+          })
+        })
+    }
+
     // if (taggerId === "admin" || auth.profile_role === 2) {
     //   axios
     //     .get(`${DOMAIN}/getalltask`)
@@ -471,7 +355,7 @@ const TaggerData = () => {
     //   console.log("record is:", taggerIdInfo);
     // } 
 
-    if (taggerId === "admin" || auth.profile_role === 2) {
+    if (taggerId === "admin" || auth.profile_role === 2 ) {
       // const fetchData = async () => {
       //   try {
       //     // First API call: /getalltask
@@ -508,28 +392,28 @@ const TaggerData = () => {
       // const mergeTasks = (tasks) => {
       //   const mergedTasks = [];
       //   const taskMap = new Map();
-      
+
       //   tasks.forEach((task) => {
       //     const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
-      
+
       //     if (!taskMap.has(key)) {
       //       taskMap.set(key, []);
       //     }
-      
+
       //     taskMap.get(key).push(task);
       //   });
-      
+
       //   taskMap.forEach((groupedTasks) => {
       //     const mergedTask = { ...groupedTasks[0] }; // Use the first task as a base
       //     mergedTask.task_id = groupedTasks.map((t) => t.task_id).join(','); // Combine task_ids
       //     mergedTask.task_title = groupedTasks.map((t) => t.task_title).join(','); // Combine task_titles
       //     mergedTask.task_filename = groupedTasks.reduce((total, t) => total + t.task_filename, 0); // Sum of task_filenames
-      
+
       //     // You can add similar logic for other properties if needed
-      
+
       //     mergedTasks.push(mergedTask);
       //   });
-      
+
       //   return mergedTasks;
       // }
 
@@ -538,19 +422,19 @@ const TaggerData = () => {
       const mergeTasks = (tasks) => {
         const mergedTasks = [];
         const taskMap = new Map();
-      
+
         tasks.forEach((taskGroup) => {
           taskGroup.forEach((task) => {
             const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
-      
+
             if (!taskMap.has(key)) {
               taskMap.set(key, []);
             }
-      
+
             taskMap.get(key).push(task);
           });
         });
-      
+
         taskMap.forEach((groupedTasks) => {
           const mergedTask = { ...groupedTasks[0] }; // Use the first task as a base
           console.log('  mergedTask1:', mergedTask);
@@ -565,32 +449,28 @@ const TaggerData = () => {
             return t.task_title;
           }).join(',');
           // Combine task_titles
-          
+
           mergedTask.task_filename = groupedTasks.length; // Count of similar tasks
-      
+
           // You can add similar logic for other properties if needed
-      
+
           mergedTasks.push(mergedTask);
           console.log('Value of mergedTask:', mergedTask);
-
         });
         console.log('Value of mergedTasks:', mergedTasks);
-
-      
         return mergedTasks;
-        
       };
 
 
-      
+
       // const mergeTasks = (tasks) => {
       //   const mergedTasks = [];
       //   const taskMap = new Map();
-      
+
       //   tasks.forEach((taskGroup) => {
       //     taskGroup.forEach((task) => {
       //       const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
-      
+
       //       if (!taskMap.has(key)) {
       //         taskMap.set(key, [task]);
       //       } else {
@@ -598,7 +478,7 @@ const TaggerData = () => {
       //         const isTitleMatch = existingTasks.some(
       //           (existingTask) => existingTask.task_title === task.task_title
       //         );
-      
+
       //         if (!isTitleMatch) {
       //           existingTasks.push(task);
       //         } else {
@@ -607,7 +487,7 @@ const TaggerData = () => {
       //       }
       //     });
       //   });
-      
+
       //   taskMap.forEach((groupedTasks) => {
       //     if (groupedTasks.length > 1) {
       //       // Only add to mergedTasks if there is more than one task in the group
@@ -617,10 +497,10 @@ const TaggerData = () => {
       //       mergedTasks.push(groupedTasks[0]);
       //     }
       //   });
-      
+
       //   return mergedTasks;
       // };
-      
+
 
 
       const fetchData = async () => {
@@ -661,36 +541,145 @@ const TaggerData = () => {
           setData(mergedTasks);
           console.log("json:", (JSON.parse((combinedTasks[0].task_filedata))).length);
           console.log("tasklist is:", combinedTasks);
+          console.log("mergedTasks:",mergedTasks)
         } catch (error) {
           console.error(error);
         }
       };
-
-
       fetchData();
     }
+    // else {
+    //   console.log("taggerIdInfo:", taggerIdInfo);
+    //   axios
+    //     .post(`${DOMAIN}/taskbyfilter`, {
+    //       assignedTo: taggerIdInfo,
+    //     })
+    //     .then((response) => {
+
+    //       const mergeTasks = (tasks) => {
+    //         const mergedTasks = [];
+    //         const taskMap = new Map();
+    
+    //         tasks.forEach((taskGroup) => {
+    //           taskGroup.forEach((task) => {
+    //             const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
+    
+    //             if (!taskMap.has(key)) {
+    //               taskMap.set(key, []);
+    //             }
+    
+    //             taskMap.get(key).push(task);
+    //           });
+    //         });
+    
+    //         taskMap.forEach((groupedTasks) => {
+    //           const mergedTask = { ...groupedTasks[0] }; // Use the first task as a base
+    //           console.log('  mergedTask1:', mergedTask);
+    
+    //           mergedTask.task_id = groupedTasks.map((t) => t.task_id).join(','); // Combine task_ids
+    
+    //           // mergedTask.task_title = groupedTasks.map((t) => t.task_title).join(','); // Combine task_titles
+    //           mergedTask.task_title = groupedTasks.map((t) => {
+    //             console.log('Value of t:', t);
+    //             console.log('Value of t.task_title:', t.task_title);
+    
+    //             return t.task_title;
+    //           }).join(',');
+    //           // Combine task_titles
+    
+    //           mergedTask.task_filename = groupedTasks.length; // Count of similar tasks
+    
+    //           // You can add similar logic for other properties if needed
+    
+    //           mergedTasks.push(mergedTask);
+    //           console.log('Value of mergedTask:', mergedTask);
+    //         });
+    //         console.log('Value of mergedTasks:', mergedTasks);
+    //         return mergedTasks;
+    //       };
+    //       console.log("Response data is:", response.data);
+    //       const allTasks = response.data;
+    //       const filteredArray = allTasks.filter((item1) => {
+    //         console.log("response.data:", response.data)
+    //         return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
+    //       });
+    //       setData(filteredArray);
+    //       console.log("filteredArray: ", filteredArray)
+
+    //     })
+    //     .catch((error) => console.error(error));
+    // }
+
     else {
-      console.log("taggerIdInfo:", taggerIdInfo);
       axios
         .post(`${DOMAIN}/taskbyfilter`, {
           assignedTo: taggerIdInfo,
         })
         .then((response) => {
+          const mergeTasks = (tasks) => {
+            const mergedTasks = [];
+            const taskMap = new Map();
+    
+            tasks.forEach((taskGroup) => {
+              taskGroup.forEach((task) => {
+                const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
+    
+                if (!taskMap.has(key)) {
+                  taskMap.set(key, []);
+                }
+    
+                taskMap.get(key).push(task);
+              });
+            });
+    
+            taskMap.forEach((groupedTasks) => {
+              const mergedTask = { ...groupedTasks[0] }; // Use the first task as a base
+              console.log('mergedTask1:', mergedTask);
+    
+              mergedTask.task_id = groupedTasks.map((t) => t.task_id).join(','); // Combine task_ids
+              mergedTask.task_title = groupedTasks.map((t) => t.task_title).join(','); // Combine task_titles
+              mergedTask.task_filename = groupedTasks.length; // Count of similar tasks
+    
+              // You can add similar logic for other properties if needed
+    
+              mergedTasks.push(mergedTask);
+              console.log('mergedTask:', mergedTask);
+            });
+            console.log('mergedTasks:', mergedTasks);
+            return mergedTasks;
+          };
+    
           console.log("Response data is:", response.data);
           const allTasks = response.data;
           const filteredArray = allTasks.filter((item1) => {
             console.log("response.data:", response.data)
             return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
           });
-          setData(filteredArray);
-          console.log("filteredArray: ",filteredArray)
-
+          const mergedTasks = mergeTasks([filteredArray]);
+          setData(mergedTasks);
+          console.log("mergedTasks:", mergedTasks);
         })
         .catch((error) => console.error(error));
     }
   };
+
+  const showCustomeAlert = (error) => {
+    Swal.fire({
+      title: '',
+      text: error,
+      icon: 'Record added successfully...',
+      confirmButtonText: 'OK',
+    });
+  };
   useEffect(() => {
     getTaggers();
+
+    axios.get(`${DOMAIN}/getPort?appName=tagging-toolV2`)
+      .then(result => {
+        setPortNumber(result['data'].appPort);
+      }).catch(error => {
+        showCustomeAlert(error)
+      })
   }, []);
 
   console.log("Data in TaggerData component:", data);
@@ -740,7 +729,7 @@ const TaggerData = () => {
       setFormData({
         assignedTo: value,
       });
-    
+
       // Call the backend API to update the assignment
       axios
         .post(`${DOMAIN}/updateAssignment/${record.task_id}`, {
@@ -751,7 +740,7 @@ const TaggerData = () => {
         })
         .catch((error) => console.error("Error updating assignment:", error));
     };
-    
+
     const getTaggers = () => {
       axios
         .get(`${DOMAIN}/getalltaggers`)
@@ -780,6 +769,7 @@ const TaggerData = () => {
 
     const tasksPerLine = 3;
     const [tasks, setTasks] = useState([]);
+    const isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
     return (
       <select
         name="assignedTo"
@@ -787,6 +777,7 @@ const TaggerData = () => {
         value={formData.assignedTo || findTaggerById(record.profile_id)?.profile_id || ''}
         onChange={handleChange}
         style={{ width: '150px', height: '30px' }}
+        disabled={isIndividualLogin} 
       >
         <option value="">Select</option>
         {taggers.length > 0 &&
@@ -800,7 +791,7 @@ const TaggerData = () => {
           ))}
       </select>
     )
-   
+
   }
 
   return (
