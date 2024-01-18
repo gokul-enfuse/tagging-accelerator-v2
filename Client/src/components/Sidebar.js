@@ -56,7 +56,7 @@ const Sidebar = ({ children }) => {
       id: 1,
       name: "Admin",
       // icon: <FaAdn />,
-      icon: <img src={customAdminIcon} width={'35px'}  alt="Admin Icon" />,
+      icon: <img src={customAdminIcon} width={'35px'} alt="Admin Icon" />,
       submenu: [
         {
           id: 4,
@@ -102,44 +102,53 @@ const Sidebar = ({ children }) => {
 
       ]
     },
-    {
-      path: "/tagger",
-      id: 3,
-      name: "Tagger",
-      // icon: <MdDns />
-      icon: <img src={customTaggerIcon} width={'35px'} alt="Tagger Icon" />,
+    // {
+    //   path: "/tagger",
+    //   id: 3,
+    //   name: "Tagger",
+    //   // icon: <MdDns />
+    //   icon: <img src={customTaggerIcon} width={'35px'} alt="Tagger Icon" />,
 
-    },
-    {
-      path: "/reviewer",
-      id: 4,
-      name: "Reviewer",
-      // icon: <MdPreview />
-      icon: <img src={customReviewerIcon} width={'35px'} alt="Reviewer Icon" />,
-    },
-    {
-      path: "/reports",
-      id: 5,
-      name: "Reports",
-      // icon: <FaTh />
-      icon: <img src={customReportsIcon} width={'35px'} alt="Reports Icon" />,
-    },
-    {
-      path: "/bulkupload",
-      id: 6,
-      name: "Bulk Upload",
-      // icon: <FaTh />
-      icon: <img src={customAnnotationToolIcon} width={'35px'} alt="Admin Icon" />,
-    },
-    {
-      path: "/annotation",
-      id: 7,
-      name: "Annotation Tool",
-      // icon: <FaTh />
-      icon: <img src={customAnnotationToolIcon} width={'35px'} alt="Annotation Icon" />,
-    },
+    // },
+
+
+
 
   ]
+
+  const reports = {
+    path: "/reports",
+    id: 5,
+    name: "Reports",
+    // icon: <FaTh />
+    icon: <img src={customReportsIcon} width={'35px'} alt="Reports Icon" />,
+  }
+
+  const annotation = {
+    path: "/annotation",
+    id: 7,
+    name: "Annotation Tool",
+    // icon: <FaTh />
+    icon: <img src={customAnnotationToolIcon} width={'35px'} alt="Annotation Icon" />,
+  }
+
+  const bulkupload = {
+    path: "/bulkupload",
+    id: 6,
+    name: "Bulk Upload",
+    // icon: <FaTh />
+    icon: <img src={customAnnotationToolIcon} width={'35px'} alt="Admin Icon" />,
+  }
+
+  const reviewer = {
+
+    path: "/reviewer",
+    id: 4,
+    name: "Reviewer",
+    // icon: <MdPreview />
+    icon: <img src={customReviewerIcon} width={'35px'} alt="Reviewer Icon" />,
+
+  }
 
   const historicalMenu = {
     path: "/historicalrecords",
@@ -147,6 +156,14 @@ const Sidebar = ({ children }) => {
     name: "Historical Records",
     // icon: <FaTh />
     icon: <img src={customHistoricalRecordsIcon} width={'35px'} alt="Historical Records Icon" />,
+  }
+  const tagger = {
+    path: "/tagger",
+    id: 3,
+    name: "Tagger",
+    // icon: <MdDns />
+    icon: <img src={customTaggerIcon} width={'35px'} alt="Tagger Icon" />,
+
   }
   const logout = () => {
     setAuth({})
@@ -178,6 +195,22 @@ const Sidebar = ({ children }) => {
             }
             {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
               <MenuItem key={historicalMenu.id} item={historicalMenu} profileRole={auth.profile_role} />}
+
+            {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+              <MenuItem key={tagger.id} item={tagger} profileRole={auth.profile_role} />}
+
+            {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+              <MenuItem key={reviewer.id} item={reviewer} profileRole={auth.profile_role} />}
+
+            {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+              <MenuItem key={reports.id} item={reports} profileRole={auth.profile_role} />}
+
+            {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+              <MenuItem key={bulkupload.id} item={bulkupload} profileRole={auth.profile_role} />}
+
+            {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
+              <MenuItem key={annotation.id} item={annotation} profileRole={auth.profile_role} />}
+
           </ul>
         </nav>
         {auth.profile_role &&
