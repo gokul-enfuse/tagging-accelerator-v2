@@ -221,7 +221,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { DOMAIN } from '../Constant';
+import { DOMAIN, DOMAINCLIENT } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 
@@ -261,16 +261,17 @@ const CreateTask = () => {
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
+        console.log("vikas=", selectedFile, DOMAIN)
         if (selectedFile) {
             const formData = new FormData();
             formData.append('image', selectedFile);
             try {
                 console.log('Sending data to server:', formData);
-                const response = await axios.post('http://localhost:3030/api/upload', formData);
+                const response = await axios.post(`${DOMAIN}/api/upload`, formData);
                 console.log('Server response:', response.data);
                 if (response.status === 200) {
                     console.log('File uploaded successfully');
-                    console.log('File path:', "http://localhost:3030/" + response.data.filePath.replace(/\\/g, '/'));
+                    console.log('File path:', `${DOMAINCLIENT}` + response.data.filePath.replace(/\\/g, '/'));
                     console.log('File name:', response.data.fileName);
                     const updatedFileData = [
                         {
@@ -282,7 +283,8 @@ const CreateTask = () => {
                     setFormData({
                         ...formData,
                         filename: response.data.fileName,
-                        filepath: "http://localhost:3030/" + response.data.filePath.replace(/\\/g, '/')
+                        //filepath: `${DOMAINCLIENT}` + response.data.filePath.replace(/\\/g, '/')
+                        filepath: `${DOMAINCLIENT}uploads/images/` + response.data.fileName
                     });
                     console.log("Updated fileData:", updatedFileData);
 

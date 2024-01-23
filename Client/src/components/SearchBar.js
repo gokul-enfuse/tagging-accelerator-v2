@@ -1,10 +1,11 @@
 import React from 'react'
 import SignIn from './SignIn';
+import useAuth from '../hooks/useAuth.js';
 import { FaBell, FaCheckSquare,FaArrowCircleDown } from 'react-icons/fa';
 
 
 function SearchBar() {
-
+  const { auth } = useAuth();
   return (
     <div className='searchbar-cont'>
         <div className='search-heading'>
@@ -16,7 +17,7 @@ function SearchBar() {
             <h1><FaCheckSquare/></h1>
             <div className='search-icon-data'>
                 <h4>Your Name</h4>
-                <p>Administrator</p>
+                <p>{auth.profile_username}</p>
             </div>
             <h1><FaArrowCircleDown/></h1>
         </div>

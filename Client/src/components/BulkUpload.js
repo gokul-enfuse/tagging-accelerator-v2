@@ -118,89 +118,9 @@ const formatDate = (excelDate) => {
         });
     };
 
-    // const handleUploadClick = () => {
-    //     if (excelFile && zipFile) {
-    //         // Both Excel and ZIP files are selected, proceed with the upload logic
-    //         console.log('Both Excel and ZIP files are selected:', excelFile, zipFile);
-    //     } else {
-    //         alert('Please select both an Excel file and a ZIP file before uploading.');
-    //     }
-    // };
+    
 
-    // const handleUploadClick = async () => {
-    //     if (excelFile && zipFile) {
-    //         // Create a FormData object to send the files
-    //         const formData = new FormData();
-    //         formData.append('excelFile', excelFile);
-    //         formData.append('zipFile', zipFile);
-
-    //         try {
-    //             // Make an HTTP POST request to the server's upload endpoint
-    //             const response = await fetch('/api/excelupload', {
-    //                 method: 'POST',
-    //                 body: formData,
-    //             });
-
-    //             if (response.ok) {
-    //                 const data = await response.json();
-    //                 console.log('Upload successful:', data);
-    //                 // Handle success, e.g., display a success message to the user
-    //             } else {
-    //                 console.error('Upload failed:', response.status);
-    //                 // Handle the error, e.g., display an error message to the user
-    //             }
-    //         } catch (error) {
-    //             console.error('Error during upload:', error);
-    //             // Handle the error, e.g., display an error message to the user
-    //         }
-    //     } else {
-    //         alert('Please select both an Excel file and a ZIP file before uploading.');
-    //     }
-    // };
-
-    // const handleUploadClick = async () => {
-    //     if (excelFile && zipFile) {
-    //         try {
-    //             const workbook = await readExcelFile(excelFile);
-    //             const sheetName = workbook.SheetNames[0]; // Use the first sheet name
-    //             const worksheet = workbook.Sheets[sheetName];
-    //             const excelData = XLSX.utils.sheet_to_json(worksheet);
-
-    //             // const formData = new FormData();
-    //             // formData.append('excelFile', excelFile);
-    //             // formData.append('excelData', JSON.stringify(excelData));
-    //             // console.log("formdata:", formData)
-    //             // console.log('excelData:', excelData);
-    //             const requestBody = {
-    //                 excelData: excelData,
-    //             };
-    //             console.log("exceldata:", excelData);
-
-    //             const response = await fetch('http://localhost:3030/api/excelupload', {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify(requestBody),
-
-    //             });
-
-    //             if (response.ok) {
-    //                 const data = await response.json();
-    //                 console.log('Upload successful:', data);
-    //                 // Handle success, e.g., display a success message to the user
-    //             } else {
-    //                 console.error('Upload failed:', response.status);
-    //                 // Handle the error, e.g., display an error message to the user
-    //             }
-    //         } catch (error) {
-    //             console.error('Error during upload:', error);
-    //             // Handle the error, e.g., display an error message to the user
-    //         }
-    //     } else {
-    //         alert('Please select both an Excel file and a ZIP file before uploading.');
-    //     }
-    // };
+    
 
  // Helper function to format date strings to YYYY-MM-DD
  const formatDateToYYYYMMDD = (dateString) => {
