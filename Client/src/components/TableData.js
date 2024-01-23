@@ -78,7 +78,6 @@ const TableData = ({ selectedProject }) => {
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   let [data, setData] = useState([])
-console.log("selectedProject tabledata:",selectedProject)
   const start = () => {
     setLoading(true);
     // ajax request after empty completing
@@ -98,31 +97,7 @@ console.log("selectedProject tabledata:",selectedProject)
     onChange: onSelectChange,
   };
   const hasSelected = selectedRowKeys.length > 0;
-
-  // if (auth.role === ROLES.ADMIN || auth.role === ROLES.MANAGER) {
-  //   data = data.map((item) => {
-  //     item.assignTo = undefined
-  //     return item
-  //   })
-  // }
-  // console.log('role:', auth.role, ', data: ', data);
-
-  // if (auth.role === ROLES.MANAGER || auth.role === ROLES.ADMIN) {
-  //   console.log('columns1:', columns)
-  //   columns = columns.filter((columnitem) => {
-  //     console.log('columnitem:', columnitem)
-  //     console.log('columns2:', columns)
-  //     return columnitem.title !== 'Assign To'
-
-
-  //   })
-  // }
   console.log('role:', auth.profile_role, ', columns: ', columns);
-
-  // columns= columns.filter((columnitem) => {
-  //  return columnitem.title !== 'Assign To'
-
-  // })
   const getTask = (record) => {
 
     axios

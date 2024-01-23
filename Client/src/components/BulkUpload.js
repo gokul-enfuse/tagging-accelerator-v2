@@ -1,6 +1,7 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
 import { useState, useEffect } from 'react';
+import { parse, format } from 'date-fns';
 
 function BulkUpload() {
 
@@ -26,181 +27,65 @@ function BulkUpload() {
     const isColumnFilled = (worksheet, column) => {
         // ... Your existing Excel validation code ...
     };
-    // const handleFileChange = async (event) => {
-    //     const file = event.target.files[0];
-    //     if (file) {
+     
+const handleFileChange = async (event) => {
 
-    //         if (isExcelFile(file)) {
-    //             try {
-    //                 const workbook = await readExcelFile(file);
-    //                 const sheetName = workbook.SheetNames[0]; // Use the first sheet name
-    //                 const worksheet = workbook.Sheets[sheetName];
-    //                 const range = XLSX.utils.decode_range(worksheet['!ref']);
-    //                 if (range.e.r > range.s.r) {
-    //                     // There is at least one data row, check columns 'A' and 'B'
-    //                     let isCol1Filled = false;
-    //                     let isCol2Filled = false;
-    //                     let isCol4Filled = false;
-    //                     let isCol5Filled = false;
-    //                     let isCol6Filled = false;
-    //                     let isCol7Filled = false;
-    //                     let isCol8Filled = false;
-    //                     let isCol9Filled = false;
+    console.log('Entering handleFileChange');
+    const file = event.target.files[0];
+    console.log('File:', file);
+    if (file) {
+        if (isExcelFile(file)) {
+            try {
+                const workbook = await readExcelFile(file);
+                const sheetName = workbook.SheetNames[0]; // Use the first sheet name
+                const worksheet = workbook.Sheets[sheetName];
+                const range = XLSX.utils.decode_range(worksheet['!ref']);
 
+                if (range.e.r > range.s.r + 1) {
+                    for (let rowIndex = range.s.r + 2; rowIndex <= range.e.r; rowIndex++) {
+                        const requiredColumns = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I'];
 
-    //                     for (let rowIndex = range.s.r + 1; rowIndex <= range.e.r; rowIndex++) {
-    //                         const cellA = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
-    //                         const cellB = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 1 })];
-    //                         const cellD = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 3 })];
-    //                         const cellE = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 4 })];
-    //                         const cellF = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 5 })];
-    //                         const cellG = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 6 })];
-    //                         const cellH = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 7 })];
-    //                         const cellI = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 8 })];
+                        const isRowValid = requiredColumns.every(column => {
+                            const cell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: column.charCodeAt(0) - 65 })];
+                            return cell && cell.v !== undefined && cell.v !== null && cell.v.toString().trim() !== '';
+                        });
 
-    //                         if (cellA && cellA.v) {
-    //                             isCol1Filled = true;
-    //                         }
+                        
 
-    //                         if (cellB && cellB.v) {
-    //                             isCol2Filled = true;
-    //                         }
-
-    //                         if (cellD && cellD.v) {
-    //                             isCol4Filled = true;
-    //                         }
-    //                         if (cellE && cellE.v) {
-    //                             isCol5Filled = true;
-    //                         }
-    //                         if (cellF && cellF.v) {
-    //                             isCol6Filled = true;
-    //                         }
-    //                         if (cellG && cellG.v) {
-    //                             isCol7Filled = true;
-    //                         }
-    //                         if (cellH && cellH.v) {
-    //                             isCol8Filled = true;
-    //                         }
-    //                         if (cellI && cellI.v) {
-    //                             isCol9Filled = true;
-    //                         }
-
-    //                         if (isCol1Filled, isCol2Filled, isCol4Filled, isCol5Filled, isCol6Filled, isCol7Filled, isCol8Filled && isCol9Filled) {
-    //                             break; // Both columns are filled, no need to check further
-    //                         }
-    //                     }
-    //                     if (isCol1Filled, isCol2Filled, isCol4Filled, isCol5Filled, isCol6Filled, isCol7Filled, isCol8Filled && isCol9Filled) {
-    //                         console.log('All Columns are filled.');
-    //                         setExcelFile(file);
-    //                         console.log('Excel file selected:', excelFile);
-    //                     } else {
-    //                         console.log('All columns are not filled.');
-    //                         alert('Please upload a valid Excel file with data.');
-    //                     }
-    //                 } else {
-    //                     console.log('No data rows found below the headers.');
-    //                     alert('Please upload a valid Excel file with data.');
-    //                 }
-    //                 // ... Your existing Excel validation code ...
-    //             } catch (error) {
-    //                 alert('An error occurred while processing the Excel file.');
-    //                 console.error(error);
-    //             }
-    //         } else {
-    //             alert('Please upload a valid Excel file with data.');
-    //             // Clear the file input field
-    //             event.target.value = '';
-    //         }
-    //     }
-    // };
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            if (isExcelFile(file)) {
-                try {
-                    const workbook = await readExcelFile(file);
-                    const sheetName = workbook.SheetNames[0]; // Use the first sheet name
-                    const worksheet = workbook.Sheets[sheetName];
-                    const range = XLSX.utils.decode_range(worksheet['!ref']);
-                    if (range.e.r > range.s.r) {
-                        // There is at least one data row, check columns A, B, D, E, F, G, H, and I
-                        let isColAEmpty = true;
-                        let isColBEmpty = true;
-                        let isColDEmpty = true;
-                        let isColEEmpty = true;
-                        let isColFEmpty = true;
-                        let isColGEmpty = true;
-                        let isColHEmpty = true;
-                        let isColIEmpty = true;
-    
-                        for (let rowIndex = range.s.r + 1; rowIndex <= range.e.r; rowIndex++) {
-                            const cellA = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 0 })];
-                            const cellB = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 1 })];
-                            const cellC = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 2 })];
-                            const cellD = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 3 })];
-                            const cellE = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 4 })];
-                            const cellF = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 5 })];
-                            const cellG = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 6 })];
-                            const cellH = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 7 })];
-                            const cellI = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: 8 })];
-    
-                            if (cellA && cellA.v) {
-                                isColAEmpty = false;
-                            }
-    
-                            if (cellB && cellB.v) {
-                                isColBEmpty = false;
-                            }
-    
-                            if (cellD && cellD.v) {
-                                isColDEmpty = false;
-                            }
-                            if (cellE && cellE.v) {
-                                isColEEmpty = false;
-                            }
-                            if (cellF && cellF.v) {
-                                isColFEmpty = false;
-                            }
-                            if (cellG && cellG.v) {
-                                isColGEmpty = false;
-                            }
-                            if (cellH && cellH.v) {
-                                isColHEmpty = false;
-                            }
-                            if (cellI && cellI.v) {
-                                isColIEmpty = false;
-                            }
+                        if (!isRowValid) {
+                            console.log(`Row ${rowIndex + 1} has missing values in required columns.`);
+                            alert(`Please fill all required columns (A, B, D, E, F, G, H, I) for row ${rowIndex + 1} in the Excel file.`);
+                            return; // Stop processing further rows if any row is invalid
                         }
-    
-                        if (isColAEmpty || isColBEmpty || isColDEmpty || isColEEmpty || isColFEmpty || isColGEmpty || isColHEmpty || isColIEmpty) {
-                            console.log('Some required columns are empty.');
-                            alert('Please fill all required columns (A, B, D, E, F, G, H, I) in the Excel file.');
-                        } else {
-                            console.log('All required columns are filled.');
-                            setExcelFile(file);
-                            console.log('Excel file selected:', excelFile);
-                        }
-                    } else {
-                        console.log('No data rows found below the headers.');
-                        alert('Please upload a valid Excel file with data.');
                     }
-                } catch (error) {
-                    alert('An error occurred while processing the Excel file.');
-                    console.error(error);
+
+                    console.log('All rows starting from the third row have valid data in required columns.');
+                    setExcelFile(file);
+                    console.log('Excel file selected:', excelFile);
+                } else {
+                    console.log('Not enough data rows found below the headers.');
+                    alert('Please upload a valid Excel file with data.');
                 }
-            } else {
-                alert('Please upload a valid Excel file with data.');
-                // Clear the file input field
-                event.target.value = '';
+            } catch (error) {
+                alert('An error occurred while processing the Excel file.');
+                console.error(error);
             }
+        } else {
+            alert('Please upload a valid Excel file with data.');
+            // Clear the file input field
+            event.target.value = '';
         }
-    };
-    
-    
+    }
+    console.log('Exiting handleFileChange');
+};
 
-
-
+const formatDate = (excelDate) => {
+    const date = new Date((excelDate - (25567 + 1)) * 86400 * 1000);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+};
 
     const handleZipFileChange = (event) => {
         const file = event.target.files[0];
@@ -233,73 +118,44 @@ function BulkUpload() {
         });
     };
 
-    // const handleUploadClick = () => {
-    //     if (excelFile && zipFile) {
-    //         // Both Excel and ZIP files are selected, proceed with the upload logic
-    //         console.log('Both Excel and ZIP files are selected:', excelFile, zipFile);
-    //     } else {
-    //         alert('Please select both an Excel file and a ZIP file before uploading.');
-    //     }
-    // };
+    
 
-    // const handleUploadClick = async () => {
-    //     if (excelFile && zipFile) {
-    //         // Create a FormData object to send the files
-    //         const formData = new FormData();
-    //         formData.append('excelFile', excelFile);
-    //         formData.append('zipFile', zipFile);
+    
 
-    //         try {
-    //             // Make an HTTP POST request to the server's upload endpoint
-    //             const response = await fetch('/api/excelupload', {
-    //                 method: 'POST',
-    //                 body: formData,
-    //             });
-
-    //             if (response.ok) {
-    //                 const data = await response.json();
-    //                 console.log('Upload successful:', data);
-    //                 // Handle success, e.g., display a success message to the user
-    //             } else {
-    //                 console.error('Upload failed:', response.status);
-    //                 // Handle the error, e.g., display an error message to the user
-    //             }
-    //         } catch (error) {
-    //             console.error('Error during upload:', error);
-    //             // Handle the error, e.g., display an error message to the user
-    //         }
-    //     } else {
-    //         alert('Please select both an Excel file and a ZIP file before uploading.');
-    //     }
-    // };
-
+ // Helper function to format date strings to YYYY-MM-DD
+ const formatDateToYYYYMMDD = (dateString) => {
+    const parts = dateString.split('/');
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+};
     const handleUploadClick = async () => {
         if (excelFile && zipFile) {
             try {
                 const workbook = await readExcelFile(excelFile);
-                const sheetName = workbook.SheetNames[0]; // Use the first sheet name
+                const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
                 const excelData = XLSX.utils.sheet_to_json(worksheet);
-
-                // const formData = new FormData();
-                // formData.append('excelFile', excelFile);
-                // formData.append('excelData', JSON.stringify(excelData));
-                // console.log("formdata:", formData)
-                // console.log('excelData:', excelData);
+    
+                // Convert date strings to YYYY-MM-DD format
+                const formattedExcelData = excelData.map(item => ({
+                    ...item,
+                    createdDate: formatDateToYYYYMMDD(item.createdDate),
+                    modifiedDate: formatDateToYYYYMMDD(item.modifiedDate),
+                }));
+    
                 const requestBody = {
-                    excelData: excelData,
+                    excelData: formattedExcelData,
                 };
-                console.log("exceldata:", excelData);
-
+    
+                console.log("Formatted excel data:", formattedExcelData);
+    
                 const response = await fetch('http://localhost:3030/api/excelupload', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(requestBody),
-
                 });
-
+    
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Upload successful:', data);
@@ -316,7 +172,9 @@ function BulkUpload() {
             alert('Please select both an Excel file and a ZIP file before uploading.');
         }
     };
-
+    
+   
+    
     useEffect(() => {
         console.log('1Excel file selected:', excelFile);
     }, [excelFile]);
@@ -344,7 +202,7 @@ function BulkUpload() {
             <div>
                 <div>
                     <span style={{ marginRight: '10px' }}>Upload the Excel:</span>
-                    <input type="file" onChange={handleFileChange} accept=".xls, .xlsx" />
+                    <input type="file" onChange={handleFileChange} accept= ".*"/>
                 </div>
             </div>
             <br></br>

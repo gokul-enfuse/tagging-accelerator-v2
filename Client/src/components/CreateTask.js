@@ -221,7 +221,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { DOMAIN } from '../Constant';
+import { DOMAIN, DOMAINCLIENT } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 
@@ -261,16 +261,17 @@ const CreateTask = () => {
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
+        console.log("vikas=", selectedFile, DOMAIN)
         if (selectedFile) {
             const formData = new FormData();
             formData.append('image', selectedFile);
             try {
                 console.log('Sending data to server:', formData);
-                const response = await axios.post('http://localhost:3030/api/upload', formData);
+                const response = await axios.post(`${DOMAIN}/api/upload`, formData);
                 console.log('Server response:', response.data);
                 if (response.status === 200) {
                     console.log('File uploaded successfully');
-                    console.log('File path:', "http://localhost:3030/" + response.data.filePath.replace(/\\/g, '/'));
+                    console.log('File path:', `${DOMAINCLIENT}` + response.data.filePath.replace(/\\/g, '/'));
                     console.log('File name:', response.data.fileName);
                     const updatedFileData = [
                         {
@@ -282,7 +283,8 @@ const CreateTask = () => {
                     setFormData({
                         ...formData,
                         filename: response.data.fileName,
-                        filepath: "http://localhost:3030/" + response.data.filePath.replace(/\\/g, '/')
+                        //filepath: `${DOMAINCLIENT}` + response.data.filePath.replace(/\\/g, '/')
+                        filepath: `${DOMAINCLIENT}uploads/images/` + response.data.fileName
                     });
                     console.log("Updated fileData:", updatedFileData);
 
@@ -394,7 +396,7 @@ const CreateTask = () => {
 
     return (
         <form className='createtask_container' onSubmit={handleSubmit} id='create-task'>
-            {/* <fieldset style={{ border: '1px solid #000', padding: '20px', width: '800px' }}> */}
+              <fieldset style={{ border: '1px solid #000', padding: '20px'}}>  
                 <div className='createtask_content'>
                 <h1>Create Task:</h1>
                 <div style={{ flex: 1 }}>
@@ -411,8 +413,8 @@ const CreateTask = () => {
                     <br />
                 </div>
                 <label>Assigned To</label><br />
-                <select className="create-task-select" name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '230px' }}>
-                    <option key={0} value={0}>
+                <select className="create-task-select" name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '230px' }} required >
+                    <option  selected disabled key={0} value="">
                         select
                     </option>
                     {taggers.length > 0 && taggers.map((tagger) => (
@@ -421,8 +423,8 @@ const CreateTask = () => {
                         </option>
                     ))}</select><br />
                 <label>Assigned Project</label><br />
-                <select className="create-task-select" name="assignedProject" id="assignedProject" value={formData.assignedProject} onChange={handleChange} style={{ width: '230px' }}>
-                    <option key={0} value={0}>
+                <select className="create-task-select" name="assignedProject" id="assignedProject" value={formData.assignedProject} onChange={handleChange} style={{ width: '230px' }} required >
+                    <option key={0} value="">
                         select
                     </option>
                     {projects.length > 0 && projects.map((project) => (
@@ -431,25 +433,25 @@ const CreateTask = () => {
                         </option>
                     ))}</select><br />
                 <label>Task Title</label><br />
-                <input type="text" name="taskTitle" value={formData.taskTitle} onChange={handleChange}></input><br />
+                <input type="text" name="taskTitle" value={formData.taskTitle} maxLength={20} onChange={handleChange} required></input><br />
                 {/* <label>Task ID</label><br />
                 <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />*/}
                 <label>Creaton Date</label><br />
-                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange}></input><br />
+                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange} required></input><br />
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 </div>
                 <label>Media Type</label><br />
-                <select className="create-task-select" name="mediaType" id='mediaType' value={formData.mediaType} onChange={handleChange}>
-                    <option value="null">Select value</option>
+                <select className="create-task-select" name="mediaType" id='mediaType' value={formData.mediaType} onChange={handleChange} required >
+                    <option value="">Select value</option>
                     <option value="image">Image</option>
                     <option value="audio">Audio</option>
                     <option value="video">Video</option>
                     <option value="document">Document</option>
                 </select><br />
                 </div>
-            {/* </fieldset> */}
+             </fieldset>  
             <div className='createtask_button_cont'>
-                <button type="submit" style={{ width: '800px', marginLeft: '0px' }} onClick={showAlert}>Add Task</button>
+                <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Task</button>
             </div>
         </form>
     );
