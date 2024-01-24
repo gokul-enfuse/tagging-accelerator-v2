@@ -93,7 +93,6 @@ const SignIn = () => {
   function validateInput() {
     // const email = document.getElementById("reset-email").value;
     const email = formik.values.email;
-    console.log("input:", email)
     if (email === "") {
       showAlert("error","Please fill in the input field.",)
     } else {
