@@ -300,7 +300,6 @@ const CreateTask = () => {
 
     };
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -311,18 +310,6 @@ const CreateTask = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // if (!isFormValid()) {
-        //     // Display an error message
-        //     alert('Please fill in all required fields.');
-        //     return;
-        // }
-
-        // if (!selectedFile) {
-        //     alert('File not uploaded. Please select a file.');
-        //     return;
-        // }
-
         const formDataToSend = {
             ...formData,
             status: 'To Do',
@@ -432,10 +419,10 @@ const CreateTask = () => {
                             {project.project_Name}
                         </option>
                     ))}</select><br />
+                <label>Category</label><br />
+                <input type="text" name="category" value={formData.category} onChange={handleChange} required></input><br />
                 <label>Task Title</label><br />
                 <input type="text" name="taskTitle" value={formData.taskTitle} maxLength={20} onChange={handleChange} required></input><br />
-                {/* <label>Task ID</label><br />
-                <input type="text" name="taskId" value={formData.taskId} onChange={handleChange}></input><br />*/}
                 <label>Creaton Date</label><br />
                 <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange} required></input><br />
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

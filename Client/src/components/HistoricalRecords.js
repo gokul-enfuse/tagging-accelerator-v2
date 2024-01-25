@@ -168,8 +168,8 @@ const HistoricalRecords = () => {
       </div>
     
     <div>
-      <div>
-        <label style={{ marginTop: 20 }}>Assign to a Tagger</label><br />
+      <div style={{marginTop: "10px"}}>
+        <label style={{ marginTop: 20, color: 'white' }}>Assign to a Tagger</label> &nbsp;&nbsp;
         <select
         className='historicalrecords'
           name="assignedTo"

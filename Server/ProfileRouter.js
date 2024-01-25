@@ -182,7 +182,6 @@ profileRouter.post('/storePort', async (req, res) => {
     let table_name = process.env.ACCELERATOR_APP1URL;
     const appname = "tagging-tool";
     await postPort(appname, res, port, table_name);
-    console.log("Received port:", port); // Change from 'port' to 'appPort'
     // res.json({ message: 'Port stored successfully' })
 });
 

@@ -32,7 +32,6 @@ const CreateProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         formData.id = selected
-        //console.log("formData:", formData)
         const randomNumber = Math.floor(Math.random() * 10000);
         const username = formData.fullName.split(' ').join('')+"."+ randomNumber;
         const password = Math.random().toString(36).slice(-8);
@@ -56,8 +55,6 @@ const CreateProfile = () => {
             }
         })
         const data = await response.json();
-        console.log("data", data);
-        // alert('Record added successfully');
         showAlert();
         setFormData({
             id: [],
@@ -98,7 +95,7 @@ const CreateProfile = () => {
                 <div className='profile_content'>
                 <h1>Create Profile</h1>
                 <label><b>Project Name</b></label><br />
-                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
+                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{height: "50%"}}>
 
                     {projectList.map((project) => (
                         <option key={project.project_id} value={project.project_id} >
@@ -109,7 +106,7 @@ const CreateProfile = () => {
                 <label><b>Manager's Full Name</b></label><br />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
-                <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
+                <input type="text" name="email" value={formData.email} onChange={handleChange} required></input><br />
                 </div>
             {/* </fieldset> */}
             <div className='profile_button_cont'>

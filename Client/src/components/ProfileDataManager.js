@@ -77,17 +77,8 @@ const ProfileData = () => {
             </div>
         
         <div className='profileDetails'>
-            <div
-                style={{
-                    marginBottom: 16,
-                }}
-            >
-                <span
-                    style={{
-                        marginRight: 8,
-                    }}
-                >
-                </span>
+            <div style={{ marginBottom: 16 }}>
+                <span style={{ marginRight: 8 }} ></span>
             </div>
             <Table columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
         </div>
