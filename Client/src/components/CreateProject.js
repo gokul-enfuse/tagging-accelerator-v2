@@ -34,11 +34,9 @@ const CreateProject = () => {
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("formdata is:", formData)
 
         await axios.get(`${DOMAIN}/allprojects`).then(async response => {
-            const allProjects = response.data
-            console.log("res data: ", response.data)
+            const allProjects = response.data;
             const projectNames = allProjects.map(project => project.project_Name);
             if (projectNames.includes(formData.projectName)) {
                 showAlert(`A project with name "${formData.projectName}" already exists. Please choose a different name.`, 'error');

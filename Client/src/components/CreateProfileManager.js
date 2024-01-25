@@ -17,7 +17,6 @@ const CreateProfileManager = () => {
         let selectedValues = [...select.options]
             .filter(option => option.selected)
             .map(option => option.value);
-        console.log("selected:", selectedValues)
         setSelected(selectedValues)
         if (e.target.name) {
             setFormData(() => ({
@@ -26,14 +25,12 @@ const CreateProfileManager = () => {
                 // projectNames: selectedValues,
             }))
         }
-        console.log("formData1:", formData)
     }
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        formData.id = selected
-        console.log("formData:", formData)
+        formData.id = selected;
 
         const randomNumber = Math.floor(Math.random() * 10000);
         const username = formData.fullName.split(' ').join('') + "." + randomNumber;
@@ -51,7 +48,6 @@ const CreateProfileManager = () => {
             confirmPassword: password,
 
         }
-        console.log("formData before api:", formData)
 
         const response = await fetch(`${DOMAIN}/create/profile`, {
             method: 'POST',
@@ -61,7 +57,6 @@ const CreateProfileManager = () => {
             }
         });
         const data = await response.json();
-        console.log(data);
         showAlert('Record added successfully');
         setFormData({
             id: [],
@@ -82,7 +77,6 @@ const CreateProfileManager = () => {
         const fetchProjects = async () => {
             const response = await fetch(`${DOMAIN}/allprojects`);
             const data = await response.json();
-            console.log("data is:", data)
             setProjectList(data);
         };
         fetchProjects();
@@ -103,7 +97,7 @@ const CreateProfileManager = () => {
             <div className='create_tagger_reviewrs_content'>
                 <h1>Create Profile (Tagger & Reviewer):</h1>
                 <label><b>Project Name</b></label><br />
-                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple>
+                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{height: "50%"}} required>
 
                     {projectList.map((project) => (
                         <option key={project.project_id} value={project.project_id}>
@@ -115,9 +109,9 @@ const CreateProfileManager = () => {
                 <label><b>Full Name</b></label><br />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
-                <input type="text" name="email" value={formData.email} onChange={handleChange}></input><br />
-                <label>Role</label><br />
-                <select name="role" value={formData.role} onChange={handleChange}>
+                <input type="text" name="email" value={formData.email} onChange={handleChange} required></input><br />
+                <label><b>Role</b></label><br />
+                <select name="role" value={formData.role} onChange={handleChange} required>
                     <option key={""} value={""}> Select</option>
                     <option value="3">Tagger</option>
                     <option value="4">Reviewer</option>

@@ -94,59 +94,6 @@ const TaggerData = () => {
     },
   ];
 
-
-
-
-  //   const AssignTo = ({ pname }) => {
-  //     const defaultFormData = {
-  //       taskTitle: '',
-  //       taskId: '',
-  //       status: 'To do',
-  //       assignedProject: '',
-  //       assignedTo: '',
-  //       reviewer_profile_id: '',
-  //       role: 3,
-  //       creationDate: '',
-  //       mediaType: '',
-  //       fileName: '',
-  //       filePath: ''
-  //     }
-  //     let [formData, setFormData] = useState(defaultFormData);
-  //     let [taggers, setTaggers] = useState([]);
-
-  //     let handleChange = (e) => {
-  //       const { name, value } = e.target;
-  //       setFormData((prevData) => ({
-  //         ...formData,
-  //         [name]: value,
-  //       }));
-  //     };
-  //     let getTaggers = () => {
-  //       axios
-  //         .get(`${DOMAIN}/getalltaggers`)
-  //         .then(res => {
-  //           const allProfiles = res.data;
-  //           setTaggers(allProfiles);
-  //       }).catch(error => console.error(error));
-  //     }
-
-  //     useEffect(() => {
-  //         getTaggers();
-  //     }, []);
-
-  //   return (
-  //     <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '150px' ,height:'30px'}}>
-  //                       {/* <option key={0} value={0}>
-  //                           Select
-  //                       </option> */}
-  //                       { (taggers.length > 0 && taggers.map((tagger) => (
-  //                         <option key={tagger.profile_id} value={tagger.profile_id}>
-  //                             {tagger.profile_username}
-  //                         </option>
-  //                     )))}</select>
-  //   );
-  // };
-
   const StatusSelect = ({ record }) => {
     const [taskStatus, setTaskStatus] = useState({});
     const [data, setData] = useState([]);
@@ -444,29 +391,6 @@ const TaggerData = () => {
     const [formData, setFormData] = useState(defaultFormData);
     const [taggers, setTaggers] = useState([]);
 
-    // const handleChange = (e) => {
-    //   const { name, value } = e.target;
-    //   setFormData((prevData) => ({
-    //     ...formData,
-    //     [name]: value,
-    //   }));
-    // };
-
-    // const handleChange = (e) => {
-    //   const { name, value } = e.target;
-    //   setFormData((prevData) => ({
-    //     ...prevData,
-    //     [name]: value,
-    //   }));
-    // };
-
-    // const handleChange = (e) => {
-    //   const { value } = e.target;
-    //   setFormData({
-    //     assignedTo: value,
-    //   });
-    // };
-
     const handleChange = (e) => {
       const { value } = e.target;
       setFormData({
@@ -498,17 +422,6 @@ const TaggerData = () => {
     const findTaggerById = (profileId) => {
       return taggers.find(tagger => tagger.profile_id === profileId);
     };
-    // return (
-    //   <select name="assignedTo" id="assignedTo" value={formData.assignedTo} onChange={handleChange} style={{ width: '150px', height: '30px' }}>
-    //     {/* <option key={0} value={0}>
-    //                       Select
-    //                   </option> */}
-    //     {(taggers.length > 0 && taggers.map((tagger) => (
-    //       <option key={tagger.profile_id} value={tagger.profile_id}>
-    //         {tagger.profile_username}
-    //       </option>
-    //     )))}</select>
-    // );
 
     const tasksPerLine = 3;
     const [tasks, setTasks] = useState([]);

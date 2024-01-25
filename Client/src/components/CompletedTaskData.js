@@ -19,7 +19,6 @@ const CompletedTaskData = () => {
     axios
       .get(`${DOMAIN}/completedtasks`)
       .then(response => {
-        console.log("Response data:", response.data);
         setData(response.data)
       })
       .catch(error => console.error(error));
@@ -30,8 +29,7 @@ const CompletedTaskData = () => {
       .get(`${DOMAIN}/allprofiles`)
       .then(response => {
         const allProfiles = response.data
-        const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4)
-        console.log("reviewer list is", reviewerList);
+        const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4);
         setReviewerList(reviewerList)
       })
       .catch(error => console.error(error));
@@ -52,7 +50,6 @@ const CompletedTaskData = () => {
     });
   }
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const rowSelection = {

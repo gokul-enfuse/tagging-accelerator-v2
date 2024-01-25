@@ -13,7 +13,7 @@ function Reviewer() {
     
     <div>
       <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 28,color:'white' }}>
-        Welcome {auth.profile_name || ""}
+        Welcome {(auth.profile_name != 'null') ? auth.profile_name : auth.profile_username}
       </h1>
       <div style={{ overflowY: 'scroll', height: '400px' }}>
         <ReviewerData />

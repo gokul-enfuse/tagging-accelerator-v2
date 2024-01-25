@@ -29,10 +29,7 @@ function BulkUpload() {
     };
      
 const handleFileChange = async (event) => {
-
-    console.log('Entering handleFileChange');
     const file = event.target.files[0];
-    console.log('File:', file);
     if (file) {
         if (isExcelFile(file)) {
             try {
@@ -96,9 +93,7 @@ const formatDate = (excelDate) => {
             const isValidExtension = allowedExtensions.some(extension => fileName.endsWith(extension));
             if (isValidExtension) {
                 // Handle the valid ZIP file here
-                console.log('Valid ZIP file selected:', file);
                 setZipFile(file);
-                console.log('zip file selected:', zipFile);
             } else {
                 alert('Please select a valid ZIP file');
                 // Clear the file input field
