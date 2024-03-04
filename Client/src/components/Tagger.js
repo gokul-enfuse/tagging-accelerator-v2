@@ -7,7 +7,6 @@ import SearchBar from './SearchBar';
 
 function Tagger() {
   const { auth } = useAuth();
-console.log("Vikas =",auth.profile_username)
   return (
     <div>
       <div>

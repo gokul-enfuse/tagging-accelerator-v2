@@ -7,7 +7,6 @@ const Taggerlist = () => {
 
     const handleAddTagger = (newTagger) => {
         setTaggers(prevTaggers => [...prevTaggers, newTagger]);
-        console.log("new tagger is: ", taggers)
     };
 
     return (

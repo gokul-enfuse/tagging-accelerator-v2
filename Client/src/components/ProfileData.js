@@ -34,15 +34,12 @@ useEffect(() => {
       .get(`${DOMAIN}/allprojects`)
       .then(response => {
         const allProjects = response.data;
-        console.log(response.data)
         const assignedProjectIds = (selectedManager.project_id || '').split(',').map(projectId => projectId.trim());
-        console.log("projectids:", assignedProjectIds)
         const assignedProjects = assignedProjectIds.map(projectId => {
             const project = allProjects.find(project => project.project_id.toString() === projectId);
 
           return project ? project.project_Name : '';
         });
-        console.log("Assigned Projects:", assignedProjects);
         setSelectedManagerDetails({ ...selectedManager, assignedProjects });
       })
       .catch(error => {

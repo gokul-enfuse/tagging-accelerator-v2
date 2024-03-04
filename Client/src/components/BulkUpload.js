@@ -2,6 +2,10 @@ import React from 'react';
 import * as XLSX from 'xlsx';
 import { useState, useEffect } from 'react';
 import { parse, format } from 'date-fns';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
+const port = 3030;
 
 function BulkUpload() {
 
@@ -37,18 +41,16 @@ const handleFileChange = async (event) => {
                 const sheetName = workbook.SheetNames[0]; // Use the first sheet name
                 const worksheet = workbook.Sheets[sheetName];
                 const range = XLSX.utils.decode_range(worksheet['!ref']);
-
-                if (range.e.r > range.s.r + 1) {
+                console.log(range, range.e, range.e.r)
+                if (range.e.r >= range.s.r + 1) {
                     for (let rowIndex = range.s.r + 2; rowIndex <= range.e.r; rowIndex++) {
-                        const requiredColumns = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I'];
+                        //const requiredColumns = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I'];
+                        const requiredColumns = ['A', 'B', 'D', 'E', 'F', 'G'];
 
                         const isRowValid = requiredColumns.every(column => {
                             const cell = worksheet[XLSX.utils.encode_cell({ r: rowIndex, c: column.charCodeAt(0) - 65 })];
                             return cell && cell.v !== undefined && cell.v !== null && cell.v.toString().trim() !== '';
                         });
-
-                        
-
                         if (!isRowValid) {
                             console.log(`Row ${rowIndex + 1} has missing values in required columns.`);
                             alert(`Please fill all required columns (A, B, D, E, F, G, H, I) for row ${rowIndex + 1} in the Excel file.`);
@@ -84,36 +86,44 @@ const formatDate = (excelDate) => {
     return `${day}/${month}/${year}`;
 };
 
-    const handleZipFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            // Check if the selected file has a valid ZIP file extension
-            const allowedExtensions = ['.zip'];
-            const fileName = file.name.toLowerCase();
-            const isValidExtension = allowedExtensions.some(extension => fileName.endsWith(extension));
-            if (isValidExtension) {
-                // Handle the valid ZIP file here
-                setZipFile(file);
-            } else {
-                alert('Please select a valid ZIP file');
-                // Clear the file input field
-                event.target.value = '';
-            }
+const handleZipFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        // Check if the selected file has a valid ZIP file extension
+        const allowedExtensions = ['.zip'];
+        const fileName = file.name.toLowerCase();
+        const isValidExtension = allowedExtensions.some(extension => fileName.endsWith(extension));
+        if (isValidExtension) {
+            // Handle the valid ZIP file here
+            setZipFile(file);
+        } else {
+            alert('Please select a valid ZIP file');
+            // Clear the file input field
+            event.target.value = '';
         }
-    };
-    const readExcelFile = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                resolve(workbook);
-            };
-            reader.readAsArrayBuffer(file);
-        });
-    };
+    }
+};
 
-    
+const readExcelFile = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            resolve(workbook);
+        };
+        reader.readAsArrayBuffer(file);
+    });
+};
+
+const showAlert = (arg) => {
+    Swal.fire({
+      title: arg,
+      text: arg,
+      icon: 'Record added successfully',
+      confirmButtonText: 'OK',
+    });
+};    
 
     
 
@@ -122,51 +132,64 @@ const formatDate = (excelDate) => {
     const parts = dateString.split('/');
     return `${parts[2]}-${parts[1]}-${parts[0]}`;
 };
-    const handleUploadClick = async () => {
-        if (excelFile && zipFile) {
-            try {
-                const workbook = await readExcelFile(excelFile);
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const excelData = XLSX.utils.sheet_to_json(worksheet);
-    
-                // Convert date strings to YYYY-MM-DD format
-                const formattedExcelData = excelData.map(item => ({
-                    ...item,
-                    createdDate: formatDateToYYYYMMDD(item.createdDate),
-                    modifiedDate: formatDateToYYYYMMDD(item.modifiedDate),
-                }));
-    
-                const requestBody = {
-                    excelData: formattedExcelData,
-                };
-    
-                console.log("Formatted excel data:", formattedExcelData);
-    
-                const response = await fetch('http://localhost:3030/api/excelupload', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestBody),
-                });
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Upload successful:', data);
-                    // Handle success, e.g., display a success message to the user
-                } else {
-                    console.error('Upload failed:', response.status);
-                    // Handle the error, e.g., display an error message to the user
-                }
-            } catch (error) {
-                console.error('Error during upload:', error);
+const handleUploadClick = async () => {
+    if (excelFile && zipFile) {
+        try {
+            const workbook = await readExcelFile(excelFile);
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const excelData = XLSX.utils.sheet_to_json(worksheet);
+
+            // Convert date strings to YYYY-MM-DD format
+            const formattedExcelData = excelData.map(item => ({
+                ...item,
+                // createdDate: formatDateToYYYYMMDD(item.createdDate),
+                // modifiedDate: formatDateToYYYYMMDD(item.modifiedDate),
+            }));
+
+            const requestBody = {
+                excelData: formattedExcelData,
+            };
+
+            console.log("Formatted excel data:", formattedExcelData);
+
+            const response = await fetch('http://localhost:3030/api/excelupload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Upload successful:', data);
+                // Handle success, e.g., display a success message to the user
+            } else {
+                console.error('Upload failed:', response.status);
                 // Handle the error, e.g., display an error message to the user
             }
-        } else {
-            alert('Please select both an Excel file and a ZIP file before uploading.');
+        } catch (error) {
+            console.error('Error during upload:', error);
+            // Handle the error, e.g., display an error message to the user
         }
-    };
+        try {
+            const formData = new FormData();
+            formData.append('zipFile', zipFile);
+            const response = await axios.post(`http://localhost:${port}/zipextraction`, formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log(response.data);
+            showAlert(response.data);
+        } catch (error) {
+            console.error('Error during upload:', error);
+        }
+    } else {
+        alert('Please select both an Excel file and a ZIP file before uploading.');
+    }
+};
     
    
     

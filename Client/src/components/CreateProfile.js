@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
+import axios from 'axios';
 import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
@@ -12,6 +13,8 @@ const CreateProfile = () => {
         email: '',
     })
     const [selected, setSelected] = useState([]);
+    const [numofmanagers, setNumOfManagers] = useState([]);
+    const [projectList, setProjectList] = useState([]);
     const handleChange = (e) => {
         const select = document.getElementById('projectNames');
         let selectedValues = [...select.options]
@@ -19,11 +22,9 @@ const CreateProfile = () => {
             .map(option => option.value);
         setSelected(selectedValues)
         if (e.target.name) {
-            setFormData(() => ({
-               
+            setFormData(() => ({               
                 ...formData,
-                [e.target.name]: e.target.value,
-                
+                [e.target.name]: e.target.value,                
                 // projectNames: selectedValues,
             }))
         }
@@ -69,7 +70,20 @@ const CreateProfile = () => {
 
         // document.getElementById("create-profile").reset();
     }
-    const [projectList, setProjectList] = useState([]);
+/**
+ * Created By: Vikas Bose | 08/02/2024
+ */    
+    const getListOfManager = async() => {
+        await axios.get(`${DOMAIN}/listoworker`, {
+            params: {
+                role_id: 2
+            }
+        }).then(response => {
+            setNumOfManagers(response.data);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -78,7 +92,9 @@ const CreateProfile = () => {
             setProjectList(data);
         };
         fetchProjects();
+        getListOfManager();
     }, []);
+
     const showAlert = () => {
         Swal.fire({
           title: '',
@@ -87,13 +103,21 @@ const CreateProfile = () => {
           confirmButtonText: 'OK',
         });
       };
-
+    
     return (
         <form className='profileContainer' onSubmit={handleSubmit} id='create-profile'>
             {/* <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}> */}
                 {/* <legend>Create Profile:</legend> */}
+                <div className='profile_content_right'>
+                    <h1>List of Manager - Free</h1>
+                    <select id="managerList" name="managerList" multiple style={{height: "230px"}} disabled={true}>
+                        {numofmanagers.map((manager) => (
+                            <option key={manager.profile_id} value={manager.profile_id} style={(manager.project_id > 0)? {color: 'red'} : {color: 'black'} }> &nbsp; {manager.profile_username} - {(manager.project_id > 0) ? 'Project Assigned' : 'No Project Assign'}</option>
+                        ))}
+                    </select>
+                </div>
                 <div className='profile_content'>
-                <h1>Create Profile</h1>
+                <h1>Create Profile (Manager)</h1>
                 <label><b>Project Name</b></label><br />
                 <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{height: "50%"}}>
 

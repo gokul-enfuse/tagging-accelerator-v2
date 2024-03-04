@@ -46,10 +46,7 @@ const HistoricalRecords = () => {
             task.task_status !== "reassigned" &&
             task.task_status !== "to do"
         );
-
-
         setData(filteredTasks);
-        console.log("filtered task:", filteredTasks)
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -62,7 +59,6 @@ const HistoricalRecords = () => {
         .then(response => {
           const allProfiles = response.data;
           const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 3);
-          console.log("reviewer list is", reviewerList);
           setReviewerList(reviewerList);
         })
         .catch(error => console.error(error));
@@ -75,7 +71,6 @@ const HistoricalRecords = () => {
   const handleAssignToChange = (e) => {
     const selectedTaggerId = e.target.value;
     setAssignedTo(selectedTaggerId);
-    console.log("assign to:", selectedTaggerId);
   };
   const handleTaskSubmit = () => {
     selectedRowKeys.forEach((key) => {

@@ -159,6 +159,12 @@ main{
   width: 456px;
  }
 
+ .profile_content_right {
+  margin-left: 0px;
+  width: 300px;
+  float: inline-end;
+ }
+
  .createtask_container{
   padding: 6px 30px 6px 30px;
   background-color: white;

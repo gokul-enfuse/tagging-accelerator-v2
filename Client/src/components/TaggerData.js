@@ -20,36 +20,22 @@ const TaggerData = () => {
   const [url, setUrl] = useState("");
   const [mismatchedTasks, setMismatchedTasks] = useState([]);
   const [portNumber, setPortNumber] = useState();
-  let currentPort;
   let location = useLocation();
   let currentURL = window.location.href;
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
+  
   const columnsRow = [
     
     {
-      title: 'Task Title',
-      dataIndex: 'task_title',
-      key: 'key',
-      render: (text, record) => {
-        const taskTitles = record.task_title.split(',');
-
-        return (
-          <div style={{ marginBottom: '8px', display: 'flex', flexWrap: 'wrap' }}>
-            {taskTitles.map((titlePart, titleIndex) => (
-              <div key={titleIndex} style={{ marginRight: '8px' }}>
-                {titlePart}
-              </div>
-            ))}
-          </div>
-        );
-      },
+      title: 'Folder Title',
+      dataIndex: 'task_folder_name',
+      key: 'taskFolderName'
     },
-
     {
       title: 'Assign To',
       dataIndex: 'profile_username',
-      key: 'key',
+      key: 'profileUsername',
       render: (text, record, pname) => (
         <AssignTo pname={pname} record={record} mismatchedTasks={mismatchedTasks} />
       )
@@ -57,13 +43,13 @@ const TaggerData = () => {
     {
       title: 'No Of Items',
       dataIndex: 'task_filename',
-      key: 'key',
+      key: 'noOfItems',
       render: (text, record) => {
         try {
           let numImages = 0;
 
           if (auth.profile_role === 3 ||auth.profile_role === 1 ||auth.profile_role === 2) {
-            numImages = record.task_filename || 0; }
+            numImages = record.numimage || 0; }
 
           const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${taggerId}`;
           return (
@@ -81,7 +67,7 @@ const TaggerData = () => {
     {
       title: 'Status',
       dataIndex: 'task_status',
-      key: 'key',
+      key: 'taskStatus',
       render: (text, record) => (
         <StatusSelect record={record} />
       )
@@ -90,14 +76,14 @@ const TaggerData = () => {
     {
       title: 'Created Date',
       dataIndex: 'createdDate',
-      key: 'key'
+      key: 'createdDate'
     },
   ];
 
   const StatusSelect = ({ record }) => {
     const [taskStatus, setTaskStatus] = useState({});
     const [data, setData] = useState([]);
-
+    
     useEffect(() => {
       setTaskStatus((prevState) => ({
         ...prevState,
@@ -106,7 +92,7 @@ const TaggerData = () => {
     }, [record]);
 
     const [completedTaskIds, setCompletedTaskIds] = useState([]);
-
+    
     const handleStatusChange = (value) => {
       record.task_status = value;
       const updatedTaskStatus = { ...taskStatus, [record.task_id]: value };
@@ -114,23 +100,21 @@ const TaggerData = () => {
       if (value === "Completed") {
         setCompletedTaskIds([...completedTaskIds, record.task_id]);
       }
-      const showAlert = () => {
+      const showAlert = (arg) => {
         Swal.fire({
-          title: '',
-          text: 'Status changed succesfullly',
-          icon: 'Record added successfully',
+          title: 'Alter Message',
+          text: arg,
+          icon: '',
           confirmButtonText: 'OK',
         });
       };
       // Update the task status in the backend
       axios
         .put(`${DOMAIN}/updatetask/${record.task_id}`, {
-          record: { ...record, task_status: "Completed", reviewer_task_status: "Waiting for review" },
+          record: { ...record, task_status: value, reviewer_task_status: (value === 'Done')?"Waiting for review" : null },
         })
         .then((response) => {
-          console.log("Response data:", response.data);
           showAlert(response.data.message);
-
           // Remove the completed task from the tagger list
           const updatedData = data.filter((task) => task.task_id !== record.task_id);
           setData(updatedData);
@@ -138,14 +122,14 @@ const TaggerData = () => {
         .catch((error) => console.error(error));
     };
 
-    axios.post(`${DOMAIN}/storePort`, { port: appPort })
+    /* axios.post(`${DOMAIN}/storePort`, { port: appPort })
       .then((response) => {
         // Handle the response if needed
         console.log("Port stored in the backend:", response.data);
       })
       .catch((error) => {
         console.error("Error storing port in the backend:", error);
-      })
+      }) */
 
     return (
       <Select
@@ -153,13 +137,10 @@ const TaggerData = () => {
         style={{ width: 120 }}
         onChange={handleStatusChange}
       >
-        <Option value="Reassigned" disabled>
-          reassigned
-        </Option>
-        <Option value="Completed">Completed</Option>
-        <Option value="Done" disabled>
-          Task done
-        </Option>
+        <Option value="Reassigned" disabled>reassigned</Option>
+        <Option value="Processed">In Process</Option>
+        <Option value="Completed" disabled>Completed</Option>
+        <Option value="Done" disabled>Task done</Option>
       </Select>
     );
   };
@@ -186,171 +167,12 @@ const TaggerData = () => {
 
   const getTaggers = () => {
     axios
-      .get(`${DOMAIN}/getalltaggers`)
+      .get(`${DOMAIN}/gettaggertask`)
       .then((response) => {
-        const allProfiles = response.data;
-        getTask(taggerId, allProfiles);
+        const taggerTasks = response.data;
+        setData(taggerTasks);
       })
       .catch((error) => console.error(error));
-  };
-
-  const getTask = (taggerIdInfo, taggers) => {
-    if (taggerId === "admin") {
-      axios
-        .get(`${DOMAIN}/getalltask`)
-        .then((response) => {
-          const allTasks = response.data;
-          const filteredArray = allTasks.filter((item1) => {
-            return taggers.some((item2) => {
-              return item1.profile_id === item2.profile_id && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
-            })
-          })
-        })
-    }
-
-    
-
-    if (taggerId === "admin" || auth.profile_role === 2 ) {
-      
-      const mergeTasks = (tasks) => {
-        const mergedTasks = [];
-        const taskMap = new Map();
-
-        tasks.forEach((taskGroup) => {
-          taskGroup.forEach((task) => {
-            const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
-
-            if (!taskMap.has(key)) {
-              taskMap.set(key, []);
-            }
-
-            taskMap.get(key).push(task);
-          });
-        });
-
-        taskMap.forEach((groupedTasks) => {
-          const mergedTask = { ...groupedTasks[0] }; // Use the first task as a base
-          console.log('  mergedTask1:', mergedTask);
-
-          mergedTask.task_id = groupedTasks.map((t) => t.task_id).join(','); // Combine task_ids
-
-          // mergedTask.task_title = groupedTasks.map((t) => t.task_title).join(','); // Combine task_titles
-          mergedTask.task_title = groupedTasks.map((t) => {
-            console.log('Value of t:', t);
-            console.log('Value of t.task_title:', t.task_title);
-
-            return t.task_title;
-          }).join(',');
-          // Combine task_titles
-
-          mergedTask.task_filename = groupedTasks.length; // Count of similar tasks
-
-          // You can add similar logic for other properties if needed
-
-          mergedTasks.push(mergedTask);
-          console.log('Value of mergedTask:', mergedTask);
-        });
-        console.log('Value of mergedTasks:', mergedTasks);
-        return mergedTasks;
-      };
-
-
-      const fetchData = async () => {
-        try {
-          // First API call: /getalltask
-          const allTaskPromise = axios.get(`${DOMAIN}/getalltask`);
-
-          // Second API call: /getmismatchedidtask
-          const mismatchedPromise = axios.get(`${DOMAIN}/getmismatchedidtask`);
-
-          // Wait for both promises to resolve
-          const [allTaskResponse, mismatchedResponse] = await Promise.all([allTaskPromise, mismatchedPromise]);
-
-          const allTasks = allTaskResponse.data;
-          const mismatchedTasks = mismatchedResponse.data;
-
-          console.log("All Tasks:", allTasks);
-          console.log("Mismatched Tasks:", mismatchedTasks);
-
-          // Filter tasks based on conditions
-          const filteredArray = allTasks.filter((item) => {
-            const isAssignedToTagger = taggers.some((tagger) => tagger.profile_id === item.profile_id);
-            const isTaskInProgress = item.task_status !== "Completed" && item.task_status !== "Pass" && item.task_status !== "waiting for review";
-
-            return isAssignedToTagger && isTaskInProgress;
-          });
-
-          console.log("Filtered Array:", filteredArray);
-
-          // Concatenate mismatched tasks to the filtered array
-          const combinedTasks = [...filteredArray, ...mismatchedTasks];
-          const mergedTasks = mergeTasks([combinedTasks]);
-
-          console.log("mergedTasks:", mergedTasks);
-
-          console.log("Combined Tasks:", combinedTasks);
-
-          setData(mergedTasks);
-          console.log("json:", (JSON.parse((combinedTasks[0].task_filedata))).length);
-          console.log("tasklist is:", combinedTasks);
-          console.log("mergedTasks:",mergedTasks)
-        } catch (error) {
-          console.error(error);
-        }
-      };
-      fetchData();
-    }
-    
-    else {
-      axios
-        .post(`${DOMAIN}/taskbyfilter`, {
-          assignedTo: taggerIdInfo,
-        })
-        .then((response) => {
-          const mergeTasks = (tasks) => {
-            const mergedTasks = [];
-            const taskMap = new Map();
-    
-            tasks.forEach((taskGroup) => {
-              taskGroup.forEach((task) => {
-                const key = `${task.profile_id}-${task.project_id}-${task.task_mediatype}`;
-    
-                if (!taskMap.has(key)) {
-                  taskMap.set(key, []);
-                }
-    
-                taskMap.get(key).push(task);
-              });
-            });
-    
-            taskMap.forEach((groupedTasks) => {
-              const mergedTask = { ...groupedTasks[0] }; // Use the first task as a base
-              console.log('mergedTask1:', mergedTask);
-    
-              mergedTask.task_id = groupedTasks.map((t) => t.task_id).join(','); // Combine task_ids
-              mergedTask.task_title = groupedTasks.map((t) => t.task_title).join(','); // Combine task_titles
-              mergedTask.task_filename = groupedTasks.length; // Count of similar tasks
-    
-              // You can add similar logic for other properties if needed
-    
-              mergedTasks.push(mergedTask);
-              console.log('mergedTask:', mergedTask);
-            });
-            console.log('mergedTasks:', mergedTasks);
-            return mergedTasks;
-          };
-    
-          console.log("Response data is:", response.data);
-          const allTasks = response.data;
-          const filteredArray = allTasks.filter((item1) => {
-            return item1.profile_id === taggerIdInfo && item1.task_status !== "Completed" && item1.task_status !== "Pass" && item1.task_status !== "waiting for review";
-          });
-          const mergedTasks = mergeTasks([filteredArray]);
-          setData(mergedTasks);
-          console.log("mergedTasks:", mergedTasks);
-        })
-        .catch((error) => console.error(error));
-    }
   };
 
   const showCustomeAlert = (error) => {
@@ -362,7 +184,7 @@ const TaggerData = () => {
     });
   };
   useEffect(() => {
-    getTaggers();
+     getTaggers();
 
     axios.get(`${DOMAIN}/getPort?appName=tagging-toolV2`)
       .then(result => {
@@ -371,8 +193,6 @@ const TaggerData = () => {
         showCustomeAlert(error)
       })
   }, []);
-
-  console.log("Data in TaggerData component:", data);
 
   const AssignTo = ({ pname, record, mismatchedTasks }) => {
     const defaultFormData = {
@@ -419,12 +239,8 @@ const TaggerData = () => {
     useEffect(() => {
       getTaggers();
     }, []);
-    const findTaggerById = (profileId) => {
-      return taggers.find(tagger => tagger.profile_id === profileId);
-    };
+    const findTaggerById = (profileId) => taggers.find(tagger => tagger.profile_id === profileId);
 
-    const tasksPerLine = 3;
-    const [tasks, setTasks] = useState([]);
     const isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
     return (
       <select
@@ -472,7 +288,7 @@ const TaggerData = () => {
         rowSelection={rowSelection}
         columns={columnsRow}
         dataSource={data}
-        pagination={{ pageSize: 4 }}
+        pagination={{ pageSize: 5 }}
       />
     </div>
   );

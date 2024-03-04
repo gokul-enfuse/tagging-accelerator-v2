@@ -26,11 +26,11 @@ const CompletedTaskData = () => {
 
   const getReviewers = () => {
     axios
-      .get(`${DOMAIN}/allprofiles`)
+      .get(`${DOMAIN}/getallreviewers`)
       .then(response => {
-        const allProfiles = response.data
-        const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4);
-        setReviewerList(reviewerList)
+        /* const allProfiles = response.data
+        const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4); */
+        setReviewerList(response.data)
       })
       .catch(error => console.error(error));
   }
@@ -39,9 +39,9 @@ const CompletedTaskData = () => {
     getCompletedTasks();
     getReviewers();
     setSelectedRowKeys([]);
-  }, [])
+  }, []);
+  
   for (let i = 0; i < i.le; i++) {
-
     data.push({
       taskId: i,
       taskTitle: `task1 ${i}`,
@@ -96,14 +96,28 @@ const CompletedTaskData = () => {
       key: 'taskTitle'
     },
     {
+      title: 'Project Name',
+      dataIndex: 'project_name',
+      key: 'projectName',
+      render: (text, records) => {
+         try {
+            return (
+                <a>{records.project_name}</a>
+            )
+         } catch(error) {
+            console.error("Error rendering number of images:", error);
+         }
+      }
+    },
+    {
       title: 'Status',
       dataIndex: 'task_status',
       key: 'status'
     },
     {
-      title: 'Created Date',
-      dataIndex: 'createdDate',
-      key: 'creationDate'
+      title: 'Modified Date',
+      dataIndex: 'modifiedDate',
+      key: 'modifiedDate'
     },
   ];
   const handleAssignToChange = (e) => {
@@ -117,6 +131,8 @@ const CompletedTaskData = () => {
       confirmButtonText: 'OK',
     });
   };
+
+  
   return (
     <div className='completedTaskData'>
       <div>
