@@ -95,7 +95,6 @@ const TableData = ({ selectedProject }) => {
   };
   const hasSelected = selectedRowKeys.length > 0;
   const getTask = (record) => {
-
     axios
       .get(`${DOMAIN}/gettaskbyproject/${selectedProject}`)
        

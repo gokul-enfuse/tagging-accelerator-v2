@@ -1,4 +1,4 @@
-import { Button, Table, Select } from 'antd';
+import { Table, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
@@ -7,18 +7,13 @@ import 'sweetalert2/dist/sweetalert2.css';
 import { useLocation } from 'react-router-dom';
 import 'antd/dist/antd.min.css';
 import { DOMAIN } from '../Constant.js';
-import { ROLES } from './ROLES.js';
 
 
 const TaggerData = () => {
   const { Option } = Select;
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   const taggerId = auth.profile_username === "admin" ? auth.profile_username : auth.profile_id;
   const [data, setData] = useState([]);
-  const [url, setUrl] = useState("");
-  const [mismatchedTasks, setMismatchedTasks] = useState([]);
   const [portNumber, setPortNumber] = useState();
   let location = useLocation();
   let currentURL = window.location.href;
@@ -37,7 +32,7 @@ const TaggerData = () => {
       dataIndex: 'profile_username',
       key: 'profileUsername',
       render: (text, record, pname) => (
-        <AssignTo pname={pname} record={record} mismatchedTasks={mismatchedTasks} />
+        <AssignTo pname={pname} record={record} />
       )
     },
     {
@@ -62,6 +57,12 @@ const TaggerData = () => {
           return 0; // or display an error message
         }
       },
+    },
+
+    {
+      title: 'Process Type',
+      dataIndex: 'task_process_type',
+      key:'taskProcessType'
     },
 
     {
@@ -144,26 +145,6 @@ const TaggerData = () => {
       </Select>
     );
   };
-
-  const start = () => {
-    setLoading(true);
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
-
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
-  const hasSelected = selectedRowKeys.length > 0;
 
   const getTaggers = () => {
     axios
@@ -268,7 +249,7 @@ const TaggerData = () => {
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           marginBottom: 16,
         }}
@@ -283,9 +264,9 @@ const TaggerData = () => {
         >
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
-      </div>
+      </div> */}
       <Table
-        rowSelection={rowSelection}
+        //rowSelection={rowSelection}
         columns={columnsRow}
         dataSource={data}
         pagination={{ pageSize: 5 }}

@@ -30,7 +30,7 @@ const ReviewerData = () => {
     {
       title: 'Task Folder',
       dataIndex: 'task_folder_name',
-      key: 'task_folder_name',
+      key: 'taskFolderName',
       render: (text, record) => {
         const taskTitles = record.task_title.split(',');
 
@@ -48,7 +48,7 @@ const ReviewerData = () => {
     {
       title: 'Assign To',
       dataIndex: 'profile_username',
-      key: 'profile_username',
+      key: 'profileUsername',
       render: (text, record, pname) => (
         <AssignTo pname={pname} record={record} mismatchedTasks={mismatchedTasks} />
       )
@@ -75,7 +75,7 @@ const ReviewerData = () => {
     {
       title: 'Status',
       dataIndex: 'task_status',
-      key: 'task_status',
+      key: 'taskStatus',
       render: (text, record) => (
         <StatusSelect record={record} />
       )
@@ -83,7 +83,7 @@ const ReviewerData = () => {
     {
       title: 'Modified Date',
       dataIndex: 'modifiedDate',
-      key: 'modifiedDate'
+      key: 'modified_Date'
     }
   ]
 
@@ -219,7 +219,7 @@ const ReviewerData = () => {
       // Update the task status in the backend
       axios
         .put(`${DOMAIN}/updatereviewertask/${record.task_id}`, {
-          record: { ...record, reviewer_profile_id: 0, task_role: 3, task_status: value, reviewer_task_status: (value === 'Reassigned')?null:'Completed'},
+          record: { ...record, task_role: (value === 'Reassigned')?3 : 4, task_status: value, reviewer_task_status: (value === 'Reassigned')?null:'Completed'},
         })
         .then((response) => {
           showAlert(response.data.message);
@@ -256,7 +256,7 @@ const ReviewerData = () => {
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           marginBottom: 16,
         }}
@@ -267,9 +267,9 @@ const ReviewerData = () => {
         <span style={{marginRight: 8}}>
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
-      </div>
+      </div> */}
       <Table 
-        rowSelection={rowSelection} 
+        //rowSelection={rowSelection} 
         columns={columns} 
         dataSource={data} 
         pagination={{ pageSize: 5 }} 
