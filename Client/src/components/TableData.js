@@ -20,7 +20,6 @@ const handleStatusChange = (record, value, text) => {
       confirmButtonText: 'OK',
     });
   };
-  console.log("value is:", value, record);
   axios
     .put(`${DOMAIN}/updatetask/${record.task_id}`, {
       task_title: record.task_title,
@@ -29,7 +28,6 @@ const handleStatusChange = (record, value, text) => {
       task_role: record.task_role
     })
     .then(response => {
-      console.log("response handlechange data is:", response);
       showAlert(response.data.message);
     })
     .catch(error => console.error(error));
@@ -39,22 +37,22 @@ let columns = [
   {
     title: 'Task ID',
     dataIndex: 'task_id',
-    key: 'key'
+    key: 'task_id'
   },
   {
     title: 'Task Title',
     dataIndex: 'task_title',
-    key: 'key'
+    key: 'task_title'
   },
   {
     title: 'Assign To',
     dataIndex: 'profile_username',
-    key: 'key',
+    key: 'profile_username',
   },
   {
     title: 'Status',
     dataIndex: 'task_status',
-    key: 'key',
+    key: 'task_status',
 
     render: (text, record) => (
       <Select defaultValue={text} style={{ width: 120 }} onChange={(value) => handleStatusChange(record, value, text)}>
@@ -68,7 +66,7 @@ let columns = [
   {
     title: 'Created Date',
     dataIndex: 'createdDate',
-    key: 'key'
+    key: 'createdDate'
   },
 
 ]
@@ -87,7 +85,6 @@ const TableData = ({ selectedProject }) => {
     }, 1000);
   };
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
 
   };
@@ -97,20 +94,13 @@ const TableData = ({ selectedProject }) => {
     onChange: onSelectChange,
   };
   const hasSelected = selectedRowKeys.length > 0;
-  console.log('role:', auth.profile_role, ', columns: ', columns);
   const getTask = (record) => {
-
     axios
       .get(`${DOMAIN}/gettaskbyproject/${selectedProject}`)
        
       .then(response => {
-        console.log("Response data:", response.data);
-        
-
-        console.log("selectedProject table:", selectedProject);
-        const filteredData = response.data.filter(task => task.task_status !== "Pass" && task.task_status !== "Pass");
+        const filteredData = response.data.filter(task => task.task_status !== "Done" && task.task_status !== "Done");
         setData(filteredData)
-        console.log("filteredData:", filteredData);
       })
       .catch(error => console.error(error));
   }
@@ -138,7 +128,7 @@ const TableData = ({ selectedProject }) => {
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
       </div>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 2 }} />
+      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
     </div>
   );
 };

@@ -7,6 +7,9 @@ const { pool } = require("pg");
 const profileRouter = express.Router();
 profileRouter.use(express.json());
 
+/**
+ * Modified By: Vikas Bose | 11/02/2024
+ */
 profileRouter.post('/create/profile', async (req, res) => {
     let table_name = process.env.PROFILE;
     let profile_name = (req.body.name) ? req.body.name : null;
@@ -30,7 +33,8 @@ profileRouter.post('/create/profile', async (req, res) => {
         } else {
             let sql = '';
             if (result[0].c > 0) {
-                sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = '${project_id}', modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`;
+                /* sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = '${project_id}', modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`; */
+                res.status(400).json({message: 'Duplicate user not allowed.', rs: result[0].c});
             } else {
                 sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, '${project_id}', '${createdDate}', '${modifiedDate}')`;
             }
@@ -52,6 +56,9 @@ profileRouter.post('/create/profile', async (req, res) => {
     });
 });
 
+/**
+ * Modified By: Vikas Bose | 11/02/2024
+ */
 profileRouter.post("/api/login", (req, res) => {
     let table_name = process.env.PROFILE;
 
@@ -67,6 +74,16 @@ profileRouter.post("/api/login", (req, res) => {
                 ).toString(CryptoJS.enc.Utf8);
                 if (decryptedPassword !== req.body.password) {
                     return res.status(401).json({ message: "Incorrect password" });
+                }
+                if(result[0].profile_role > 2) {
+                    updateLoginSessionFun(table_name, result[0].profile_id, 1)
+                        .then(result => {
+                            console.log(result);
+                        }).catch(error => {
+                            //return res.status(404).json({message: error.sqlMessage});
+                            console.log(error.sqlMessage);
+                            return;
+                        });
                 }
                 res.status(200).json(result[0]);
             } else {
@@ -115,17 +132,42 @@ profileRouter.post('/api/resetpassword', (req, res) => {
     });
 });
 
+/**
+ * Modified By: Vikas Bose | 21/02/2024
+ */
 profileRouter.get('/getalltaggers', async (req, res) => {
     let table_name = process.env.PROFILE;
-    let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
-    getuser('accelerator_profile.profile_role = 3', res, table_name, join);
+    let fields = [`profile_id`, `profile_name`, `profile_email`, `profile_fullname`, `profile_username`, `profile_password`, `profile_confirmpassword`, `profile_role`, `${table_name}.createdDate`, `${table_name}.modifiedDate`, `project_id`, `role_name`]
+    let join = ` INNER JOIN accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
+    getuser('accelerator_profile.profile_role = 3', res, table_name, join, fields);
 });
 
+/**
+ * Modified By: Vikas Bose | 22/02/2024
+ */
+profileRouter.get('/getallreviewers', async(req, res) => {
+    let table_name = process.env.PROFILE;
+    let table_name_three = process.env.ROLE;
+    let fields = [`profile_id`, `profile_name`, `profile_email`, `profile_fullname`, `profile_username`, `profile_password`, `profile_confirmpassword`, `profile_role`, `${table_name}.createdDate`, `${table_name}.modifiedDate`, `project_id`, `role_name`]
+    let join = ` INNER JOIN ${table_name_three} ON ${table_name}.profile_role = ${table_name_three}.role_id`;
+    getuser(` ${table_name}.profile_role = 4`, res, table_name, join, fields);
+});
 
 profileRouter.get('/allprofiles', async (req, res) => {
     let table_name = process.env.PROFILE;
     let join = ` inner join accelerator_project ON ${table_name}.project_id = accelerator_project.project_id inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
     getuser(null, res, table_name, join);
+});
+
+/**
+ * Created By: Vikas Bose | 07/02/2024
+ */
+profileRouter.get('/taggerandreviewerprofiles', async (req, res) => {
+    let { role_id } = req.query;
+    let table_name = process.env.PROFILE;
+    let join = ` inner join accelerator_role ON ${table_name}.profile_role = accelerator_role.role_id`;
+    let arg =  (role_id === '3')? `${table_name}.profile_role = ${role_id} ` : (role_id === '4')? `${table_name}.profile_role = 4 ` : `${table_name}.profile_role in (3, 4) `;
+    getTaggerAndReviewer(arg, res, table_name, join);
 });
 
 profileRouter.get('/managername/:projectId', async (req, res) => {
@@ -139,7 +181,6 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
       FROM ${table_name}
       WHERE FIND_IN_SET('${projectId}', ${table_name}.project_id) > 0
       AND ${condition}`;
-    console.log("query:", query);
     conn.query(query, (error, result) => {
         if (error) {
             res.status(400).json({ message: 'SQL error', Error: error });
@@ -148,7 +189,6 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
                 res.status(404).json({ message: 'No manager found for the specified project ID.' });
             } else {
                 const managerNames = result.map((row) => row.manager_name);
-                console.log('Manager names:', managerNames);
                 res.status(200).json({ manager_names: managerNames });
             }
         }
@@ -157,7 +197,7 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
 
 profileRouter.get('/getPort', (req, res) => {
     const { appName } = req.query; // Assuming you send appName as a query parameter
-    console.log(appName)
+    //console.log(appName)
     let table_name = process.env.ACCELERATOR_APP1URL;
     if (!appName) {
         return res.status(400).json({ message: "appName parameter is missing." });
@@ -180,10 +220,24 @@ profileRouter.get('/getPort', (req, res) => {
 profileRouter.post('/storePort', async (req, res) => {
     const { port } = req.body;
     let table_name = process.env.ACCELERATOR_APP1URL;
-    const appname = "tagging-tool";
+    const appname = "tagging-toolV2";
     await postPort(appname, res, port, table_name);
     // res.json({ message: 'Port stored successfully' })
 });
+
+/**
+ * Created: 21/02/2024 | Vikas Bose
+ */
+profileRouter.put('/logout/:profile_id', (req, res) => {
+    let { profile_id } = req.params;
+    let login_session = req.body.profil_login_session;
+    updateLoginSessionFun('accelerator_profile', profile_id, login_session)
+        .then(result => {
+            res.status(200).json({ message: "User has been logged out. Thanks " });
+        }).catch(error => {
+            res.status(400).json({ message: "There is an error "+ error });
+        });
+})
 
 /**
  * 
@@ -223,21 +277,57 @@ let postPort = (appname, res, appPort, table_name) => {
 }
 
 /**
- * 
+ * Created By: Vikas Bose | 05/02/2024
  * @param {*} arg 
  * @param {*} res 
  * @param {*} table_name 
  * @param {*} join 
  */
-let getuser = (arg = null, res, table_name = null, join = null) => {
-    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, ${table_name}.project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, project_name, role_name from ${table_name}`;
+let getuser = (arg = null, res, table_name = null, join = null, fields = null) => {
+    let sql = '';
+    if(fields === null) {
+        sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, ${table_name}.project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, project_name, role_name from ${table_name}`;
+    } else {
+        sql = `SELECT ${fields} FROM ${table_name}`;
+    }
+    
     if (join != null) {
         sql += join
     }
     if (arg) {
         sql += ` WHERE ${arg}`;
     }
-    // console.log("sql:", sql)
+   //console.log("sql:", sql)
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            if (result.length) {
+                res.json(result);
+            } else {
+                res.status(400).json({ message: "There is no data for specific search." });
+            }
+
+        }
+    });
+}
+
+/**
+ * Created By: Vikas Bose | 11/02/2024
+ * @param {*} arg 
+ * @param {*} res 
+ * @param {*} table_name 
+ * @param {*} join 
+ */
+let getTaggerAndReviewer = (arg = null, res, table_name = null, join = null) => {
+    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, (TRIM(BOTH ',' FROM ${table_name}.project_id)) as project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, role_name from ${table_name}`;
+    if (join != null) {
+        sql += join
+    }
+    if (arg) {
+        sql += ` WHERE ${arg}`;
+    }
+    //console.log("sql:", sql)
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -321,6 +411,28 @@ let emailFunction = (email, username, password) => {
             console.log('Email sent: ' + info.response);
         }
     });
+}
+
+/**
+ * Created By: Vikas Bose | 05/02/2024
+ * @param {*} table_name 
+ * @param {*} profile_id 
+ * @param {*} login_session 
+ * @returns 
+ */
+let updateLoginSessionFun = (table_name, profile_id, login_session) => {
+    let sql= `update ${table_name} set profile_login_session = ${login_session}  WHERE profile_id = ${profile_id}`;
+    //console.log(sql);
+    return new Promise((resolve, reject) => {
+
+        conn.query(sql, (error, result) => {
+            if(error) {
+                return reject(error);
+            }
+            return resolve(result);
+        });
+
+    });    
 }
 
 module.exports = profileRouter;

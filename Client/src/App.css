@@ -159,6 +159,12 @@ main{
   width: 456px;
  }
 
+ .profile_content_right {
+  margin-left: 0px;
+  width: 300px;
+  float: inline-end;
+ }
+
  .createtask_container{
   padding: 6px 30px 6px 30px;
   background-color: white;
@@ -326,7 +332,7 @@ main{
  .bulkupload{
   background-color: lightgrey;
   width: 46%;
-  height: 280px;
+  height: 480px;
   padding: 20px 0px 20px 20px;
   border-radius: 18px;
   border: 3px solid gray;

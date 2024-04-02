@@ -1,0 +1,83 @@
+12/03/2024 to 17/03/2024
+Vikas Bose
+Bulk Upload=:
+1. template updated
+2. Template upload and zip file upload functionality working
+3. When template excel upload then effected tables accelerator_task and accelerator_profile
+4. When zip file uploaded,
+	a. created new folder in images folder
+	b. effected tables are accelerator_task, accelerator_task_image
+	c. in case, if any issue happen then delete the values from accelerator_task table.
+limitation =:
+1. Need to fill the spacified value in excel
+2. Only single project at a time mentioned in excel sheet
+
+19/03/2024 to 22/03/2024
+Vikas Bose
+1. Tagger update the code based on bulk upload and manual entries [working]
+	[issue:: while creating upload the images it is creating the multiple folder] - Resolved
+	[issue:: task_id is creating the issue, if same details upload again then throwing an error] - Resolved
+	[issue:: while changing the status manually or direct Accelerator] - testing
+	[issue:: tagging-tool, detail page has issue, showing all 16 items instead of 8 items] - Resolved
+	[issue:: when zip file extraacted but items are not extrcted properly] - Resolved
+	[issue:: For manual allocation] - resolved
+2. anaconda need to install in the Linux VM - Done
+26/03/2024 to 29/03/2024
+Vikas Bose
+3. Reviewer automation - In Progress
+	[issue:: verify that automation is working or not for reviewer] - testing
+	[issue:: for manual allocation to reviewer ] - in progress
+	[issue:: verify the entire cycle of reviewer] - in progress
+4. Tagging tool
+	[issue:: Tagging details page, previously all result related single tagger display now it is also differentiated by folder name] - resolved
+	[issue:: Rectangle BB data store into DB but retrieve did not working] - in progress
+	[issue:: Cropping not working as expected] - Hold
+	[issue:: Document tagging need to integrated] - in progress
+	[issue:: When tagger complete the task and submit then need to effected two tables [accelerator_tasks, accelerator_task_image], update query using task_id,profile_id in accelerator_task_image table where accelerator_tasks we need to check weather reviewer_profile_id has assigned or not, if yes then it will be automated or else manual] - in progress
+	[issue:: If automated or already assigne reviewer then details go to reviewer bucket or else assgine to reviewer part] - in progress 
+	[issue:: When automated then checkbox should not appear in "Assgine to reviewer"] - in progress
+5. Installing chrome browser in the Linux VM machine - in Progress
+6. KT session with Tushar to handed over the VA implementation
+	1. Explain the files and folder - Done
+	2. Business requirements and implementation - Done
+	3. Azure DB and tables - Done
+	4. Scheduler Job and running date + time - Done
+7. Linux VM server configuration 
+	1. install chorme - Done
+	2. IP configuration - Done
+	3. External IP access configuration - in progress
+
+12/03/2024 to 29/03/2024
+Lalitha and Srilakhmi
+1. Create Manger & Create tagger + reviewer page
+	[issue:: Adjust the add project button, Upload the project" Adjusent to "add project"] - Done
+	[issue:: Create the two links [download report of project | download the template]] - Done
+	[issue:: UI changes] - Done
+	[issue:: detail panel must auto referesh using react property] - Done
+	[issue:: while autoupdate the list panel, it use spinner] - in progress
+	[issue:: validate the duplicate entry not happen]
+Logic -: [Explain by Vikas]
+1. download report of project [backend work]
+    - project_id, project_name, project_status in excel sheet file and downaload
+    - need to modify the status if 0 = inactive and 1 = active.
+2. download the template [excel format template]
+    - Project_name, client_name, Domain
+3. Upload the project
+    - it should update the DB with the details [table name is "accelerator_project"]
+
+12/03/2024 to 29/03/2024
+Saddam
+1. Video Tagging
+	[issue:: track the object in the video + their moment + time] - in progress
+	[issue:: rectangle BB not pleace in same position, while fetching the records from DB] - In progress [Vikas need to push the changes in repo - pending]
+
+
+
+
+
+Login created by 
+
+
+mperivan
+
+

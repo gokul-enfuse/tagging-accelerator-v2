@@ -22,10 +22,12 @@ const SignIn = () => {
   const [buttonTitle, setButtonTitle] = useState('Login');
 
   let navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation();  
   const from = location.state?.from?.pathname || "/";
-
   const [isSubmitSuccess] = useState(false);
+  let currentURL = window.location.href;
+  let porturl = new URL(currentURL);
+  let appPort = porturl.port;
 
   const formik = useFormik({
     initialValues: {
@@ -53,6 +55,21 @@ const SignIn = () => {
             } else if (response.data.profile_role === 2) {
               navigate("/manager");
             }
+            /**
+            * Created Date: 22/02/2024 | Vikas Bose
+            * START
+            */
+              axios.post(`${DOMAIN}/storePort`, { port: appPort })
+                .then((response) => {
+                  // Handle the response if needed
+                  console.log("Port stored in the Database:", response.data.message);
+                })
+                .catch((error) => {
+                  console.error("Error storing port in the backend:", error);
+                });
+            /**
+            * END
+            */
           } else {
             console.warn("check the response")
           }
@@ -80,7 +97,6 @@ const SignIn = () => {
         }
         else{
           showAlert("please enter your email");
-          
         }
       } 
     }
@@ -99,7 +115,6 @@ const SignIn = () => {
       axios
         .post(`${DOMAIN}/user/reset`, { email })
         .then(response => {
-          console.log("response data :", response.data)
           // showAlert("Please check your Email")
           showAlert("error", "Please check your Email");
 

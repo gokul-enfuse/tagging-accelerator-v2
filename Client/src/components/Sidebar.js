@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
-import logo from './enfuse-logo.png';
+//import logo from process.env.PUBLIC_URL+'/icon/enfuse-logo.png'
 import useAuth from "../hooks/useAuth";
 import Button from '@mui/material/Button';
 import axios from 'axios';
@@ -168,8 +168,8 @@ const Sidebar = ({ children }) => {
 
   }
   const logout = () => {
-    let profil_id = auth.profile_id;
-    axios.put(`${DOMAIN}/logout/${profil_id}`, {profil_login_session: 0})
+    let profile_id = auth.profile_id;
+    axios.put(`${DOMAIN}/logout/${profile_id}`, {profil_login_session: 0})
     setAuth({})
   }
   const sidebarStyle = {
@@ -185,7 +185,7 @@ const Sidebar = ({ children }) => {
       {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px", ...sidebarStyle }} className='sidebar'>
 
         <div className='top-section'>
-          <img style={{ display: isOpen ? "block" : "none" }} src={logo} alt='logo' />
+          <img style={{ display: isOpen ? "block" : "none" }} src={process.env.PUBLIC_URL+'/icon/enfuse-logo.png'} alt='logo' />
           <div style={{ width: isOpen ? "300px" : "50px" }} className='bars' ><FaBars onClick={toggle} /></div>
         </div>
         <nav>

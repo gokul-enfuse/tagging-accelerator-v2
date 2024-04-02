@@ -6,7 +6,7 @@ const RequireAuth = () => {
     const { auth } = useAuth();
     const location = useLocation();
 
-console.log('Auth: ', auth)
+//console.log('Auth: ', auth)
     return (
         auth.profile_username
             ? <Outlet />

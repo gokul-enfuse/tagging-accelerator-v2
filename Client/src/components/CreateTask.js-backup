@@ -19,46 +19,39 @@ const CreateTask = () => {
         role: 3,
         creationDate: '',
         mediaType: '',
+        fileName: '',
+        filePath: '',
         category: '',
         status: 'To Do', // Include the status field
     };
 
     const [formData, setFormData] = useState(defaultFormData);
-    const [files, setFiles] = useState([]);
     const [taggers, setTaggers] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
 
-    const showAlert = () => {
-        Swal.fire({
-            title: '',
-            text: 'Task added successfully',
-            icon: 'success',
-            confirmButtonText: 'OK',
-        });
-    };
-
-    const handleFileChange = async (e) => {
-        const selectedFiles = (e.target.files.length > 1)? Array.from(e.target.files).filter(file =>
-            file.type === 'image/jpeg' || file.type === 'image/jpg'
-          ): [e.target.files[0]];
-        console.log(selectedFiles);
-        if (selectedFiles) {
-            const formDatas = new FormData();
-            for (const file of selectedFiles) {
-                formDatas.append('images', file);
-            }
-            
+    const handleFileChange = async (event) => {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('image', selectedFile);
             try {
-                const response = await axios.post(`${DOMAIN}/api/upload`, formDatas, {
-                    headers: {
-                      'Content-Type': 'multipart/form-data',
-                    },
-                  });
+                const response = await axios.post(`${DOMAIN}/api/upload`, formData);
                 if (response.status === 200) {
+                    /* console.log('File uploaded successfully');
+                    console.log('File path:', `${DOMAINCLIENT}` + response.data.filePath.replace(/\\/g, '/'));
+                    console.log('File name:', response.data.fileName); */
+                    const updatedFileData = [
+                        {
+                            filename: response.data.fileName,
+                            filepath: response.data.filePath.replace(/\\/g, '/'),
+                        },
+                    ];
                     setFormData({
                         ...formData,
-                        fileName: response.data.fileName,
-                        filePath: response.data.filePath
+                        filename: response.data.fileName,
+                        //filepath: `${DOMAINCLIENT}` + response.data.filePath.replace(/\\/g, '/')
+                        filepath: `${DOMAINCLIENT}uploads/images/` + response.data.fileName
                     });
                     // validateForm();
 
@@ -84,7 +77,9 @@ const CreateTask = () => {
         e.preventDefault();
         const formDataToSend = {
             ...formData,
-            status: 'To Do'
+            status: 'To Do',
+            fileName: formData.fileName, // Include fileName in the form data
+            filePath: formData.filePath, // Include filePath in the form data
         };
 
         try {
@@ -105,13 +100,29 @@ const CreateTask = () => {
         }
     };
 
+    const isFormValid = () => {
+        return (
+            formData.taskTitle &&
+            formData.assignedProject &&
+            formData.assignedTo &&
+            formData.creationDate &&
+            formData.mediaType &&
+            selectedFile
+        );
+    };
+
+    const showAlert = () => {
+        Swal.fire({
+            title: '',
+            text: 'Task added successfully',
+            icon: 'success',
+            confirmButtonText: 'OK',
+        });
+    };
+
     const getTaggers = () => {
         axios
-            .get(`${DOMAIN}/taggerandreviewerprofiles`, {
-                params: {
-                    role_id: 3
-                }
-            })
+            .get(`${DOMAIN}/getalltaggers`)
             .then((res) => {
                 const allProfiles = res.data;
                 setTaggers(allProfiles);

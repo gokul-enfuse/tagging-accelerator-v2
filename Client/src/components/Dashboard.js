@@ -47,16 +47,9 @@ const Dashboard = () => {
             <Route path="/bulkupload" element={<BulkUpload />} />
             <Route path="/createproject" element={<CreateProject />} />
             <Route path="/createprofilemanager" element={<CreateProfileManager />} />
-            <Route path="/profiledetailsmanager" element={<ProfileDetailsManager />} />
-       
+            <Route path="/profiledetailsmanager" element={<ProfileDetailsManager />} />       
             <Route path="/historicalrecords" element={<HistoricalRecords />} />
-
-
-
-
             {/* <Route path="/reports" element={<Reports />} /> */}
-             
-
           </Route>
         </Routes>
       </Sidebar>

@@ -9,66 +9,88 @@ import SearchBar from './SearchBar.js';
 
 
 const ProfileData = () => {
-    let [data, setData] = useState([])
+    let [data, setData] = useState([]);
+    
+    /* const getAllProject = (arg) => {
+        axios
+            .get(`${DOMAIN}/allprojects`)
+            .then(res => {
+                console.log(res.data);
+                setProjectData(res.data);
+            }).catch(error => {
+                console.log(error);
+            });
+    } */
     const getAllProfiles = () => {
         axios
-            .get(`${DOMAIN}/allprofiles`)
+            .get(`${DOMAIN}/taggerandreviewerprofiles`)
             .then(response => {
-                console.log("Response data:", response.data);
-                const managerProfiles = response.data.length > 0 && response.data.filter(item => item.profile_role === 3 || item.profile_role === 4)
-                console.log("managerProfiles:", managerProfiles)
-                setData(managerProfiles)
-
-                axios
-                    .get(`${DOMAIN}/allprojects`)
-                    .then(response => {
-                        console.log("Response data projects:", response.data);
-                        const allprojects = response.data
-                        const result = managerProfiles.map(eachProfile => {
-                            const filteredArray = allprojects.filter(item1 => {
-                                console.log("item1", item1);
-                                return eachProfile.project_id.split(",").some(item2 => {
-                                    console.log("item2:", item2);
-                                    return item1.project_id.toString() === item2
-                                })
-                            }).map(item => item.project_Name);
-                            eachProfile.project_name = filteredArray.toString()
-                            return eachProfile
-                        })
-                        console.log("result is:", result)
-                        setData(result)
-                    })
-                    .catch(error => console.error(error));
-            })
-            .catch(error => console.error(error));
+                const managerProfiles = (response.data.length > 0)? response.data : [];                
+                const managerProfile = managerProfiles.map((v, i, arr) => {
+                    //project_Name: projectData.filter(item => arr[i].project_id.split(',').every(value => item.project_id == value))
+                    return {
+                        createdDate: arr[i].createdDate,
+                        modifiedDate: arr[i].modifiedDate,
+                        profile_email: arr[i].profile_email,
+                        profile_fullname: arr[i].profile_fullname,
+                        profile_id: arr[i].profile_id,
+                        profile_name: arr[i].profile_name,
+                        profile_role: arr[i].profile_role,
+                        profile_username: arr[i].profile_username,
+                        role_name: arr[i].role_name,
+                        project_id: arr[i].project_id
+                    }
+                });
+                setData(managerProfile);
+            }).catch(error => console.error(error));
     }
-    useEffect(() => {
-        getAllProfiles();
-    }, []);
-
-    let columns = [
+    //console.log(data)
+    const columns = [
         {
             title: "Full Name",
             dataIndex: 'profile_fullname',
-            key: 'key'
+            key: 'fullname'
         },
         {
             title: 'Username',
             dataIndex: 'profile_username',
-            key: 'key'
+            key: 'username'
         },
         {
             title: 'Assigned Projects',
-            dataIndex: 'project_name',
-            key: 'key',
+            dataIndex: 'project_Name',
+            key: 'projectname',
+            render: (text, records) => (
+                <Specificproject record={records}/>
+            )
         },
         {
             title: 'Role',
             dataIndex: 'role_name',
-            key: 'key',
+            key: 'role',
         }
-    ]
+    ];
+    
+    const Specificproject = ({ record }) => {  
+        let [projectData, setProjectData] = useState([]);      
+        useEffect(() => {
+            axios.get(`${DOMAIN}/profilerelateproject`, {
+                params: {
+                    project_ids: record.project_id
+                }
+            })
+            .then(res => {
+                setProjectData(res.data[0]);
+            }).catch(error => {
+                console.log(error);
+            });
+        }, []);
+        return (<div key={projectData.project_id}>{projectData.project_name}</div>)
+    }
 
+    useEffect(() => {
+        getAllProfiles();
+    }, []);
 
     return (
         <div>
@@ -80,7 +102,7 @@ const ProfileData = () => {
             <div style={{ marginBottom: 16 }}>
                 <span style={{ marginRight: 8 }} ></span>
             </div>
-            <Table columns={columns} dataSource={data} pagination={{ pageSize: 4 }} />
+            <Table columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
         </div>
         </div>
     );

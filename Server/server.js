@@ -11,6 +11,7 @@ const projectRouter = require("./ProjectRouter.js");
 const PortConnection = require("./PortConnection.js");
 
 const emailRouter = require("./EmailRouter.js");
+const bulkuploadRouter = require("./BulkuploadRouter.js");
 
 const Port = process.env.PORT || 3030;
 app.use(express.json());
@@ -151,7 +152,7 @@ async function main() {
 //   res.status(200).json("You logged out successfully.");
 // });
 app.post('/api/getCurrentURL', (req, res) => {
-  console.log("req:", req)
+console.log("req:", req)
   res.json({ message: 'Home URL received and processed on the server' })
 
 })
@@ -159,6 +160,7 @@ app.use(taskRouter);
 app.use(profileRouter);
 app.use(projectRouter);
 app.use(emailRouter);
+app.use(bulkuploadRouter);
 // app.use(PortConnection);
 
 app.listen(Port, () => {
