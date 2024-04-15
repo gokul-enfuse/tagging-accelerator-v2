@@ -174,9 +174,9 @@ const CreateTask = () => {
                         </option>
                     ))}</select><br />
                 <label>Folder Name</label><br />
-                <input type="text" name="category" id="category" value={formData.category} onChange={handleChange} required></input><br />
+                <input type="text" name="category" id="category" value={formData.category} onChange={handleChange}></input><br />
                 <label>Task Title</label><br />
-                <input type="text" name="taskTitle" value={formData.taskTitle} maxLength={20} onChange={handleChange} required></input><br />
+                <input type="text" name="taskTitle" value={formData.taskTitle} maxLength={20} onChange={handleChange}></input><br />
                 <label>Creaton Date</label><br />
                 <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange} required></input><br />
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

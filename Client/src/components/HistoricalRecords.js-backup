@@ -16,14 +16,56 @@ const HistoricalRecords = () => {
   const [isSubmitted, setIsSubmitted] = useState({});
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   useEffect(() => {
-     axios.get(`${DOMAIN}/api/historicalRec`)
-      .then(res => {
-         console.log(res);
-         setData(res.data);
-         setLoading(false);
-      }).catch(error => {
-         console.log(error)
-      });
+    const fetchData = async () => {
+      try {
+        const taggerResponse = await axios.get(`${DOMAIN}/gettaggername`);
+        const reviewerResponse = await axios.get(`${DOMAIN}/getreviewername`);
+
+        const taggerTasks = taggerResponse.data.map(item => ({
+          ...item,
+          role: "Tagger",
+          reviewerName: "",
+          taggerName: item.profile_fullname, // Add taggerName field
+        }));
+
+        const reviewerTasks = reviewerResponse.data.map(item => ({
+          ...item,
+          role: "Reviewer",
+        }));
+
+        taggerTasks.forEach(taggerTask => {
+          const matchingReviewerTask = reviewerTasks.find(reviewerTask => reviewerTask.task_id === taggerTask.task_id);
+          if (matchingReviewerTask) {
+            taggerTask.reviewerName = matchingReviewerTask.profile_fullname;
+          }
+        });
+
+        const filteredTasks = taggerTasks.filter(
+          task =>
+            task.task_status === "Pass" &&
+            task.task_status !== "reassigned" &&
+            task.task_status !== "to do"
+        );
+        setData(filteredTasks);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const getReviewers = () => {
+      axios
+        .get(`${DOMAIN}/allprofiles`)
+        .then(response => {
+          const allProfiles = response.data;
+          const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 3);
+          setReviewerList(reviewerList);
+        })
+        .catch(error => console.error(error));
+    };
+
+    fetchData();
+    getReviewers();
   }, []);
 
   const handleAssignToChange = (e) => {
@@ -80,8 +122,8 @@ const HistoricalRecords = () => {
     },
     {
       title: 'Project Name',
-      dataIndex: 'project_name',
-      key: 'project_name',
+      dataIndex: 'project_id',
+      key: 'project_id',
     },
     {
       title: 'Tagger User ID',
@@ -112,9 +154,6 @@ const HistoricalRecords = () => {
       title: 'Action',
       dataIndex: 'action',
       key: 'action',
-      render: (text, records) => { 
-        return (<a href='#'>Edit</a>);
-      }
     }
   ];
 
@@ -168,7 +207,7 @@ const HistoricalRecords = () => {
 
         </h1>
         <div style={{ overflowY: 'scroll', height: '356px' }}>
-          <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 10 }} rowKey="task_id" />            
+          <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 4 }} rowKey="task_id" rowSelection={rowSelection} />            
         </div>
       </div>
     </div>

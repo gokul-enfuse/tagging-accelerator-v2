@@ -255,6 +255,13 @@ taskRouter.get('/projectlist', async (req, res) => {
     await gettask(null, res, table_name, null);
 });
 
+taskRouter.get('/getmismatchedidtask', async (req, res) => {
+    let table_name = 'accelerator_tasks'
+    let join = `accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id`;
+    let additionalCondition = 'accelerator_profile.profile_id IS NULL';
+    await getmismatchedidtask(null, res, 'accelerator_tasks', join, additionalCondition);
+});
+
 taskRouter.post('/updateAssignment/:id', async (req, res) => {
 
     const table_name = process.env.TASK;
@@ -473,6 +480,40 @@ let deletetask = (arg = null, res, table_name = null) => {
             res.json(result);
         }
     });
+};
+
+let getmismatchedidtask = (arg = null, res, table_name = null, join = null, additionalCondition = '') => {
+    let sql = `
+        SELECT
+            accelerator_tasks.task_id,
+            accelerator_tasks.task_title,
+            accelerator_tasks.task_mediatype,
+            accelerator_tasks.task_filename,
+            accelerator_tasks.task_filepath,
+            accelerator_tasks.task_status,
+            accelerator_tasks.profile_id,
+            accelerator_tasks.task_role,
+            accelerator_tasks.createdDate,
+            accelerator_tasks.modifiedDate,
+            accelerator_tasks.project_id,
+            accelerator_tasks.createdDate AS profile_createdDate,
+            accelerator_tasks.modifiedDate AS profile_modifiedDate
+        FROM
+            accelerator_tasks
+        LEFT JOIN
+            accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id
+        WHERE
+    ${arg ? `${arg} AND ` : ''}
+    ${additionalCondition}
+`;
+    conn.query(sql, (error, result) => {
+        if (error) {
+            res.status(404).json({ message: "Data not found.", error: error });
+        } else {
+            res.json(result);
+        }
+    });
+
 };
 
 /**

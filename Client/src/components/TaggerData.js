@@ -7,6 +7,7 @@ import 'sweetalert2/dist/sweetalert2.css';
 import { useLocation } from 'react-router-dom';
 import 'antd/dist/antd.min.css';
 import { DOMAIN } from '../Constant.js';
+import { AssignToTagger } from '../utilities/Assignto.js';
 
 
 const TaggerData = () => {
@@ -32,7 +33,7 @@ const TaggerData = () => {
       dataIndex: 'profile_username',
       key: 'profileUsername',
       render: (text, record, pname) => (
-        <AssignTo pname={pname} record={record} />
+        <AssignToTagger pname={pname} record={record} />
       )
     },
     {
@@ -174,78 +175,6 @@ const TaggerData = () => {
         showCustomeAlert(error)
       })
   }, []);
-
-  const AssignTo = ({ pname, record, mismatchedTasks }) => {
-    const defaultFormData = {
-      taskTitle: '',
-      taskId: '',
-      status: 'To do',
-      assignedProject: '',
-      assignedTo: '',
-      reviewer_profile_id: '',
-      role: 3,
-      creationDate: '',
-      mediaType: '',
-      fileName: '',
-      filePath: ''
-    }
-    const [formData, setFormData] = useState(defaultFormData);
-    const [taggers, setTaggers] = useState([]);
-
-    const handleChange = (e) => {
-      const { value } = e.target;
-      setFormData({
-        assignedTo: value,
-      });
-
-      // Call the backend API to update the assignment
-      axios
-        .post(`${DOMAIN}/updateAssignment/${record.task_id}`, {
-          record, assignedTo: value,
-        })
-        .then((response) => {
-          console.log("Assignment updated successfully:", response.data);
-        })
-        .catch((error) => console.error("Error updating assignment:", error));
-    };
-
-    const getTaggers = () => {
-      axios
-        .get(`${DOMAIN}/getalltaggers`)
-        .then(res => {
-          const allProfiles = res.data;
-          setTaggers(allProfiles);
-        }).catch(error => console.error(error));
-    }
-    useEffect(() => {
-      getTaggers();
-    }, []);
-    const findTaggerById = (profileId) => taggers.find(tagger => tagger.profile_id === profileId);
-
-    const isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
-    return (
-      <select
-        name="assignedTo"
-        id="assignedTo"
-        value={formData.assignedTo || findTaggerById(record.profile_id)?.profile_id || ''}
-        onChange={handleChange}
-        style={{ width: '150px', height: '30px' }}
-        disabled={isIndividualLogin} 
-      >
-        <option value="">Select</option>
-        {taggers.length > 0 &&
-          taggers.map((tagger) => (
-            <option
-              key={tagger.profile_id}
-              value={tagger.profile_id}
-            >
-              {tagger.profile_username}
-            </option>
-          ))}
-      </select>
-    )
-
-  }
 
   return (
     <div>
