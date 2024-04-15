@@ -12,6 +12,7 @@ const PortConnection = require("./PortConnection.js");
 
 const emailRouter = require("./EmailRouter.js");
 const bulkuploadRouter = require("./BulkuploadRouter.js");
+const historicalRec = require("./HistoricalrecRouter.js");
 
 const Port = process.env.PORT || 3030;
 app.use(express.json());
@@ -161,6 +162,7 @@ app.use(profileRouter);
 app.use(projectRouter);
 app.use(emailRouter);
 app.use(bulkuploadRouter);
+app.use(historicalRec);
 // app.use(PortConnection);
 
 app.listen(Port, () => {

@@ -27,16 +27,16 @@ Vikas Bose
 3. Reviewer automation - In Progress
 	[issue:: verify that automation is working or not for reviewer] - testing
 	[issue:: for manual allocation to reviewer ] - in progress
-	[issue:: verify the entire cycle of reviewer] - in progress
+	[issue:: verify the entire cycle of reviewer] - Resolved {automated}
 4. Tagging tool
 	[issue:: Tagging details page, previously all result related single tagger display now it is also differentiated by folder name] - resolved
 	[issue:: Rectangle BB data store into DB but retrieve did not working] - in progress
 	[issue:: Cropping not working as expected] - Hold
 	[issue:: Document tagging need to integrated] - in progress
-	[issue:: When tagger complete the task and submit then need to effected two tables [accelerator_tasks, accelerator_task_image], update query using task_id,profile_id in accelerator_task_image table where accelerator_tasks we need to check weather reviewer_profile_id has assigned or not, if yes then it will be automated or else manual] - in progress
-	[issue:: If automated or already assigne reviewer then details go to reviewer bucket or else assgine to reviewer part] - in progress 
+	[issue:: When tagger complete the task and submit then need to effected two tables [accelerator_tasks, accelerator_task_image], update query using task_id,profile_id in accelerator_task_image table where accelerator_tasks we need to check weather reviewer_profile_id has assigned or not, if yes then it will be automated or else manual] - Resolved
+	[issue:: If automated or already assigne reviewer then details go to reviewer bucket or else assgine to reviewer part] - Resolved 
 	[issue:: When automated then checkbox should not appear in "Assgine to reviewer"] - in progress
-5. Installing chrome browser in the Linux VM machine - in Progress
+5. Installing chrome browser in the Linux VM machine - Done
 6. KT session with Tushar to handed over the VA implementation
 	1. Explain the files and folder - Done
 	2. Business requirements and implementation - Done
@@ -46,6 +46,37 @@ Vikas Bose
 	1. install chorme - Done
 	2. IP configuration - Done
 	3. External IP access configuration - in progress
+
+01/04/2024 to 05/04/2024
+8. Tagging Tool
+	[issue:: when change the status of task for Tagger/Reviewer] - Resolved
+	[issue:: when bulk upload happen then the tagger & reviewer dashboard shows the process type & update the DB] - resolved
+	[issue:: When manual task going to update then popup window open and tagger need to fill the reviewer name] - resolved
+	[issue:: system will check the reviewer userid, if valid then it will go further process to assign the task and update the 2 tables] - resolved
+	[issue:: historical records, not populated the records] - in progress
+	[issue:: need to remove the dropdown and submit button from historical records] - in progress
+	[issue:: 
+	[issue:: in case the requirement for multiple reviewer allocation then we need to implement the distribution logic for manual] - hold
+	[issue:: in case all mentioned reviewer already assigned task then system will show popup message "Already assigned, wan continue or not", if 'yes' then process or else allow to update the reviewer id] - hold
+	[issue:: accelerator_profile did not upadate with project id for reviewers] - in progress
+	[issue:: remove the dropdown in tagger & reviewer bucket] - hold
+	[issue:: rectangle BB retrieving part not working] - in progress
+
+08/04/2024 to 12/04/2024
+9. Linux VM
+	[issue:: uninstall xampp] - Done
+	[issue:: Setup the mysql workbench] - in progress
+	[issue:: Setup the database for both tools] - Done
+	[issue:: Copy the Accelerator code] - Done
+	[issue:: copy the tagging tool code] - Done
+10. Tagging tool
+	[issue:: rectangle BB retrieving part not working] - in progress
+	[issue:: remove the assginee dropdown in tagger & reviewer bucket] - Done
+	[issue:: historical records, not populated the records] - resolved
+	[issue:: need to remove the dropdown and submit button from historical records] - resolved
+	[issue:: click on "edit" button, popup must appear with two dropdowns {assginee, status)] - in progress
+	
+	
 
 12/03/2024 to 29/03/2024
 Lalitha and Srilakhmi
@@ -72,12 +103,5 @@ Saddam
 	[issue:: rectangle BB not pleace in same position, while fetching the records from DB] - In progress [Vikas need to push the changes in repo - pending]
 
 
-
-
-
-Login created by 
-
-
-mperivan
 
 
