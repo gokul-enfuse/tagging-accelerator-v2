@@ -7,12 +7,13 @@ historicalRecRouter.use(express.json());
 historicalRecRouter.get('/api/historicalRec', async (req, res) => {
     let addition = [`profile_username`, `project_name`];
     let table_task = `accelerator_tasks`, table_profile = `accelerator_profile`;
-    let fields = [`task_folder_name`, `task_status`, `${table_task}.project_id`, `project_name`, `${table_task}.profile_id`, `reviewer_profile_id`, `task_mediatype`, `task_process_type`, `${table_task}.createdDate`];
-    let join = ` ${table_task} INNER JOIN ${table_profile} ON ${table_task}.profile_id = ${table_profile}.profile_id INNER JOIN accelerator_project ON ${table_task}.project_id = accelerator_project.project_id `
+    let fields = [`task_id`, `task_folder_name`, `task_status`, `${table_task}.project_id`, `project_name`, `${table_task}.profile_id`, `u1.profile_username as tagger`, `reviewer_profile_id`, `u2.profile_username as reviewer`, `task_mediatype`, `task_process_type`, `${table_task}.createdDate`];
+    let join = ` INNER JOIN ${table_profile} u1 ON ${table_task}.profile_id = u1.profile_id INNER JOIN ${table_profile} u2 ON ${table_task}.reviewer_profile_id = u2.profile_id INNER JOIN accelerator_project ON ${table_task}.project_id = accelerator_project.project_id `
     let condi = ` task_status = 'completed'`;
     
     await getHistoricalRec(res, table_task, fields, join, condi);
 });
+
 
 /**
  * ================================================================Functions

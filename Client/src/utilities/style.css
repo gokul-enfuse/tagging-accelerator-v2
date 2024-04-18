@@ -1,0 +1,23 @@
+.wrapper{ display: flex;
+    flex-direction: column;
+     align-items: center
+   };
+
+   .wrapper2{ display: flex;
+    flex-direction: column;
+     align-items: center;
+    margin: 0px 10px;
+   };
+   .header{
+    font-size: 18px;
+   }
+   #HAlign{
+    display: flex;
+    justify-content: space-between;
+   }
+   #tagUsr{
+    margin: 0px 10px;
+   }
+   select {
+    width: 100%;
+   }
