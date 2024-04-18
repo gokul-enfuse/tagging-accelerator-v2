@@ -1,4 +1,4 @@
-import { Button, Table, Checkbox } from 'antd';
+import { Table } from 'antd';
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.min.css';
 import axios from "axios";
@@ -6,19 +6,20 @@ import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import SearchBar from './SearchBar';
+import Model from '../utilities/Model';
 
 
 const HistoricalRecords = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [assignedTo, setAssignedTo] = useState("");
-  const [reviewerList, setReviewerList] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState({});
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [open, setOpen] = useState(false);
+  
   useEffect(() => {
      axios.get(`${DOMAIN}/api/historicalRec`)
       .then(res => {
-         console.log(res);
          setData(res.data);
          setLoading(false);
       }).catch(error => {
@@ -26,10 +27,6 @@ const HistoricalRecords = () => {
       });
   }, []);
 
-  const handleAssignToChange = (e) => {
-    const selectedTaggerId = e.target.value;
-    setAssignedTo(selectedTaggerId);
-  };
   const handleTaskSubmit = () => {
     selectedRowKeys.forEach((key) => {
       const selectedRow = data.find((row) => row.task_id === key);
@@ -57,16 +54,6 @@ const HistoricalRecords = () => {
     });
   };
 
-  const hasSelected = selectedRowKeys.length > 0;
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
   const columns = [
     {
       title: 'Forlder Title',
@@ -85,12 +72,12 @@ const HistoricalRecords = () => {
     },
     {
       title: 'Tagger User ID',
-      dataIndex: 'profile_id',
+      dataIndex: 'tagger',
       key: 'profile_id',
     },
     {
       title: 'Reviewer User ID',
-      dataIndex: 'reviewer_profile_id',
+      dataIndex: 'reviewer',
       key: 'reviewer_profile_id',
     },
     {
@@ -113,10 +100,13 @@ const HistoricalRecords = () => {
       dataIndex: 'action',
       key: 'action',
       render: (text, records) => { 
-        return (<a href='#'>Edit</a>);
+        return (<button style={{width: 'auto', height: '40px', margin: '0px', fontSize:'20px'}} onClick={showModelBox} id={records.task_id}>Edit</button>);
       }
     }
   ];
+
+  const showModelBox = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const showAlert = () => {
     Swal.fire({
@@ -170,6 +160,7 @@ const HistoricalRecords = () => {
         <div style={{ overflowY: 'scroll', height: '356px' }}>
           <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 10 }} rowKey="task_id" />            
         </div>
+        <Model open={open} handleClose={handleClose} />
       </div>
     </div>
     </div>
