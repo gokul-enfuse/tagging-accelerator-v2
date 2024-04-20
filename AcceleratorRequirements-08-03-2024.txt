@@ -101,6 +101,12 @@ Saddam
 1. Video Tagging
 	[issue:: track the object in the video + their moment + time] - in progress
 	[issue:: rectangle BB not pleace in same position, while fetching the records from DB] - In progress [Vikas need to push the changes in repo - pending]
+	
+1. Merging the document tagging code in the tagging tool and testing - in progress
+2. Historical record module needs to be updated - Done
+3. Historical Record backend need to work - in progress
+3. Push all changes related to Accelerator and Tagging tools into Linux VM and Git repository. [half of done]
+4. Rectangle BB retrieving part [Still doing R&D]
 
 
 

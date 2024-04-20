@@ -14,6 +14,31 @@ historicalRecRouter.get('/api/historicalRec', async (req, res) => {
     await getHistoricalRec(res, table_task, fields, join, condi);
 });
 
+historicalRecRouter.get('/api/getallprofile', async(req, res) => {
+    let {role_id} = req.query;
+    let table_profile = process.env.PROFILE;
+    let fields = [`profile_id`, `profile_username`, `profile_role`];
+    let condi = ` profile_role in (${role_id.join()})`;
+
+    await getHistoricalRec(res, table_profile, fields, null, condi);
+});
+
+historicalRecRouter.put('/api/updateprofile', async(req, res) => {
+    const {new_profile_id, new_reviewer_profile_id, task_id, old_reviewer_profile_id} = req.query;
+    let table_task =process.env.TASK;
+    let table_task_image = process.env.TASK_IMAGES;
+    let setFields = ` SET profile_id = ${new_profile_id}, reviewer_profile_id = ${new_reviewer_profile_id}, task_role = 3, task_status = 'To Do', reviewer_task_status = ''`;
+    let condi = ` task_id = ${task_id}`;
+    let setfieldsTwo = ` SET profile_id = ${new_profile_id}`;
+    let condiTwo = ` task_id = ${task_id} and profile_id = ${old_reviewer_profile_id}`;
+
+    if(new_profile_id && new_reviewer_profile_id && task_id) {
+        await updateHistoricalRec(res, table_task, table_task_image, setFields, setfieldsTwo, condi, condiTwo);
+    } else {
+        res.status(400).json({message: 'Invalid arguments.'});
+    }
+});
+
 
 /**
  * ================================================================Functions
@@ -34,7 +59,30 @@ const getHistoricalRec = (response, tablename, fields, join=null, condition=null
         } else {
             response.json(result);
         }
-    })
-}
+    });
+};
+
+const updateHistoricalRec = (response, tablename, tablenametwo = null, setfields, setfieldsTwo = null, conditions, conditionsTwo = null) => {
+    let sqlUpdate = ` UPDATE ${tablename} ${setfields} WHERE ${conditions}`;
+    conn.query(sqlUpdate, (error, result) => {
+        if(error) {
+            response.status(400).json({ message: "Data not updated.", error: error });
+        } else {
+            if(tablenametwo) {
+                let sqlUpdateTwo = ` UPDATE ${tablenametwo} ${setfieldsTwo} WHERE ${conditionsTwo} `;
+                console.log(sqlUpdateTwo);
+                conn.query(sqlUpdateTwo, (error, resultT) => {
+                    if(error) {
+                        response.status(400).json({ message: "Data not updated.", error: error });
+                    } else {
+                        response.json(resultT);
+                    }
+                });
+            } else {
+                response.json(result);
+            }
+        }
+    });
+};
 
 module.exports = historicalRecRouter;
