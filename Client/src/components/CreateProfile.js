@@ -119,7 +119,7 @@ const CreateProfile = () => {
                 <div className='profile_content'>
                 <h1>Create Profile (Manager)</h1>
                 <label><b>Project Name</b></label><br />
-                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{height: "50%"}}>
+                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{height: "50%"}} required>
 
                     {projectList.map((project) => (
                         <option key={project.project_id} value={project.project_id} >

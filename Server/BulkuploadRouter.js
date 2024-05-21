@@ -123,7 +123,7 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
       if(stdout) {
         const table_name = process.env.TASK;
         const dataArray = JSON.parse(req.body.body);
-        const assignNameOftaggersArr = [], projectNameArr = [], folderName = [];
+        const assignNameOftaggersArr = [], projectNameArr = [], taskMediaType = [], folderName = [];
         const folder_path = extractionPath;
         const folderData = fs.readdirSync(folder_path).map(arr => arr);
 
@@ -136,7 +136,8 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
             resone.forEach((v, i, arr) => {
               let updateSQL = ` UPDATE ${table_name} SET task_zip_folder_name = '${additionalPath}' WHERE 
                 profile_id = (SELECT profile_id FROM accelerator_profile WHERE profile_username = '${arr[i].assignNameOftaggers}') 
-                and project_id = (SELECT project_id FROM accelerator_project WHERE project_name = '${arr[i].project_name}') `;
+                and project_id = (SELECT project_id FROM accelerator_project WHERE project_name = '${arr[i].project_name}') 
+                and task_mediatype = '${arr[i].task_mediatype}' `;
                 conn.query(updateSQL, (error, result) => {
                     if(error) {
                         res.status(400).json({message: 'Update SQL error', Error: error});
@@ -145,6 +146,7 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
                 assignNameOftaggersArr.push(`'${arr[i].assignNameOftaggers}'`);
                 projectNameArr.push(`'${arr[i].project_name}'`);
                 folderName.push(`'${additionalPath}'`);
+                taskMediaType.push(`'${arr[i].task_mediatype}'`);
             });
             return folderName;
         }).then((folderName) => {
@@ -162,7 +164,7 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
                  distribution.map((v, i, arr) => {
                      let insertSQL = ` INSERT INTO accelerator_task_image (task_id, profile_id, image_imagename, image_imagepath) VALUES `;
                         for(let i=0; i<Object.values(v); i++) {
-                          insertSQL+= `((select task_id from accelerator_tasks where profile_id = ${Object.keys(v)} and task_zip_folder_name=${folderName[0]} and task_freezz = 0),
+                          insertSQL+= `((select task_id from accelerator_tasks where profile_id = ${Object.keys(v)} and task_zip_folder_name=${folderName[0]} and task_freezz = 0 and task_mediatype='image' and  task_process_type='bulk'),
                              ${Object.keys(v)}, 
                              '${folderData[j]}', 
                              '${extractionPath}/${folderData[j]}') `;
@@ -171,16 +173,15 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
                             }
                           j=j+1;
                         }
-                     // console.log("insertSQL = ", insertSQL);
                       conn.query(insertSQL, (error, result) => {
                           if(error) {
                              console.log({message: 'Insert SQL error.', Error: error});
                              return;
                           } else {
-                             let updateSQLTaskFreez = ` UPDATE ${table_name} SET task_freezz = 1 WHERE profile_id = ${Object.keys(v)} and task_zip_folder_name = ${folderName[0]} `;
+                             let updateSQLTaskFreez = ` UPDATE ${table_name} SET task_freezz = 1 WHERE profile_id = ${Object.keys(v)} and task_zip_folder_name = ${folderName[0]} and task_mediatype='image' and  task_process_type='bulk'`;
                               conn.query(updateSQLTaskFreez, (error, result) => {
                                   if(error) {
-                                      res.status(400).json({message: 'Update SQL error', Error: error});
+                                      console.error({message: 'Update SQL error', Error: error});
                                   } else {
                                       console.log("Insert SQL executed.");
                                   }
@@ -205,6 +206,20 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
   }
 });
 
+routers.get('/bulkuploadcheck', async(req, res) => {
+  console.log(req.query.args);
+   let projectName = req.query.args;
+   let sqlbulkupload = `SELECT project_status FROM accelerator_project WHERE project_name = '${projectName}'`;
+   console.log(sqlbulkupload);
+   conn.query(sqlbulkupload, (error, result) => {
+       if(error) {
+          res.status(400).json({message: 'SQL query issue!', error: error});
+       } else {
+          res.status(200).json({message: 'Return the project status.', resargs: result[0]});
+       }
+   });
+});
+
 /**
  * Created By: Vikas Bose | 12/03/2024
  * @param {*} numRecords 
@@ -227,7 +242,6 @@ function distributeRecords(numRecords, numPersons, keys) {
       distribution.push(obj);
       recordsLeft -= recordsToAssign;
   }
-
   return distribution;
 }
 
