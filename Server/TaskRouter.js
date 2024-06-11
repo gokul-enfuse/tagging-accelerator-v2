@@ -19,6 +19,7 @@ let fs = require('fs');
 taskRouter.post('/createtask', async (req, res) => {
     let table_name_task = process.env.TASK;
     let table_name_profile = process.env.PROFILE;
+    let table_name_project = process.env.PROJECT;
     let task_folder_name = req.body.category || `folderName_${shortid.generate()}`;
     let task_title = req.body.taskTitle || `title_${shortid.generate()}`;
     let task_status = (req.body.status) ? req.body.status : null;
@@ -35,43 +36,63 @@ taskRouter.post('/createtask', async (req, res) => {
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
-    
+
     let projects = [];
-    selectSQL = ` SELECT profile_id, project_id FROM ${table_name_profile} WHERE profile_id = ${profile_id}`;
+    let selectSQL = ` SELECT profile_id, project_id FROM ${table_name_profile} WHERE profile_id = ${profile_id}`;
     conn.query(selectSQL, (error, selectRes) => {
         if (error) {
             res.status(400).json({ message: "SQL error.", error: error });
         } else {
             projects.push(project_id, selectRes[0]['project_id']);
-            sqlUpdate = ` update ${table_name_profile} SET project_id = '${projects.reverse()}' where profile_id = ${profile_id}`;
-            conn.query(sqlUpdate, (error, updateRes) => {
+            let sqlProject = `SELECT project_status FROM ${table_name_project} WHERE project_id = ${project_id}`;
+            conn.query(sqlProject, (error, result) => {
                 if(error) {
                     res.status(400).json({ message: "SQL error.", error: error });
                 } else {
-                    insertTaskSql = ` INSERT INTO ${table_name_task} (task_folder_name, task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_zip_folder_name, task_process_type, createdDate, modifiedDate) VALUES ('${task_folder_name}', '${task_title}', '${task_status}', '${project_id}', ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${shortid.generate()+'_extracted'}', '${task_process_type}', '${createdDate}', '${modifiedDate}') `;
-                    conn.query(insertTaskSql, (error, taskInsertRes) => {
-                        if(error) {
-                            res.status(400).json({ message: "SQL error.", error: error });
-                        } else{
-                            sql = `INSERT INTO accelerator_task_image (task_id, profile_id, image_imagename, image_imagepath, createdDate, modifiedDate) VALUES `;
-                                for(let i=0; i<task_filename.length; i++) {
-                                    sql+= `('${taskInsertRes.insertId}', '${profile_id}', '${task_filename[i]}', '${task_filepath[i].replace(/\\/g, '/')}', '${createdDate}', '${modifiedDate}')`;
-                                    if(i < task_filename.length - 1) {
-                                        sql += ', ';
-                                    }
-                                }
-                            conn.query(sql, (error, sqlRes) => {
-                                if(error) {
-                                    res.status(400).json({ message: "SQL error.", error: error });
-                                } else {
-                                    res.status(200).json({ message: "Task created.", rs: sqlRes });
-                                }
-                            });  
-                        }
-                    });                    
-                }
-            });                  
-        }
+                    if(result[0].project_status === 0) {
+                        res.status(200).json({ message: "Manager does not belong to the project.", error: result[0].project_status });
+                    } else {
+                        let sqlUpdate = ` update ${table_name_profile} SET project_id = '${projects.reverse()}' where profile_id = ${profile_id}`;
+                        conn.query(sqlUpdate, (error, updateRes) => {
+                            if(error) {
+                                res.status(400).json({ message: "SQL error.", error: error });
+                            } else {
+                                insertTaskSql = ` INSERT INTO ${table_name_task} (task_folder_name, task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_zip_folder_name, task_process_type, createdDate, modifiedDate) VALUES ('${task_folder_name}', '${task_title}', '${task_status}', '${project_id}', ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${shortid.generate()+'_extracted'}', '${task_process_type}', '${createdDate}', '${modifiedDate}') `;
+                                conn.query(insertTaskSql, (error, taskInsertRes) => {
+                                    if(error) {
+                                        res.status(400).json({ message: "SQL error.", error: error });
+                                    } else{
+                                        let table_media_type = '', media_fields = [];
+                                        if(task_mediatype === 'image') {
+                                            table_media_type = 'accelerator_task_image';
+                                            media_fields = [`task_id`, `profile_id`, `image_imagename`, `image_imagepath`, `createdDate`, `modifiedDate`].join();
+                                        }
+                                        if(task_mediatype === 'doc') {
+                                            table_media_type = 'accelerator_task_doc';
+                                            media_fields = [`task_id`, `profile_id`, `media_filename`, `media_filepath`, `createdDate`, `modifiedDate`].join();
+                                        }
+                                        sql = `INSERT INTO ${table_media_type} (${media_fields}) VALUES `;
+                                            for(let i=0; i<task_filename.length; i++) {
+                                                sql+= `('${taskInsertRes.insertId}', '${profile_id}', '${task_filename[i]}', '${task_filepath[i].replace(/\\/g, '/')}', '${createdDate}', '${modifiedDate}')`;
+                                                if(i < task_filename.length - 1) {
+                                                    sql += ', ';
+                                                }
+                                            }
+                                        conn.query(sql, (error, sqlRes) => {
+                                            if(error) {
+                                                res.status(400).json({ message: "SQL error.", error: error });
+                                            } else {
+                                                res.status(200).json({ message: "Task created.", rs: sqlRes });
+                                            }
+                                        });  
+                                    } //end else
+                                });                    
+                            } //end else
+                        }); 
+                    } //end else
+                } //end else
+            });                             
+        } //end else
     });    
 });
 
@@ -84,7 +105,8 @@ let fileName = "";
 const storageImage = multer.diskStorage({
     destination: function (req, file, cb) {
         //cb(null, "uploads/images");
-        let folderPath = process.env.TAGGINGSERVERPATH+'/manual/';
+        console.log("fileDetails=", file);
+        let folderPath = (file.mimetype === 'image/jpeg')?process.env.TAGGINGSERVERPATH+'/manual/image/' : process.env.TAGGINGSERVERPATH+'/manual/doc/';
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath, { recursive: true });
         }
@@ -143,10 +165,32 @@ taskRouter.get('/getalltask', async (req, res) => {
 }); */
 
 taskRouter.get('/gettaggertask', async (req, res) => {
-    let fields = [`accelerator_tasks.task_id`, `accelerator_tasks.task_folder_name`, `accelerator_tasks.task_title`, `task_status`, `task_mediatype`, `accelerator_tasks.profile_id`, `role_name`, `profile_name`, `profile_email`, `profile_username`, `accelerator_tasks.project_id`, `accelerator_tasks.createdDate`, `count(image_id) as numimage`, `GROUP_CONCAT(image_imagename) as imagename`, `task_process_type`].join()
-    let join = ` INNER JOIN accelerator_profile ON accelerator_tasks.profile_id = accelerator_profile.profile_id INNER JOIN accelerator_role ON accelerator_tasks.task_role = accelerator_role.role_id INNER JOIN accelerator_task_image ON accelerator_tasks.task_id = accelerator_task_image.task_id`
+    let fields = [`accelerator_tasks.task_id`, 
+                `accelerator_tasks.task_folder_name`, 
+                `accelerator_tasks.task_title`, 
+                `task_status`,
+                `task_mediatype`, 
+                `accelerator_tasks.profile_id`, 
+                `role_name`, 
+                `profile_name`, 
+                `profile_email`, 
+                `profile_username`, 
+                `accelerator_tasks.project_id`, 
+                `accelerator_tasks.createdDate`, 
+                `(select count(image_id) from accelerator_task_image WHERE task_id = accelerator_tasks.task_id and profile_id = accelerator_tasks.profile_id) as numimage`, 
+                `(select GROUP_CONCAT(image_imagename) from accelerator_task_image WHERE task_id = accelerator_tasks.task_id and profile_id = accelerator_tasks.profile_id) as imagename`, 
+                `task_process_type`, 
+                `(select count(media_id) from accelerator_task_doc WHERE task_id = accelerator_tasks.task_id and profile_id = accelerator_tasks.profile_id) as numdocs`, 
+                `(select GROUP_CONCAT(media_filename) from accelerator_task_doc WHERE task_id = accelerator_tasks.task_id and profile_id = accelerator_tasks.profile_id) as docname`].join();
+
+    let join = ` inner join accelerator_profile as ap ON accelerator_tasks.profile_id = ap.profile_id
+    inner join accelerator_role as ar ON accelerator_tasks.task_role = ar.role_id
+    inner join accelerator_project as apro ON accelerator_tasks.project_id = apro.project_id`
+
     let arg = ` WHERE task_role = 3 and task_status not in ('Done', 'waiting for review')`;
-    let groupby = ` GROUP By profile_id, task_folder_name, accelerator_tasks.project_id, accelerator_task_image.task_id`;
+
+    let groupby = ` GROUP By profile_id, task_folder_name, accelerator_tasks.project_id`;
+
     await executeSqlQuery(arg, res, 'accelerator_tasks', fields, join, groupby);
 });
 
@@ -331,6 +375,10 @@ taskRouter.post('/api/excelupload', (req, res) => {
 
         const dataArray = JSON.parse(req.body.excelData);
         const table_name = process.env.TASK;
+        const table_project = process.env.PROJECT;
+
+        /* let sqlProject = ` SELECT project_status FROM ${table_project} WHERE project_name = '${dataArray[0].project_name}'`;
+        console.log(sqlProject); */
 
         let sqlInsert = ` INSERT INTO ${table_name} (task_folder_name, task_title, task_status, project_id, profile_id, numOfItemAssignToTagger, reviewer_profile_id, numOfItemAssignToReviewer, task_mediatype, task_role, task_process_type, createdDate, modifiedDate)
                         VALUES `;
@@ -524,6 +572,7 @@ let executeSqlQuery = (arg = null, res, table_name = null, fields = null, join =
     if (groupby != null) {
         sql += ` ${groupby}`;
     }
+   //console.log(sql);
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });

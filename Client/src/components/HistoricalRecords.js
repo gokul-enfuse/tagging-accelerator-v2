@@ -12,10 +12,9 @@ import Model from '../utilities/Model';
 const HistoricalRecords = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [assignedTo, setAssignedTo] = useState("");
   const [isSubmitted, setIsSubmitted] = useState({});
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [open, setOpen] = useState(false);
+  const [taskid, setTaskId] = useState();
   
   useEffect(() => {
      axios.get(`${DOMAIN}/api/historicalRec`)
@@ -26,33 +25,6 @@ const HistoricalRecords = () => {
          console.log(error)
       });
   }, []);
-
-  const handleTaskSubmit = () => {
-    selectedRowKeys.forEach((key) => {
-      const selectedRow = data.find((row) => row.task_id === key);
-      if (selectedRow) {
-        const updatedRow = { ...selectedRow };
-        updatedRow.tagger_id = assignedTo;
-        // updatedRow.profile_role = 3;
-        updatedRow.task_role = 3;
-        updatedRow.task_status = "reassigned";
-
-        // Update the task information
-        axios
-          .put(`${DOMAIN}/updatetask/${selectedRow.task_id}`, {
-            id: selectedRow.task_id,
-            record: updatedRow,
-          })
-          .then((response) => {
-            let temp = { ...isSubmitted };
-            temp[response.data.task_id] = true;
-            setIsSubmitted(temp);
-            showAlert("Success");
-          })
-          .catch((error) => console.error(error));
-      }
-    });
-  };
 
   const columns = [
     {
@@ -100,12 +72,17 @@ const HistoricalRecords = () => {
       dataIndex: 'action',
       key: 'action',
       render: (text, records) => { 
-        return (<button style={{width: 'auto', height: '40px', margin: '0px', fontSize:'20px'}} onClick={showModelBox} id={records.task_id}>Edit</button>);
+        let combineId = records.task_id+'_'+records.reviewer_profile_id;
+        return (<button style={{width: 'auto', height: '40px', margin: '0px', fontSize:'20px'}} onClick={showModelBox} id={combineId}>Edit</button>);
       }
     }
   ];
 
-  const showModelBox = () => setOpen(true);
+  const showModelBox = (e) => {
+    const {id} = e.target;
+      setOpen(true);
+      setTaskId(id);
+  }
   const handleClose = () => setOpen(false);
 
   const showAlert = () => {
@@ -160,7 +137,7 @@ const HistoricalRecords = () => {
         <div style={{ overflowY: 'scroll', height: '356px' }}>
           <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 10 }} rowKey="task_id" />            
         </div>
-        <Model open={open} handleClose={handleClose} />
+        <Model open={open} handleClose={handleClose} taskId={taskid}/>
       </div>
     </div>
     </div>

@@ -4,8 +4,8 @@ import useAuth from '../hooks/useAuth.js';
 import { DOMAIN } from '../Constant.js';
 
 export function AssignToReviewer({ pname, record, mismatchedTasks }) {
-    const { auth } = useAuth();
-    const defaultFormData = {
+    let { auth } = useAuth();
+    let defaultFormData = {
       taskTitle: '',
       taskId: '',
       status: 'waiting for review',
@@ -18,10 +18,10 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
       fileName: '',
       filePath: ''
     }
-    const [formData, setFormData] = useState(defaultFormData);    
+    let [formData, setFormData] = useState(defaultFormData);    
     let [reviewers, setReviewers] = useState([]);
     
-    const handleChange = (e) => {
+    let handleChange = (e) => {
       const { value } = e.target;
       setFormData({
         assignedTo: value,
@@ -37,7 +37,7 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
         .catch((error) => console.error("Error updating assignment:", error));
     };
 
-    const getReviewers = () => {
+    let getReviewers = () => {
       axios
         .get(`${DOMAIN}/getreviewername`)
         .then(res => {
@@ -49,7 +49,7 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
       getReviewers();
     }, []);
 
-    const isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
+    let isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
 
     return (
       <select
@@ -60,7 +60,7 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
         style={{ width: '150px', height: '30px' }}
         /* disabled={isIndividualLogin} */
         disabled>
-        <option value="">Select</option>
+        <option value="" key={0}>Select</option>
         {reviewers.length > 0 &&
           reviewers.map((reviewer) => (
             <option key={reviewer.reviewer_profile_id} value={reviewer.reviewer_profile_id} > 
@@ -73,8 +73,8 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
  };
 
  export function AssignToTagger({ pname, record, mismatchedTasks }) {
-    const { auth } = useAuth();
-    const defaultFormData = {
+    let { auth } = useAuth();
+    let defaultFormData = {
         taskTitle: '',
         taskId: '',
         status: 'To do',
@@ -87,10 +87,10 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
         fileName: '',
         filePath: ''
       }
-      const [formData, setFormData] = useState(defaultFormData);
-      const [taggers, setTaggers] = useState([]);
+      let [formData, setFormData] = useState(defaultFormData);
+      let [taggers, setTaggers] = useState([]);
   
-      const handleChange = (e) => {
+      let handleChange = (e) => {
         const { value } = e.target;
         setFormData({
           assignedTo: value,
@@ -107,7 +107,7 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
           .catch((error) => console.error("Error updating assignment:", error));
       };
   
-      const getTaggers = () => {
+      let getTaggers = () => {
         axios
           .get(`${DOMAIN}/getalltaggers`)
           .then(res => {
@@ -118,9 +118,9 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
       useEffect(() => {
         getTaggers();
       }, []);
-      const findTaggerById = (profileId) => taggers.find(tagger => tagger.profile_id === profileId);
+      let findTaggerById = (profileId) => taggers.find(tagger => tagger.profile_id === profileId);
   
-      const isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
+      let isIndividualLogin = auth.profile_role !== 1 && auth.profile_role !== 2;
 
       return (
         <select
@@ -132,7 +132,7 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
           /* disabled={isIndividualLogin} */ 
           disabled
         >
-          <option value="">Select</option>
+          <option value="" key={0}>Select</option>
           {taggers.length > 0 &&
             taggers.map((tagger) => (
               <option

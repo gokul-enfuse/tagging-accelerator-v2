@@ -74,9 +74,43 @@ Vikas Bose
 	[issue:: remove the assginee dropdown in tagger & reviewer bucket] - Done
 	[issue:: historical records, not populated the records] - resolved
 	[issue:: need to remove the dropdown and submit button from historical records] - resolved
-	[issue:: click on "edit" button, popup must appear with two dropdowns {assginee, status)] - in progress
+	[issue:: click on "edit" button, popup must appear with two dropdowns {assginee, status)] - resolved
+11. Accelerator tool
+	2. Historical record module needs to be updated - Done 
+		[ UI part and filling the records in the dropdown has done]
+	3. Historical Record backend need to work - Done
+		[Backend section (update operation also finished. Testing has done]
+	4. Push all changes related to Accelerator and Tagging tools into Linux VM and Git repository. 
+		[Accelerator development has been done and push all changes into Linux VM + Git repo. Once Tagging tool development done phase-I then I will perfrom same action.]
+	5. Download button functionality for profile page - Done
+12. Taggin tool
+	1. Merging the document tagging code in the tagging tool and testing - in progress
+		[The new code merging done till detail page and I am currently working on layout page, so both event could work properly. After that I need to do manual testing]
+	2. Rectangle BB retrieving part 
+		[Still doing R&D. The library has some limitations after customization even the library did not work as expected]
 	
-	
+22/04/2024 to 01/05/2024
+13. Bulk upload : 
+	[issue:: UI, create an tab for document upload similar to image upload][https://www.geeksforgeeks.org/how-to-create-tabs-in-reactjs/] - Done
+	[issue:: template will be similar and zip file also similar ] - Done
+	[issue:: create the table for list of documents] - Done
+	[issue:: backend work, add the document details in DB, extract the zip file and then document name & path must add into DB] - Done
+14. create task :
+	[issue:: check using brwser can we upload documents or not ?] - Done
+	[issue:: it must be same work flow like images] - Done
+
+06/05/2024 to 10/05/2024
+15. Restrictions - in bulk upload
+	[issue:: we should not allow bulk upload till project hasn't been assigned to Manager]
+	[issue:: only those details need to add in bulk upload, where listed project assign to Manager]
+16. Restrictions - in manual upload
+	[issue:: we should not allow manual upload till project hasn't been assigned to Manager] - fixed
+	[issue:: only those details need to add in manual upload, where listed project assign to Manager] - fixed
+17. [issue:: PUBLIC_URL variable wasn't working] - fixed
+18. Tagging Tool
+	[issue:: Image component did not working] - fixed
+	[issue:: Document component not load the document/pdf files] - In Progress
+
 
 12/03/2024 to 29/03/2024
 Lalitha and Srilakhmi
@@ -87,6 +121,10 @@ Lalitha and Srilakhmi
 	[issue:: detail panel must auto referesh using react property] - Done
 	[issue:: while autoupdate the list panel, it use spinner] - in progress
 	[issue:: validate the duplicate entry not happen]
+2.  UI, create an tab for document upload similar to image upload [Not completed]
+	[issue:: two tabs [image bulk upload | doc bulk upload]
+	[issue:: when I click on image tab, when I click on doc tab]
+
 Logic -: [Explain by Vikas]
 1. download report of project [backend work]
     - project_id, project_name, project_status in excel sheet file and downaload
@@ -101,6 +139,13 @@ Saddam
 1. Video Tagging
 	[issue:: track the object in the video + their moment + time] - in progress
 	[issue:: rectangle BB not pleace in same position, while fetching the records from DB] - In progress [Vikas need to push the changes in repo - pending]
+
+
+
+
+
+	
+
 
 
 

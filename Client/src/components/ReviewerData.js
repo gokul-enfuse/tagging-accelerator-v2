@@ -94,11 +94,11 @@ const ReviewerData = () => {
  * Created Date: 28/02/2024
  * Created By:: Vikas Bose
  */
-  const showAlert = (arg) => {
+  const showAlert = (arg, icon) => {
     Swal.fire({
       title: arg,
       text: 'Status updated succesfully',
-      icon: 'Record added successfully',
+      icon: icon,
       confirmButtonText: 'OK',
     });
   };
@@ -138,7 +138,7 @@ const ReviewerData = () => {
           record: { ...record, task_role: (value === 'Reassigned')?3 : 4, task_status: value, reviewer_task_status: (value === 'Reassigned')?null:'Completed'},
         })
         .then((response) => {
-          showAlert(response.data.message);
+          showAlert(response.data.message, 'info');
           const updatedData = data.filter((task) => task.task_id !== record.task_id);
           setData(updatedData);
         })
@@ -166,7 +166,7 @@ const ReviewerData = () => {
       .then(result => {
         setPortNumber(result['data'].appPort);
       }).catch(error => {
-        showAlert(error)
+        showAlert(error, 'error');
       })
   }, []);  
 

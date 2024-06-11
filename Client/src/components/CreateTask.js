@@ -28,19 +28,19 @@ const CreateTask = () => {
     const [taggers, setTaggers] = useState([]);
     const [projects, setProjects] = useState([]);
 
-    const showAlert = () => {
+    const showAlert = (arg, info) => {
         Swal.fire({
             title: '',
-            text: 'Task added successfully',
-            icon: 'success',
+            text: arg,
+            icon: info,
             confirmButtonText: 'OK',
         });
     };
 
     const handleFileChange = async (e) => {
         const selectedFiles = (e.target.files.length > 1)? Array.from(e.target.files).filter(file =>
-            file.type === 'image/jpeg' || file.type === 'image/jpg'
-          ): [e.target.files[0]];
+           file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.type === 'application/pdf'
+        ): [e.target.files[0]];
         console.log(selectedFiles);
         if (selectedFiles) {
             const formDatas = new FormData();
@@ -94,14 +94,17 @@ const CreateTask = () => {
                 },
             });
             if (response.status === 200) {
+                console.log("Res = ",response)
                 // Task created successfully, you can navigate or show a success message here
-                showAlert();
+                showAlert(response.data.message, 'success');
                 setFormData(defaultFormData); // Reset the form
             } else {
                 console.error('Task creation failed');
             }
         } catch (error) {
-            console.error('Error creating task:', error);
+            showAlert(error.response.data.message, 'error');
+            setFormData(defaultFormData); // Reset the form
+           // console.error('Error creating task:', error);
         }
     };
 
@@ -187,7 +190,7 @@ const CreateTask = () => {
                     <option value="image">Image</option>
                     <option value="audio">Audio</option>
                     <option value="video">Video</option>
-                    <option value="document">Document</option>
+                    <option value="doc">Document</option>
                 </select><br />
                 </div>
              </fieldset>  

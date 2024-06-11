@@ -4,7 +4,6 @@ import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
-import { useLocation } from 'react-router-dom';
 import 'antd/dist/antd.min.css';
 import { DOMAIN } from '../Constant.js';
 import { AssignToTagger } from '../utilities/Assignto.js';
@@ -16,11 +15,10 @@ const TaggerData = () => {
   const taggerId = auth.profile_username === "admin" ? auth.profile_username : auth.profile_id;
   const [data, setData] = useState([]);
   const [portNumber, setPortNumber] = useState();
-  let location = useLocation();
   let currentURL = window.location.href;
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
-  
+  //let location = useLocation();
   const columnsRow = [
     
     {
@@ -42,15 +40,12 @@ const TaggerData = () => {
       key: 'noOfItems',
       render: (text, record) => {
         try {
-          let numImages = 0;
-
-          if (auth.profile_role === 3 ||auth.profile_role === 1 ||auth.profile_role === 2) {
-            numImages = record.numimage || 0; }
+            let numItems = (record.numimage > 0)? record.numimage : record.numdocs; 
 
           const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${taggerId}`;
           return (
             <a href={otherAppUrl} target="_blank">
-              {numImages}
+              {numItems}
             </a>
           );
         } catch (error) {
@@ -64,6 +59,12 @@ const TaggerData = () => {
       title: 'Process Type',
       dataIndex: 'task_process_type',
       key:'taskProcessType'
+    },
+
+    {
+      title: 'Media Type',
+      dataIndex: 'task_mediatype',
+      key:'taskMediatype'
     },
 
     {
@@ -178,22 +179,6 @@ const TaggerData = () => {
 
   return (
     <div>
-      {/* <div
-        style={{
-          marginBottom: 16,
-        }}
-      >
-        <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
-          StartWorking
-        </Button>
-        <span
-          style={{
-            marginRight: 8,
-          }}
-        >
-          {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-        </span>
-      </div> */}
       <Table
         //rowSelection={rowSelection}
         columns={columnsRow}

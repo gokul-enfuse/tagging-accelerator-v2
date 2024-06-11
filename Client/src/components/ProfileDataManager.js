@@ -1,26 +1,17 @@
-import { Button, Table, Select } from 'antd';
+import { Button, Table } from 'antd';
 import React, { useState } from 'react';
-import 'antd/dist/antd.min.css'
+import 'antd/dist/antd.min.css';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
 import { DOMAIN } from '../Constant.js';
+import * as XLSX from 'xlsx'; // Import XLSX library for Excel file generation
 import SearchBar from './SearchBar.js';
 
 
 const ProfileData = () => {
     let [data, setData] = useState([]);
-    
-    /* const getAllProject = (arg) => {
-        axios
-            .get(`${DOMAIN}/allprojects`)
-            .then(res => {
-                console.log(res.data);
-                setProjectData(res.data);
-            }).catch(error => {
-                console.log(error);
-            });
-    } */
+    const [xlsxData,setxlsxData] = useState([]);
     const getAllProfiles = () => {
         axios
             .get(`${DOMAIN}/taggerandreviewerprofiles`)
@@ -41,10 +32,25 @@ const ProfileData = () => {
                         project_id: arr[i].project_id
                     }
                 });
+                const tempData = managerProfiles.map((v, i, arr) => {
+                   return {
+                       FullName: arr[i].profile_fullname,
+                       UserName: arr[i].profile_username,
+                       Role: arr[i].role_name,
+                   }
+               });
+                setxlsxData(tempData);
                 setData(managerProfile);
             }).catch(error => console.error(error));
     }
-    //console.log(data)
+    // Function to handle download button click
+    const handleDownload = () => {
+        const worksheet = XLSX.utils.json_to_sheet(xlsxData); // Convert data to worksheet
+        const workbook = XLSX.utils.book_new(); // Create a new workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Profiles'); // Add worksheet to the workbook
+        XLSX.writeFile(workbook, 'profiles.xlsx'); // Write workbook to an Excel file and download it
+    }
+    
     const columns = [
         {
             title: "Full Name",
@@ -99,8 +105,11 @@ const ProfileData = () => {
             </div>
         
         <div className='profileDetails'>
-            <div style={{ marginBottom: 16 }}>
-                <span style={{ marginRight: 8 }}><a>Download</a></span>
+        <div style={{ marginBottom: "16px", marginLeft: "auto", width: "fit-content" }}>
+                {/* Button to trigger download */}
+                <Button type="primary" onClick={handleDownload}>
+                    <span>Download</span>
+                </Button>
             </div>
             <Table columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
         </div>
