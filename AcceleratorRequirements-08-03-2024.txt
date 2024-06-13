@@ -110,6 +110,22 @@ Vikas Bose
 18. Tagging Tool
 	[issue:: Image component did not working] - fixed
 	[issue:: Document component not load the document/pdf files] - In Progress
+	
+13/05/2024 to 24/05/2024
+19. Tagging Tool
+	[issue:: Document tagging POC- able to display the docx but not PDF] - In Progress
+	[issue:: Externl IP issue for Linux VM] - In Progress
+
+27/05/2024 to 31/05/2024
+20. Tagging Tool
+	[issue: Push the all Accelerator changes into VM and Git]
+	[issue: Document tagging POC- able to display the docx and PDF both]
+	[issue: merging the Document Tagging part into main application] - In Progress
+
+03/06/2024 to 7/06/2024
+21. Tagging Tool
+	[issue: Document tagging POC- able to display the docx and PDF both in richtext box] - In Progress
+	[issue: merging the Document Tagging part into main application] - In Progress
 
 
 12/03/2024 to 29/03/2024
@@ -139,8 +155,15 @@ Saddam
 1. Video Tagging
 	[issue:: track the object in the video + their moment + time] - in progress
 	[issue:: rectangle BB not pleace in same position, while fetching the records from DB] - In progress [Vikas need to push the changes in repo - pending]
+	
+11/06/2024 to 14/06/2024
+1. Tagging tool
+	[issue:: Need to add the scroller into document display part] - In Progress [completed by Saddam, review code & testing by Vikas Pending]
 
-
+2. Accelerator Tool
+	[issue:: Create project not working in production server ] -completed [Testing done]
+	[issue:: Duplicate project name mustn't save in DB] - TBD [Vikas Bose]
+	[issue:: Create manager not working in production server ] - In Progress
 
 
 
