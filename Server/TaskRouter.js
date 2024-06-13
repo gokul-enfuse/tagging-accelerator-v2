@@ -32,7 +32,7 @@ taskRouter.post('/createtask', async (req, res) => {
     let task_filepath = (req.body.filePath) ? req.body.filePath : null;
     let task_process_type = 'manual';
     let createdDate = req.body.creationDate;
-    let modifiedDate = new Date().toJSON();
+    let modifiedDate = new Date().toJSON().substring(0, 10);
     if (task_title === null || task_status === null || profile_id === 0 || task_role === 0) {
         res.status(400).json({ message: "Invalid Input" });
     }
@@ -252,7 +252,7 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
     let table_task = process.env.TASK;
     let table_task_image = process.env.TASK_IMAGES;
     const task_id = req.params.id;
-    const modifiedDate = new Date().toJSON();
+    const modifiedDate = new Date().toJSON().substring(0, 10);
     if(reviewer_profile_id) {
         sql = ` UPDATE ${table_task} SET task_status = "${task_status}", reviewer_profile_id = "${reviewer_profile_id}", task_role = ${task_role}, modifiedDate = "${modifiedDate}" WHERE task_id = ${task_id} and profile_id = ${profile_id} `;
     } else {
@@ -282,7 +282,7 @@ taskRouter.put('/updatetask/:id', async (req, res) => {
 taskRouter.put('/updatetaskprofile/:profile_id', async (req, res) => {
     const table_name = process.env.TASK;
     const profile_id = req.params.profile_id;
-    const modifiedDate = new Date().toJSON();
+    const modifiedDate = new Date().toJSON().substring(0, 10);
 
     const sql = `UPDATE ${table_name} SET task_title = '${req.body.record.task_title}', task_status = '${req.body.record.task_status}', reviewer_task_status = '${req.body.record.reviewer_task_status}', reviewer_profile_id = ${req.body.record.reviewer_profile_id}, task_role = ${req.body.record.task_role}, profile_id = '${req.body.record.profile_id}', modifiedDate = '${modifiedDate}' WHERE profile_id = ${profile_id}`;
     conn.query(sql, (error, result) => {
@@ -303,7 +303,7 @@ taskRouter.post('/updateAssignment/:id', async (req, res) => {
 
     const table_name = process.env.TASK;
     const task_id = req.params.id;
-    const modifiedDate = new Date().toJSON();
+    const modifiedDate = new Date().toJSON().substring(0, 10);
     let taggerId = req.body.record && req.body.record.tagger_id ? `, profile_id = ${req.body.record.assignedTo}` : '';
     const sql = `
     UPDATE ${table_name} 
@@ -335,7 +335,7 @@ taskRouter.put('/updatereviewertask/:id', async (req, res) => {
     let table_task = process.env.TASK;
     let table_task_image = process.env.TASK_IMAGES;
     const task_id = req.params.id;
-    const modifiedDate = new Date().toJSON();
+    const modifiedDate = new Date().toJSON().substring(0, 10);
 
     const sql = ` UPDATE ${table_task} SET task_status = "${task_status}", task_role = ${task_role}, reviewer_task_status = "${reviewer_task_status}", modifiedDate = "${modifiedDate}" WHERE task_id = ${task_id} and profile_id = ${profile_id} and reviewer_profile_id = ${reviewer_profile_id}`;
     conn.query(sql, (error, result) => {
@@ -392,8 +392,8 @@ taskRouter.post('/api/excelupload', (req, res) => {
             const reviewer_profile_name = data[i].assignNameOfReviewers || '';
             const numOfItemAssignToReviewer = data[i].numOfItemAssignToReviewer || 0;
             const task_mediatype = data[i].task_mediatype || null;
-            const createdDate = data[i].createdDate || new Date().toJSON();
-            const modifiedDate = data[i].modifiedDate || new Date().toJSON();
+            const createdDate = data[i].createdDate || new Date().toJSON().substring(0, 10);
+            const modifiedDate = data[i].modifiedDate || new Date().toJSON().substring(0, 10);
 
             sqlInsert +=` ('${task_folder_name}', '${task_title}', '${task_status}', 
                             (SELECT project_id FROM accelerator_project WHERE project_name = '${project_name}'), 
