@@ -9,8 +9,8 @@ projectRouter.post('/create/project', async (req, res) => {
     let project_clientname = req.body.client;
     let project_domain = req.body.domain;
     let project_status = (req.body.assignTo)?req.body.assignTo:0; //it is boolean flag to make understand the project has assigned or not.
-    let createdDate = new Date().toJSON();
-    let modifiedDate = new Date().toJSON();
+    let createdDate = new Date().toJSON().substring(0, 10);
+    let modifiedDate = new Date().toJSON().substring(0, 10);
 
     if(project_Name === null || project_clientname === null || project_domain === null) {
         res.status(400).json({message: "Invalid Input" });
@@ -19,9 +19,9 @@ projectRouter.post('/create/project', async (req, res) => {
     sql = `INSERT INTO ${table_name} (project_Name, project_clientname, project_domain, project_status, createdDate, modifiedDate) VALUES ('${project_Name}', '${project_clientname}', '${project_domain}', ${project_status}, '${createdDate}', '${modifiedDate}')`;
     conn.query(sql, (error, result) => {
         if(error) {
-            res.status(400).json({ message: "Could not create user.", error: error });
+            res.status(400).json({ message: "Could not create project due to SQL error.", error: error.sqlMessage });
         } else {
-            res.status(200).json({ message: "User created.", rs: result});
+            res.status(200).json({ message: "Project created.", rs: result.affectedRows});
         }
     });
 });
@@ -109,7 +109,7 @@ let listOfWorkers = (table_name, res, condi) => {
     let sql = ` SELECT profile_id, profile_fullname, profile_username, profile_role, project_id FROM ${table_name} ${condi}`;
     conn.query(sql, (error, result) => {
         if(error) {
-            res.status(404).json({ message: "Data not found.", error: error });
+            res.status(404).json({ message: "Data not found.", error: error.sqlMessage });
         } else {
             res.json(result);
         }

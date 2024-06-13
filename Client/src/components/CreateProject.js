@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
-import { useEffect } from 'react';
-import ReactDOM from "react-dom";
 import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
@@ -41,8 +39,7 @@ const CreateProject = () => {
             if (projectNames.includes(formData.projectName)) {
                 showAlert(`A project with name "${formData.projectName}" already exists. Please choose a different name.`, 'error');
                 return;
-            }
-            else {
+            } else {
                 const response = await fetch(`${DOMAIN}/create/project`, {
                     method: 'POST',
                     body: JSON.stringify(formData),
@@ -51,7 +48,7 @@ const CreateProject = () => {
                     }
                 })
                 const data = await response.json();
-                showAlert('Project added successfully', "success");
+                showAlert(`${data.message}`, "info");
                 setFormData(defaultFormValues)
             }
         });

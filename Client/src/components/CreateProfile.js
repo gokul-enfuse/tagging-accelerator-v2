@@ -56,7 +56,7 @@ const CreateProfile = () => {
             }
         })
         const data = await response.json();
-        showAlert();
+        showAlert(data.message, 'info');
         setFormData({
             id: [],
             fullName: '',

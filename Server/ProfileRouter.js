@@ -20,8 +20,8 @@ profileRouter.post('/create/profile', async (req, res) => {
     let profile_confirmpassword = (req.body.confirmPassword) ? req.body.confirmPassword : null;
     let profile_role = (req.body.role) ? req.body.role : 0;
     let project_id = (req.body.id) ? req.body.id : 0;
-    let createdDate = new Date().toJSON();
-    let modifiedDate = new Date().toJSON();
+    let createdDate = new Date().toJSON().substring(0, 10);
+    let modifiedDate = new Date().toJSON().substring(0, 10);
 
     if (profile_email === null || profile_username === null || profile_password === null || profile_role === 0) {
         res.status(400).json({ message: "Invalid input." });
