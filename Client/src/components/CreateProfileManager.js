@@ -131,7 +131,7 @@ const CreateProfileManager = () => {
                 <label><b>Full Name</b></label><br />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
-                <input type="text" name="email" value={formData.email} onChange={handleChange} required></input><br />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} required></input><br />
                 <label><b>Role</b></label><br />
                 <select name="role" value={formData.role} onChange={handleChange} required>
                     <option key={""} value={""}> Select</option>

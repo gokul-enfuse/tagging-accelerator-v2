@@ -8,7 +8,7 @@ const profileRouter = express.Router();
 profileRouter.use(express.json());
 
 /**
- * Modified By: Vikas Bose | 11/02/2024
+ * Modified By: Vikas Bose | 11/02/2024 | 22/06/2024
  */
 profileRouter.post('/create/profile', async (req, res) => {
     let table_name = process.env.PROFILE;
@@ -35,19 +35,23 @@ profileRouter.post('/create/profile', async (req, res) => {
             if (result[0].c > 0) {
                 /* sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = '${project_id}', modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`; */
                 res.status(400).json({message: 'Duplicate user not allowed.', rs: result[0].c});
+                return;
             } else {
                 sql = `INSERT INTO ${table_name} (profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, project_id, createdDate, modifiedDate) VALUES ('${profile_name}', '${profile_email}', '${profile_fullname}', '${profile_username}', '${profile_password}', '${profile_confirmpassword}', ${profile_role}, '${project_id}', '${createdDate}', '${modifiedDate}')`;
             }
             conn.query(sql, (error, result) => {
                 if (error) {
                     res.status(400).json({ message: "Could not create user.", error: error });
+                    return;
                 } else {
                     let updateSQl = `UPDATE accelerator_project SET project_status = 1 WHERE project_id in (${project_id})`;
                     conn.query(updateSQl, (error, result) => {
                         if (error) {
                             res.status(400).json({ message: "Could not create user.", error: error });
+                            return;
                         } else {
                             res.status(200).json({ message: "User created.", rs: result });
+                            emailFunction(profile_email, profile_username, profile_confirmpassword)
                         }
                     })
                 }
@@ -101,6 +105,7 @@ profileRouter.get('/api/forgotpassword/:email', (req, res) => {
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
+            return;
         } else {
             if (result.length) {
                 emailFunction(result[0].profile_email, result[0].profile_name, result[0].profile_id);

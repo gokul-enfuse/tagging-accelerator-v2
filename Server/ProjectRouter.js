@@ -3,6 +3,9 @@ const projectRouter = express.Router();
 projectRouter.use(express.json());
 const conn = require('./mysqlConnection');
 
+/**
+ * updated by: Vikas Bose [22/06/2024]
+ */
 projectRouter.post('/create/project', async (req, res) => {
     let table_name = process.env.PROJECT;
     let project_Name = req.body.projectName;
@@ -12,7 +15,7 @@ projectRouter.post('/create/project', async (req, res) => {
     let createdDate = new Date().toJSON().substring(0, 10);
     let modifiedDate = new Date().toJSON().substring(0, 10);
 
-    if(project_Name === null || project_clientname === null || project_domain === null) {
+    if(project_Name.length === 0 || project_clientname.length === 0 || project_domain.length === 0) {
         res.status(400).json({message: "Invalid Input" });
     }
 
@@ -29,7 +32,7 @@ projectRouter.post('/create/project', async (req, res) => {
 projectRouter.get('/allprojects', async (req, res) => {
     const table_name = process.env.PROJECT;
     const { project_ids } = req.query;
-    const arg = (project_ids)?` project_id in (${project_ids})`:null;
+    const arg = (project_ids)?` project_id in (${project_ids}) and project_name != "" `: ` project_name != "" `;
     await getprojects(arg, res, table_name, null);
 });
 
