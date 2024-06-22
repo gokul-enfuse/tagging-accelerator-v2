@@ -112,7 +112,7 @@ const TableData = ({ selectedProject }) => {
 
   return (
     <div>
-      <div
+      {/* <div
         style={{
           marginBottom: 16,
         }}
@@ -127,8 +127,8 @@ const TableData = ({ selectedProject }) => {
         >
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
-      </div>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
+      </div> */}
+      <Table columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
     </div>
   );
 };

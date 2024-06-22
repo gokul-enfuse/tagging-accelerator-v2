@@ -296,9 +296,13 @@ taskRouter.put('/updatetaskprofile/:profile_id', async (req, res) => {
     });
 });
 
+/**
+ * Created By: Vikas Bose | 08/02/2024
+ */
 taskRouter.get('/projectlist', async (req, res) => {
     let table_name = 'accelerator_project';
-    await gettask(null, res, table_name, null);
+    let arg = ` project_name != "" `;
+    await gettask(arg, res, table_name, null);
 });
 
 taskRouter.post('/updateAssignment/:id', async (req, res) => {

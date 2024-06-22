@@ -130,7 +130,7 @@ const CreateProfile = () => {
                 <label><b>Manager's Full Name</b></label><br />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
                 <label><b>Email</b></label><br />
-                <input type="text" name="email" value={formData.email} onChange={handleChange} required></input><br />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} required></input><br />
                 </div>
             {/* </fieldset> */}
             <div className='profile_button_cont'>

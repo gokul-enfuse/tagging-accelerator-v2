@@ -73,7 +73,7 @@ const Manager = () => {
 
     const handleProjectChange = (event) => {
         const selectedProjectId = event.target.value;
-        setSelectedProject(selectedProjectId);
+            setSelectedProject(selectedProjectId);
         if (selectedProjectId) {
             getManagerName(selectedProjectId);
         } else {
