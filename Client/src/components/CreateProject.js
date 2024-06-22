@@ -71,15 +71,15 @@ const CreateProject = () => {
             <div className='project_content'>
                 <h1>Create Project</h1>
                 <label><b>Project Name </b></label><br />
-                <input type="text" name="projectName" value={formData.projectName} onChange={e => handleChange(e, true)} ></input><br />
+                <input type="text" name="projectName" value={formData.projectName} onChange={e => handleChange(e, true)} required></input><br />
                 {/*<label><b>Manager</b></label><br />
                 <input type="text" placeholder="First name" name="firstName" value={formData.firstName} onChange={handleChange}></input> <br /><br />
         <input type="text" placeholder="Last name" name="lastName" value={formData.lastName} onChange={handleChange}></input><br />*/}
                 <label><b>Client</b></label><br />
-                <input type="text" name="client" value={formData.client} onChange={handleChange}></input><br />
+                <input type="text" name="client" value={formData.client} onChange={handleChange} required></input><br />
                 <label><b>Domain</b></label><br />
 
-                <select name="domain" value={formData.domain} onChange={handleChange}>
+                <select name="domain" value={formData.domain} onChange={handleChange} required>
                     <option key={""} value={""}> Select</option>
                     <option value="imageTagging">Image tagging</option>
                     <option value="textAnnotation">Text annotation</option>

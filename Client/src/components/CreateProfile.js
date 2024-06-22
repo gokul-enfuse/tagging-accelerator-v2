@@ -95,11 +95,11 @@ const CreateProfile = () => {
         getListOfManager();
     }, []);
 
-    const showAlert = () => {
+    const showAlert = (arg, icon) => {
         Swal.fire({
           title: '',
-          text: 'Profile created successfully',
-          icon: 'Record added successfully',
+          text: arg,
+          icon: icon,
           confirmButtonText: 'OK',
         });
       };

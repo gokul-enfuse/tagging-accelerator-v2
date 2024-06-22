@@ -23,6 +23,7 @@ taskRouter.post('/createtask', async (req, res) => {
     let task_folder_name = req.body.category || `folderName_${shortid.generate()}`;
     let task_title = req.body.taskTitle || `title_${shortid.generate()}`;
     let task_status = (req.body.status) ? req.body.status : null;
+    let reviewer_task_status = null;
     let project_id = (req.body.assignedProject) ? req.body.assignedProject : 0;
     let profile_id = (req.body.assignedTo) ? req.body.assignedTo : 0; //denoted to assigned to
     let reviewer_profile_id = (req.body.reviewer_profile_id) ? req.body.reviewer_profile_id : 0;
@@ -57,7 +58,7 @@ taskRouter.post('/createtask', async (req, res) => {
                             if(error) {
                                 res.status(400).json({ message: "SQL error.", error: error });
                             } else {
-                                insertTaskSql = ` INSERT INTO ${table_name_task} (task_folder_name, task_title, task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_zip_folder_name, task_process_type, createdDate, modifiedDate) VALUES ('${task_folder_name}', '${task_title}', '${task_status}', '${project_id}', ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${shortid.generate()+'_extracted'}', '${task_process_type}', '${createdDate}', '${modifiedDate}') `;
+                                insertTaskSql = ` INSERT INTO ${table_name_task} (task_folder_name, task_title, task_status, reviewer_task_status, project_id, profile_id, reviewer_profile_id, task_role, task_mediatype, task_zip_folder_name, task_process_type, createdDate, modifiedDate) VALUES ('${task_folder_name}', '${task_title}', '${task_status}', '${reviewer_task_status}', '${project_id}', ${profile_id}, ${reviewer_profile_id}, ${task_role},'${task_mediatype}', '${shortid.generate()+'_extracted'}', '${task_process_type}', '${createdDate}', '${modifiedDate}') `;
                                 conn.query(insertTaskSql, (error, taskInsertRes) => {
                                     if(error) {
                                         res.status(400).json({ message: "SQL error.", error: error });
@@ -67,10 +68,10 @@ taskRouter.post('/createtask', async (req, res) => {
                                             table_media_type = 'accelerator_task_image';
                                             media_fields = [`task_id`, `profile_id`, `image_imagename`, `image_imagepath`, `createdDate`, `modifiedDate`].join();
                                         }
-                                        if(task_mediatype === 'doc') {
+                                        /* if(task_mediatype === 'doc') {
                                             table_media_type = 'accelerator_task_doc';
                                             media_fields = [`task_id`, `profile_id`, `media_filename`, `media_filepath`, `createdDate`, `modifiedDate`].join();
-                                        }
+                                        } */
                                         sql = `INSERT INTO ${table_media_type} (${media_fields}) VALUES `;
                                             for(let i=0; i<task_filename.length; i++) {
                                                 sql+= `('${taskInsertRes.insertId}', '${profile_id}', '${task_filename[i]}', '${task_filepath[i].replace(/\\/g, '/')}', '${createdDate}', '${modifiedDate}')`;
@@ -78,6 +79,7 @@ taskRouter.post('/createtask', async (req, res) => {
                                                     sql += ', ';
                                                 }
                                             }
+                                        console.log("SQL = ", sql);
                                         conn.query(sql, (error, sqlRes) => {
                                             if(error) {
                                                 res.status(400).json({ message: "SQL error.", error: error });
@@ -380,28 +382,31 @@ taskRouter.post('/api/excelupload', (req, res) => {
         /* let sqlProject = ` SELECT project_status FROM ${table_project} WHERE project_name = '${dataArray[0].project_name}'`;
         console.log(sqlProject); */
 
-        let sqlInsert = ` INSERT INTO ${table_name} (task_folder_name, task_title, task_status, project_id, profile_id, numOfItemAssignToTagger, reviewer_profile_id, numOfItemAssignToReviewer, task_mediatype, task_role, task_process_type, createdDate, modifiedDate)
+        let sqlInsert = ` INSERT INTO ${table_name} (task_folder_name, task_title, task_status, reviewer_task_status, project_id, profile_id, numOfItemAssignToTagger, reviewer_profile_id, numOfItemAssignToReviewer, task_mediatype, task_zip_folder_name, task_role, task_process_type, createdDate, modifiedDate)
                         VALUES `;
         dataArray.forEach((v, i, data) => {
             const task_folder_name = data[i].task_folder_name || `folderName_${uniqueId}`;
             const task_title = data[i].task_title || `title_${uniqueId}`;
             const task_status = data[i].task_status || 'To Do';
+            const reviewer_task_status = null;
             const project_name = data[i].project_name || '';
             const tagger_profile_name = data[i].assignNameOftaggers || '';
             const numOfItemAssignToTagger = data[i].numOfItemAssignToTagger || 0;
             const reviewer_profile_name = data[i].assignNameOfReviewers || '';
             const numOfItemAssignToReviewer = data[i].numOfItemAssignToReviewer || 0;
             const task_mediatype = data[i].task_mediatype || null;
+            const task_zip_folder_name = null;
             const createdDate = data[i].createdDate || new Date().toJSON().substring(0, 10);
             const modifiedDate = data[i].modifiedDate || new Date().toJSON().substring(0, 10);
 
-            sqlInsert +=` ('${task_folder_name}', '${task_title}', '${task_status}', 
+            sqlInsert +=` ('${task_folder_name}', '${task_title}', '${task_status}', '${reviewer_task_status}', 
                             (SELECT project_id FROM accelerator_project WHERE project_name = '${project_name}'), 
                             (SELECT profile_id FROM accelerator_profile WHERE profile_username = '${tagger_profile_name}'), 
                             ${numOfItemAssignToTagger},
                             (select profile_id from accelerator_profile where profile_username = '${reviewer_profile_name}'),
                             ${numOfItemAssignToReviewer},
                             '${task_mediatype}',
+                            '${task_zip_folder_name}',
                             3,
                             'bulk',
                             '${createdDate}',
