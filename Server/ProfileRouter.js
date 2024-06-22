@@ -31,7 +31,7 @@ profileRouter.post('/create/profile', async (req, res) => {
         if (error) {
             res.status(400).json({ message: 'SQL error', Error: error });
         } else {
-            let sql = '';
+            let sql = ''; 
             if (result[0].c > 0) {
                 /* sql = `UPDATE ${table_name} SET profile_name = '${profile_name}', profile_email = '${profile_email}', profile_fullname = '${profile_fullname}', profile_username = '${profile_username}', profile_password = '${profile_password}', profile_confirmpassword = '${profile_confirmpassword}', profile_role = ${profile_role}, project_id = '${project_id}', modifiedDate = '${modifiedDate}' WHERE profile_email='${profile_email}'`; */
                 res.status(400).json({message: 'Duplicate user not allowed.', rs: result[0].c});
@@ -87,7 +87,7 @@ profileRouter.post("/api/login", (req, res) => {
                 }
                 res.status(200).json(result[0]);
             } else {
-                res.status(400).json({ message: "Could not login user" });
+                res.status(400).json({ message: "Invalid user." });
             }
         }
     });
@@ -357,7 +357,7 @@ let emailFunction = (email, username, password) => {
         secure: true,
         auth: {
             user: 'vikasr82@gmail.com',
-            pass: 'ispnurgwhzontnms'
+            pass: 'zpzqrybyzmkjqddk'
         }
     });
     // console.log(CryptoJS.AES.encrypt(email, "Key").toString(), CryptoJS.HmacSHA256(email, "key").toString());

@@ -12,7 +12,6 @@ import logo from './enfuse-logo.png';
 import { DOMAIN } from "../Constant";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
-import { message } from "antd";
 
 
 const SignIn = () => {
@@ -29,6 +28,25 @@ const SignIn = () => {
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
 
+  const showAlert = (messageText, iconType="info") => {
+    Swal.fire({
+      title: "",
+      text: messageText,
+      icon: iconType,
+      confirmButtonText: "Ok",
+    });
+  };
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const handleEmailChange = e => {
+    setEmail(e.target.value);
+    if (e.target.validity.valid) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -36,6 +54,7 @@ const SignIn = () => {
       email: ""
     },
     validationSchema: Yup.object({
+      username: (!isEmailVisible)?Yup.string().min(5).required("Username is required"):'',
       password: (!isEmailVisible)?Yup.string().min(5).required("Password is required"):'',
     }),
 
@@ -75,7 +94,7 @@ const SignIn = () => {
           }
           setAuth(response.data);
         }).catch((error) => {
-          showAlert(error.response.data.message);
+          showAlert(error.response.data.message, "error");
         });
       // navigate('/admin', { replace: false });
         navigate(from, { replace: true });
@@ -85,18 +104,17 @@ const SignIn = () => {
           baseURL = `${DOMAIN}/api/forgotpassword/${values.email}`;
           axios.get(baseURL).then(response => {
              if (response.status === 200) {
-                 showAlert("Password has been sent to your email id.");
+                 showAlert("Password has been sent to your email id.", "success");
              } else {
                  console.warn("check the response")
              }
           }).catch(error => {
-            showAlert(error.response.data.message);
+            showAlert(error.response.data.message, "error");
           });
           navigate('/', { replace: true });
 
-        }
-        else{
-          showAlert("please enter your email");
+        } else{
+          showAlert("please enter your email", "error");
         }
       } 
     }
@@ -104,37 +122,31 @@ const SignIn = () => {
   function showEmailField() {
     setButtonTitle('Submit');
     setIsEmailVisible(true);
-    validateInput();
+    //validateInput();
+  }
+
+  function showLoginField() {
+    setButtonTitle('Submit');
+    setIsEmailVisible(false);
+    //validateInput();
   }
   function validateInput() {
     // const email = document.getElementById("reset-email").value;
     const email = formik.values.email;
     if (email === "") {
-      showAlert("error","Please fill in the input field.",)
+      showAlert("Please fill in the input field.", "error")
     } else {
       axios
         .post(`${DOMAIN}/user/reset`, { email })
         .then(response => {
           // showAlert("Please check your Email")
-          showAlert("error", "Please check your Email");
+          showAlert("Please check your Email", "error");
 
         })
         .catch(error => console.error(error));
     }
   }
-  const showAlert = (iconType,title, messageText) => {
-    Swal.fire({
-      // title: '',
-      // text: 'Success',
-      // icon: message,
-      // confirmButtonText: 'OK',
-
-      title: title,
-      text: messageText,
-      icon: iconType,
-      confirmButtonText: "Ok",
-    });
-  };
+  
   return (
 
     <div className="container">
@@ -153,8 +165,8 @@ const SignIn = () => {
           {/*<h2>Login Form</h2>*/}
 
           {/*<button type="button" className="google-button" style={ {background: "#fafafa"}}>
-           <img src= {google} alt="Google Icon" className="google-icon" />
-      </button>*/}
+              <img src= {google} alt="Google Icon" className="google-icon" />
+          </button>*/}
          {/* Login page starts here*/}
           {!isEmailVisible && (
 
@@ -179,7 +191,7 @@ const SignIn = () => {
           )}
 
           {formik.touched.username && formik.errors.username ? (
-            <div className="error_msg">{formik.errors.user}</div>
+            <div className="error_msg">{formik.errors.username}</div>
           ) : null}
 
           {!isEmailVisible && (
@@ -207,6 +219,7 @@ const SignIn = () => {
           {formik.touched.password && formik.errors.password ? (
             <div className="error_msg">{formik.errors.password}</div>
           ) : null}
+
          {/* Forgotpassword view starts here*/}
           {isEmailVisible && (
             <TextField
@@ -214,18 +227,30 @@ const SignIn = () => {
               type="text"
               placeholder="Enter your Email"
               className="textField"
-              id="reset-email"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-             value={formik.values.email}
+             onChange={handleEmailChange}
+             value={email}
+             error={emailError}
+             helperText={
+              emailError ? "Please enter your email (abc@gmail.com)" : ""
+            }
+            inputProps={{
+               type: "email",
+            }}
+             required label="Email"
             />
           )}
 
-          <div className="forgot-password" style={{ textAlign: "center" }}>
-            {!isEmailVisible && (
-            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#" onClick={showEmailField}>Click here</a></p>)}
+         {!isEmailVisible && (
+          <div className="forgot-password" style={{ textAlign: "center" }}>            
+            <p style={{ marginBottom: 0 }}>Forgot Password? <a href="#" onClick={showEmailField}>Click here</a></p>
             <input type="hidden" name="hidForgotPassword" id="hidForgotPassword" value={isEmailVisible} />
-          </div>
+          </div> )}
+
+          {isEmailVisible && (
+          <div className="forgot-password" style={{ textAlign: "center" }}>            
+            <p style={{ marginBottom: 0 }}>Go Back to Login? <a href="#" onClick={showLoginField}>Click here</a></p>
+            <input type="hidden" name="hidForgotPassword" id="hidForgotPassword" value={!isEmailVisible} />
+          </div> )}
 
           <button type="submit" onClick={formik.handleSubmit}>{buttonTitle}</button>
 

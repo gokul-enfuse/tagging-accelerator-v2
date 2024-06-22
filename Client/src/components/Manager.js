@@ -5,6 +5,8 @@ import { DOMAIN } from '../Constant';
 import TableData from './TableData';
 import useAuth from '../hooks/useAuth.js';
 import SearchBar from './SearchBar';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 const Manager = () => {
     const [projectList, setProjectList] = useState([]);
@@ -13,6 +15,15 @@ const Manager = () => {
     const { auth } = useAuth();
   /*const [data, setData] = useState([])
     const [managerProfiles, setManagerProfiles] = useState([]) */
+
+    const showAlert = (mes, icon) => {
+        Swal.fire({
+          title: '',
+          text: mes,
+          icon: icon,
+          confirmButtonText: 'OK',
+        });
+    };
 
     const getProject = () => {
         if (auth.profile_role !== 1) {
@@ -51,7 +62,8 @@ const Manager = () => {
                 setManagerName(manager.join(', '));
             })
             .catch((error) => {
-                console.error(error);
+               // console.error(error);
+                showAlert(error.response.data.message, 'error');
                 setManagerName("");
             });
     };
