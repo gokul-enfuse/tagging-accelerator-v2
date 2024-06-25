@@ -22,9 +22,9 @@ const CreateProfile = () => {
             .map(option => option.value);
         setSelected(selectedValues)
         if (e.target.name) {
-            setFormData(() => ({               
+            setFormData(() => ({
                 ...formData,
-                [e.target.name]: e.target.value,                
+                [e.target.name]: e.target.value,
                 // projectNames: selectedValues,
             }))
         }
@@ -34,7 +34,7 @@ const CreateProfile = () => {
         e.preventDefault();
         formData.id = selected
         const randomNumber = Math.floor(Math.random() * 10000);
-        const username = formData.fullName.split(' ').join('')+"."+ randomNumber;
+        const username = formData.fullName.split(' ').join('') + "." + randomNumber;
         const password = Math.random().toString(36).slice(-8);
         /* if (!formData.fullName) {
             return
@@ -97,41 +97,43 @@ const CreateProfile = () => {
 
     const showAlert = (arg, icon) => {
         Swal.fire({
-          title: '',
-          text: arg,
-          icon: icon,
-          confirmButtonText: 'OK',
+            title: '',
+            text: arg,
+            icon: icon,
+            confirmButtonText: 'OK',
         });
-      };
-    
+    };
+
     return (
         <form className='profileContainer' onSubmit={handleSubmit} id='create-profile'>
             {/* <fieldset style={{border: '1px solid #000', padding:'20px', width:'800px'}}> */}
-                {/* <legend>Create Profile:</legend> */}
+            {/* <legend>Create Profile:</legend> */}
+            <h1>Create Profile (Manager)</h1>
+            <div id='profile_content_wrapper'>
+                <div className='profile_content'>
+                    <label><b>Project Name</b></label><br />
+                    <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{ height: "35%" }} required>
+
+                        {projectList.map((project) => (
+                            <option key={project.project_id} value={project.project_id} >
+                                {project.project_Name}
+                            </option>
+                        ))}
+                    </select><br />
+                    <label><b>Manager's Full Name</b></label><br />
+                    <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
+                    <label><b>Email</b></label><br />
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} required></input><br />
+                </div>
                 <div className='profile_content_right'>
-                    <h1>List of Manager - Free</h1>
-                    <select id="managerList" name="managerList" multiple style={{height: "230px"}} disabled={true}>
+                    <h1>List of Manager</h1>
+                    <select id="managerList" name="managerList" multiple style={{ height: "120px" }} disabled={true}>
                         {numofmanagers.map((manager) => (
-                            <option key={manager.profile_id} value={manager.profile_id} style={(manager.project_id > 0)? {color: 'red'} : {color: 'black'} }> &nbsp; {manager.profile_username} - {(manager.project_id > 0) ? 'Project Assigned' : 'No Project Assign'}</option>
+                            <option key={manager.profile_id} value={manager.profile_id} style={(manager.project_id > 0) ? { color: 'red' } : { color: 'black' }}> &nbsp; {manager.profile_username} - {(manager.project_id > 0) ? 'Project Assigned' : 'No Project Assign'}</option>
                         ))}
                     </select>
                 </div>
-                <div className='profile_content'>
-                <h1>Create Profile (Manager)</h1>
-                <label><b>Project Name</b></label><br />
-                <select id="projectNames" name="projectNames" onClick={e => handleChange(e)} multiple style={{height: "50%"}} required>
-
-                    {projectList.map((project) => (
-                        <option key={project.project_id} value={project.project_id} >
-                            {project.project_Name}
-                        </option>
-                    ))}
-                </select><br />
-                <label><b>Manager's Full Name</b></label><br />
-                <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required></input><br />
-                <label><b>Email</b></label><br />
-                <input type="email" name="email" value={formData.email} onChange={handleChange} required></input><br />
-                </div>
+            </div>
             {/* </fieldset> */}
             <div className='profile_button_cont'>
                 <button type="submit" style={{ width: '800px', marginLeft: '0px' }} >Add Profile</button>

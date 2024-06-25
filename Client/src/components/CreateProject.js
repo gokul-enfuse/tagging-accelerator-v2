@@ -22,6 +22,10 @@ const CreateProject = () => {
     const [formData, setFormData] = useState(defaultFormValues)
 
     const handleChange = (e, isProjectName) => {
+        if(e.target.value.length>=40){
+            alert('You have reached max input character limit')
+            return;
+        }
         if (isProjectName) {
             e.target.value = ("" + e.target.value).toUpperCase();
         }
@@ -36,7 +40,7 @@ const CreateProject = () => {
         await axios.get(`${DOMAIN}/allprojects`).then(async response => {
             const allProjects = response.data;
             const projectNames = allProjects.map(project => project.project_Name);
-            if (projectNames.includes(formData.projectName)) {
+            if (projectNames.includes(formData.projectName.replace("", "-"))) {
                 showAlert(`A project with name "${formData.projectName}" already exists. Please choose a different name.`, 'error');
                 return;
             } else {

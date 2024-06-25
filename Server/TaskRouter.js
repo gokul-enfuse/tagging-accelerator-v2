@@ -191,7 +191,7 @@ taskRouter.get('/gettaggertask', async (req, res) => {
 
     let arg = ` WHERE task_role = 3 and task_status not in ('Done', 'waiting for review')`;
 
-    let groupby = ` GROUP By profile_id, task_folder_name, accelerator_tasks.project_id`;
+    let groupby = ` GROUP By accelerator_tasks.task_id, accelerator_tasks.task_folder_name, accelerator_tasks.task_title, task_status, task_mediatype, accelerator_tasks.profile_id, role_name, profile_name, profile_email, profile_username, accelerator_tasks.project_id, accelerator_tasks.createdDate, task_process_type`;
 
     await executeSqlQuery(arg, res, 'accelerator_tasks', fields, join, groupby);
 });
@@ -220,7 +220,7 @@ taskRouter.get('/getreviewertask', async (req, res) => {
     let fields = [`accelerator_tasks.task_id`, `accelerator_tasks.task_folder_name`, `accelerator_tasks.task_title`, `task_status`, 'reviewer_task_status', 'reviewer_profile_id', `task_mediatype`, `accelerator_tasks.profile_id`, `accelerator_tasks.task_role`, `role_name`, `profile_name`, `profile_email`, `profile_username`, `accelerator_tasks.project_id`, `accelerator_tasks.createdDate`, `count(image_id) as numimage`, `GROUP_CONCAT(image_imagename) as imagename`, `accelerator_tasks.modifiedDate`, `task_process_type`].join()
     let join = ` INNER JOIN accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id INNER JOIN accelerator_role ON accelerator_tasks.task_role = accelerator_role.role_id INNER JOIN accelerator_task_image ON accelerator_tasks.task_id = accelerator_task_image.task_id`;
     let arg = ` WHERE task_role = 4 and task_status in ('waiting for review')`;
-    let groupby = ` GROUP By task_folder_name, accelerator_tasks.project_id, accelerator_task_image.task_id`;
+    let groupby = ` GROUP By accelerator_tasks.task_id, accelerator_tasks.task_folder_name, accelerator_tasks.task_title, task_status, reviewer_task_status, reviewer_profile_id, task_mediatype, accelerator_tasks.profile_id, accelerator_tasks.task_role, role_name, profile_name, profile_email, profile_username, accelerator_tasks.project_id, accelerator_task_image.task_id, accelerator_tasks.createdDate`;
     await gettaskForReviewers(arg, res, 'accelerator_tasks', fields, join, groupby);
 });
 
