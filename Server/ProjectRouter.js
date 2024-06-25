@@ -8,7 +8,7 @@ const conn = require('./mysqlConnection');
  */
 projectRouter.post('/create/project', async (req, res) => {
     let table_name = process.env.PROJECT;
-    let project_Name = req.body.projectName;
+    let project_Name = req.body.projectName.replace("", "-");
     let project_clientname = req.body.client;
     let project_domain = req.body.domain;
     let project_status = (req.body.assignTo)?req.body.assignTo:0; //it is boolean flag to make understand the project has assigned or not.

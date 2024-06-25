@@ -99,9 +99,10 @@ const SignIn = () => {
       // navigate('/admin', { replace: false });
         navigate(from, { replace: true });
       } else {
-        if (values.email){
+        console.log("Vikas = ", email);
+        if (email){
 
-          baseURL = `${DOMAIN}/api/forgotpassword/${values.email}`;
+          baseURL = `${DOMAIN}/api/forgotpassword/${email}`;
           axios.get(baseURL).then(response => {
              if (response.status === 200) {
                  showAlert("Password has been sent to your email id.", "success");

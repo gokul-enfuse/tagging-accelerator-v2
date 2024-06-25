@@ -86,6 +86,7 @@ main{
  .projectContainer{
   background-color: white;
   width: 50%;
+  min-width: 300px;
   border-radius: 16px;
   border: solid 6px grey;
  }
@@ -118,23 +119,23 @@ main{
  }
 
  .projectContainer .project_content{
-  margin-left: 0px;
-  width: 456px;
+  /* margin-left: 0px;
+  width: 456px; */
  }
-
-
+ 
  .profileContainer{
   background-color: white;
   width: 50%;
   border-radius: 16px;
   border: solid 6px grey;
+  padding: 25px;
  }
  .profileContainer input,select{
   /* background-color: rgb(214, 245, 244); */
   background-color: rgb(206, 209, 209);
   border-color: white;
   border-radius: 6px;
-  width: 80% !important;
+  width: 100% !important;
   height: 32px;
   border: none;
   margin-bottom: 20px;
@@ -155,9 +156,23 @@ main{
   font-size: 18px;
  }
  .profileContainer .profile_content{
-  margin-left: 0px;
-  width: 456px;
+  width: 45%;
  }
+
+#profile_content_wrapper{
+  display: flex;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 1100px) {
+  #profile_content_wrapper{
+    display: flex;
+    flex-direction: column;
+  }
+  .profileContainer .profile_content{
+    width: 80%;
+   }
+}
 
  .profile_content_right {
   margin-left: 0px;
@@ -445,4 +460,8 @@ main{
 .sb_container2 input{
   border-radius: 4px;
   margin-left: 164px;
+}
+
+#projectNames{
+  width: 100% !important;
 }
