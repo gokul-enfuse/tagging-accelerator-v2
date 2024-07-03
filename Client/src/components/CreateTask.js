@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 
 const CreateTask = () => {
+    const [currentDate, setCurrentDate] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const previousRoute = location.state?.previousRoute;
@@ -41,7 +42,6 @@ const CreateTask = () => {
         const selectedFiles = (e.target.files.length > 1)? Array.from(e.target.files).filter(file =>
            file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.type === 'application/pdf'
         ): [e.target.files[0]];
-        console.log(selectedFiles);
         if (selectedFiles) {
             const formDatas = new FormData();
             for (const file of selectedFiles) {
@@ -94,7 +94,6 @@ const CreateTask = () => {
                 },
             });
             if (response.status === 200) {
-                console.log("Res = ",response)
                 // Task created successfully, you can navigate or show a success message here
                 showAlert(response.data.message, 'success');
                 setFormData(defaultFormData); // Reset the form
@@ -135,6 +134,8 @@ const CreateTask = () => {
     useEffect(() => {
         getTaggers();
         getProjects();
+        let currentDateLimit = new Date().toJSON().substring(0, 10);
+        setCurrentDate(currentDateLimit); 
     }, []);
 
     return (
@@ -181,7 +182,7 @@ const CreateTask = () => {
                 <label>Task Title</label><br />
                 <input type="text" name="taskTitle" value={formData.taskTitle} maxLength={20} onChange={handleChange}></input><br />
                 <label>Creaton Date</label><br />
-                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange} required></input><br />
+                <input type="date" name="creationDate" value={formData.creationDate} onChange={handleChange} min={currentDate} required></input><br />
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 </div>
                 <label>Media Type</label><br />

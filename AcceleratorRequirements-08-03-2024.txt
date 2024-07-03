@@ -165,8 +165,11 @@ Saddam
 	[issue:: Duplicate project name mustn't save in DB] - TBD [Vikas Bose]
 	[issue:: Create manager not working in production server ] - In Progress
 
-
-
+3. Accelerator Tool
+	[issue:: Taggers can see other taggers task in tool after their own login] [fixed]
+	[issue:: in Linux VM, Tagging tool make it up and running] [fixed]
+	[issue:: Fixed all issues of Tagging tool and now it is ready for testing] [fixed]
+	[issue:: Setup Taggingtool in external ip] [fixed]
 	
 
 

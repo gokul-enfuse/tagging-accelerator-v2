@@ -99,7 +99,6 @@ const SignIn = () => {
       // navigate('/admin', { replace: false });
         navigate(from, { replace: true });
       } else {
-        console.log("Vikas = ", email);
         if (email){
 
           baseURL = `${DOMAIN}/api/forgotpassword/${email}`;

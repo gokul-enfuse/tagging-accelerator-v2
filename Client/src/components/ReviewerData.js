@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
 import { useEffect } from 'react';
-import { DOMAIN } from '../Constant.js';
+import { DOMAIN, DOMAINCLIENT } from '../Constant.js';
 import 'antd/dist/antd.min.css';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
@@ -57,7 +57,7 @@ const ReviewerData = () => {
       render: (text, record) => {
         try {
           let numImages = record.numimage || 0;
-          const reviewerAppUrl = `http://localhost:${portNumber}/${record.reviewer_profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${reviewerId}`;
+          const reviewerAppUrl = `${DOMAINCLIENT}${record.reviewer_profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${reviewerId}`;
           return (
             <a href={reviewerAppUrl} target="_blank">
               {numImages}
@@ -105,7 +105,12 @@ const ReviewerData = () => {
 
   const getReviewersTask = () => {
     axios
-      .get(`${DOMAIN}/getreviewertask`)
+      .get(`${DOMAIN}/getreviewertask`, {
+          params: {
+            profile_id: auth.profile_id,
+            profile_role: auth.profile_role
+          }
+      })
       .then(response => {
         setData(response.data);
       }).catch(error => 

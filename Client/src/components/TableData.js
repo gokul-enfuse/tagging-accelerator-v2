@@ -100,7 +100,10 @@ const TableData = ({ selectedProject }) => {
        
       .then(response => {
         const filteredData = response.data.filter(task => task.task_status !== "Done" && task.task_status !== "Done");
-        setData(filteredData)
+        const finalData = filteredData.map((elem,idx)=>{
+          return {...elem,'task_id':idx+1}
+        })
+        setData(finalData)
       })
       .catch(error => console.error(error));
   }
@@ -111,7 +114,7 @@ const TableData = ({ selectedProject }) => {
 
 
   return (
-    <div>
+    <div style={{overflow:'hidden'}}>
       {/* <div
         style={{
           marginBottom: 16,
@@ -128,7 +131,7 @@ const TableData = ({ selectedProject }) => {
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
         </span>
       </div> */}
-      <Table columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
+      <Table columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
     </div>
   );
 };

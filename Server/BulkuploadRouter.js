@@ -17,7 +17,6 @@ routers.post('/zipextraction-old', upload.single('zipFile'), async (req, res) =>
   if (!file) {
     return res.status(400).send('No file uploaded');
   }
-console.log(file)
   // Extract the uploaded zip file
   const additionalPath = `${shortid.generate()}_extracted`;
   const extractPath = `${process.env.TAGGINGSERVERPATH}/${additionalPath}`;
@@ -207,10 +206,8 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
 });
 
 routers.get('/bulkuploadcheck', async(req, res) => {
-  console.log(req.query.args);
    let projectName = req.query.args;
    let sqlbulkupload = `SELECT project_status FROM accelerator_project WHERE project_name = '${projectName}'`;
-   console.log(sqlbulkupload);
    conn.query(sqlbulkupload, (error, result) => {
        if(error) {
           res.status(400).json({message: 'SQL query issue!', error: error});

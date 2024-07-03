@@ -88,13 +88,13 @@ const Manager = () => {
             </div>
         
         <div>
-            <h1 style={{color:'white' ,marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 80 }}>
-                Welcome {auth.profile_username === "admin" ? auth.profile_username : auth.profile_id}
+            <h1 style={{color:'white' ,marginBottom: '10px', textAlign: 'center', alignItems: 'center', marginTop: 10,fontSize:'16px' }}>
+                Welcome {auth.profile_username === "admin" ? auth.profile_username : auth.profile_username}
             </h1>
             <div>
-                <label style={{ marginTop: 20 ,color:'white'}}>Assigned to Project</label>
+                <label style={{ marginTop: 10 ,color:'white'}}>Assigned to Project</label>
                 <br />
-                <select className='assignedToProject' name='assignedTo' style={{ width: '150px', height: '35px', border: '1px solid skyblue' }} onChange={handleProjectChange}>
+                <select className='assignedToProject' name='assignedTo' style={{ width: '150px', height: '25px', border: '1px solid skyblue' }} onChange={handleProjectChange}>
                     <option key='0' value=''>Select</option>
                     {projectList &&
                         projectList.map((item) => (
@@ -108,7 +108,8 @@ const Manager = () => {
                 <div>
                     <strong style={{color:'white'}}>Manager Name: {(managerName)? managerName : 'Manager not assigned'}</strong> 
                 </div>)}
-            {selectedProject && <TableData selectedProject={selectedProject} />}
+            {selectedProject &&
+            <div style={{height:'360px',overflowY:'auto'}}><TableData selectedProject={selectedProject} /></div>}
         </div>
         </div>
     );

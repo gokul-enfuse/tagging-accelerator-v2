@@ -79,7 +79,6 @@ taskRouter.post('/createtask', async (req, res) => {
                                                     sql += ', ';
                                                 }
                                             }
-                                        console.log("SQL = ", sql);
                                         conn.query(sql, (error, sqlRes) => {
                                             if(error) {
                                                 res.status(400).json({ message: "SQL error.", error: error });
@@ -107,7 +106,6 @@ let fileName = "";
 const storageImage = multer.diskStorage({
     destination: function (req, file, cb) {
         //cb(null, "uploads/images");
-        console.log("fileDetails=", file);
         let folderPath = (file.mimetype === 'image/jpeg')?process.env.TAGGINGSERVERPATH+'/manual/image/' : process.env.TAGGINGSERVERPATH+'/manual/doc/';
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath, { recursive: true });
@@ -134,6 +132,7 @@ taskRouter.post('/api/upload', uploadImage, (req, res) => {
     }
 
     if(req.files.length >= 1) {
+        console.log(req.files)
         const filePath = req.files.map((v, i, itmes) => itmes[i].path); // Change this path as per your actual file storage location
         const fileName = req.files.map((v, i, itmes) => itmes[i].filename); // Change this path as per your actual file storage location
         const responseJson = {
@@ -167,6 +166,7 @@ taskRouter.get('/getalltask', async (req, res) => {
 }); */
 
 taskRouter.get('/gettaggertask', async (req, res) => {
+    let { profile_id, profile_role } = req.query;
     let fields = [`accelerator_tasks.task_id`, 
                 `accelerator_tasks.task_folder_name`, 
                 `accelerator_tasks.task_title`, 
@@ -188,8 +188,8 @@ taskRouter.get('/gettaggertask', async (req, res) => {
     let join = ` inner join accelerator_profile as ap ON accelerator_tasks.profile_id = ap.profile_id
     inner join accelerator_role as ar ON accelerator_tasks.task_role = ar.role_id
     inner join accelerator_project as apro ON accelerator_tasks.project_id = apro.project_id`
-
-    let arg = ` WHERE task_role = 3 and task_status not in ('Done', 'waiting for review')`;
+    let additionalCondition = (profile_id && profile_role > 2)? ` and accelerator_tasks.profile_id = ${profile_id}` : '';
+    let arg = ` WHERE task_role = 3 and task_status not in ('Done', 'waiting for review') ${additionalCondition}`;
 
     let groupby = ` GROUP By accelerator_tasks.task_id, accelerator_tasks.task_folder_name, accelerator_tasks.task_title, task_status, task_mediatype, accelerator_tasks.profile_id, role_name, profile_name, profile_email, profile_username, accelerator_tasks.project_id, accelerator_tasks.createdDate, task_process_type`;
 
@@ -216,10 +216,11 @@ taskRouter.get('/getreviewername', async (req, res) => {
 });
 
 taskRouter.get('/getreviewertask', async (req, res) => {
-    const { reviewer_profile_id, project_id } = req.query;
+    const { reviewer_profile_id, project_id, profile_id, profile_role } = req.query;
     let fields = [`accelerator_tasks.task_id`, `accelerator_tasks.task_folder_name`, `accelerator_tasks.task_title`, `task_status`, 'reviewer_task_status', 'reviewer_profile_id', `task_mediatype`, `accelerator_tasks.profile_id`, `accelerator_tasks.task_role`, `role_name`, `profile_name`, `profile_email`, `profile_username`, `accelerator_tasks.project_id`, `accelerator_tasks.createdDate`, `count(image_id) as numimage`, `GROUP_CONCAT(image_imagename) as imagename`, `accelerator_tasks.modifiedDate`, `task_process_type`].join()
     let join = ` INNER JOIN accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id INNER JOIN accelerator_role ON accelerator_tasks.task_role = accelerator_role.role_id INNER JOIN accelerator_task_image ON accelerator_tasks.task_id = accelerator_task_image.task_id`;
-    let arg = ` WHERE task_role = 4 and task_status in ('waiting for review')`;
+    let additionalCondition = (profile_id && profile_role > 2)? ` and accelerator_tasks.reviewer_profile_id = ${profile_id}` : '';
+    let arg = ` WHERE task_role = 4 and task_status in ('waiting for review') ${additionalCondition}`;
     let groupby = ` GROUP By accelerator_tasks.task_id, accelerator_tasks.task_folder_name, accelerator_tasks.task_title, task_status, reviewer_task_status, reviewer_profile_id, task_mediatype, accelerator_tasks.profile_id, accelerator_tasks.task_role, role_name, profile_name, profile_email, profile_username, accelerator_tasks.project_id, accelerator_task_image.task_id, accelerator_tasks.createdDate`;
     await gettaskForReviewers(arg, res, 'accelerator_tasks', fields, join, groupby);
 });
@@ -552,6 +553,7 @@ let gettaskForReviewers = (arg = null, res, table_name = null, fields = null, jo
     if (groupby != null) {
         sql += ` ${groupby}`;
     }
+    console.log(sql);
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -581,7 +583,7 @@ let executeSqlQuery = (arg = null, res, table_name = null, fields = null, join =
     if (groupby != null) {
         sql += ` ${groupby}`;
     }
-   //console.log(sql);
+   console.log(sql);
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });

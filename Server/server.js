@@ -22,7 +22,6 @@ app.use(express.static(__dirname));
 app.use("/assets", express.static('uploads'));
 
 app.post('/api/getCurrentURL', (req, res) => {
-console.log("req:", req)
   res.json({ message: 'Home URL received and processed on the server' })
 
 })
