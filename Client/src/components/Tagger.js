@@ -14,8 +14,8 @@ function Tagger() {
       </div>
     
     <div>
-      <h1 style={{ marginBottom: '50px', textAlign: 'center', alignItems: 'center', marginTop: 28 ,color:'white'}}>Welcome {(auth.profile_name != 'null') ? auth.profile_name : auth.profile_username}</h1>
-      <div style={{ overflowY: 'scroll', height: '400px', overflowX: 'hidden' }}>
+      <h1 style={{ marginBottom: '5px', textAlign: 'center', alignItems: 'center', marginTop: 5 ,color:'white',fontSize:'18px'}}>Welcome {(auth.profile_name != 'null') ? auth.profile_name : auth.profile_username}</h1>
+      <div >
         <TaggerData />
       </div>
     </div>

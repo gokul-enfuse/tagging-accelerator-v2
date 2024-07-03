@@ -5,12 +5,11 @@ const Hogan = require('hogan.js')
 const fs = require('fs');
 const { dirname } = require("path");
 
-const template = fs.readFileSync('./email.hjs', 'utf-8')
+const template = fs.readFileSync('./Email.hjs', 'utf-8')
 const compiledTemplate = Hogan.compile(template);
 
 // send mail
 emailRouter.post("/user/reset", (req, res) => {
-    console.log("email :", req.body);
     const { email } = req.body;
     res.json({ result: "email sent" })
     try {

@@ -44,16 +44,21 @@ profileRouter.post('/create/profile', async (req, res) => {
                     res.status(400).json({ message: "Could not create user.", error: error });
                     return;
                 } else {
-                    let updateSQl = `UPDATE accelerator_project SET project_status = 1 WHERE project_id in (${project_id})`;
-                    conn.query(updateSQl, (error, result) => {
-                        if (error) {
-                            res.status(400).json({ message: "Could not create user.", error: error });
-                            return;
-                        } else {
-                            res.status(200).json({ message: "User created.", rs: result });
-                            emailFunction(profile_email, profile_username, profile_confirmpassword)
-                        }
-                    })
+                    if(profile_role > 2) {
+                        res.status(200).json({ message: "User created.", rs: 1});
+                        emailFunction(profile_email, profile_username, profile_confirmpassword)
+                    } else {
+                        let updateSQl = `UPDATE accelerator_project SET project_status = 1 WHERE project_id in (${project_id})`;
+                        conn.query(updateSQl, (error, result) => {
+                            if (error) {
+                                res.status(400).json({ message: "Could not create user.", error: error });
+                                return;
+                            } else {
+                                res.status(200).json({ message: "User created.", rs: result });
+                                emailFunction(profile_email, profile_username, profile_confirmpassword)
+                            }
+                        });
+                    }
                 }
             });
         }
@@ -202,7 +207,6 @@ profileRouter.get('/managername/:projectId', async (req, res) => {
 
 profileRouter.get('/getPort', (req, res) => {
     const { appName } = req.query; // Assuming you send appName as a query parameter
-    //console.log(appName)
     let table_name = process.env.ACCELERATOR_APP1URL;
     if (!appName) {
         return res.status(400).json({ message: "appName parameter is missing." });
@@ -214,7 +218,8 @@ profileRouter.get('/getPort', (req, res) => {
         }
 
         if (result.length > 0) {
-            const appPort = result[0].appPort;
+            //const appPort = result[0].appPort;
+            let appPort = 3001;
             res.status(200).json({ message: "AppPort retrieved.", appPort: appPort });
         } else {
             res.status(404).json({ message: "App name not found in the database." });
@@ -367,19 +372,20 @@ let emailFunction = (email, username, password) => {
     });
     // console.log(CryptoJS.AES.encrypt(email, "Key").toString(), CryptoJS.HmacSHA256(email, "key").toString());
     let contentOne = `
-        <div>You recently requested to reset the password for your [${process.env.HOST}] account. Click the link below to proceed.</div>
-        <div><a href=${process.env.HOST}resetpassword/${password}/${email}>Reset Password</a></div>
+        <div>You recently requested to reset the password for your [${process.env.PROD_HOST}] account. Click the link below to proceed.</div>
+        <div><a href=${process.env.PROD_HOST}resetpassword/${password}/${username}>Reset Password</a></div>
         <div>If you did not request a password reset, please ignore this email.</div>
         <div>If you have any comments or questions do not hesitate to reach us at <a>[email to customer portal support team]</a></div>
     `
     let contentTwo = `
         <div style='color:blue;padding:13px 0px 13px 0px' align='center'>UserName</div>
-        <div style='padding:13px 0px 13px 0px' align='center'>${email}</div>
+        <div style='padding:13px 0px 13px 0px' align='center'>${username}</div>
         <div style='color:blue;padding:13px 0px 13px 0px' align='center'>Password</div>
         <div style='padding:13px 0px 13px 0px' align='center'>${password}</div>
         <div style='padding:15px 0px 15px 0px' align='center'>Please click this link below and login with your credentials</div>
-        <div style='padding:13px 0px 13px 0px' align='center'><a href=${process.env.HOST}>Login Here</a></div>`
+        <div style='padding:13px 0px 13px 0px' align='center'><a href=${process.env.PROD_HOST}>Login Here</a></div>`
     let mainContent = (typeof password === 'number') ? contentOne : contentTwo;
+    let mainUser = (typeof password === 'number')?username : email;
     let a = `<html lang="en">
             <head>
             <meta charset="UTF-8" />
@@ -392,20 +398,20 @@ let emailFunction = (email, username, password) => {
             <div>
                 <div align='center'><img src='cid:bestWishBanner'></div>
                 <div style='width:500px;margin-left:400px;'>
-                    <h2 align='center'>Hi ${username}</h2>
+                    <h2 align='center'>Hi ${mainUser}</h2>
                     <p>                    
                         ${mainContent}                    
                     <div>Thanks</div>
                     <div>The Enfuse[customer portal] Team</div>
 
-                    <div style='padding:20px 0px 20px 0px; background-color:black; height:45px;color:white;text-align:center'>Copyright © 2022 All Rights Reserved. EnFuse Solutions</div>
+                    <div style='padding:20px 0px 20px 0px; background-color:black; height:45px;color:white;text-align:center'>Copyright Â© 2022 All Rights Reserved. EnFuse Solutions</div>
                     </p>
                 </div>`;
     a += `</div></body></html>`;
     var mailOptions = {
         from: 'vikasr82@gmail.com',
         to: email,
-        subject: 'Enfuse Reset Password',
+        subject: (typeof password === 'number')?' Accelerator - Reset forgotten Password.':'Welcome to Accelerator | Login Instructions.',
         html: a
     };
 

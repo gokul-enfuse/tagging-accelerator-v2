@@ -161,8 +161,8 @@ CREATE TABLE `accelerator_tasks` (
   `task_zip_folder_name` varchar(225) NOT NULL,
   `task_freezz` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'This is indication that task is now freezz.',
   `task_process_type` varchar(50) NOT NULL DEFAULT 'bulk' COMMENT 'This field indicate which kind of process tagger doing it.',
-  `createdDate` date NOT NULL DEFAULT current_timestamp(),
-  `modifiedDate` date NOT NULL DEFAULT current_timestamp()
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modifiedDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -235,8 +235,8 @@ CREATE TABLE `rectanglebb` (
   `geometry_width` double NOT NULL,
   `geometry_height` double NOT NULL,
   `numannotation` int(40) NOT NULL DEFAULT 1 COMMENT 'content the number of annotation',
-  `createdDate` varchar(30) NOT NULL,
-  `modifiedDate` varchar(30) NOT NULL
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modifiedDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -260,8 +260,8 @@ CREATE TABLE `taggingimages` (
   `imageName` varchar(225) NOT NULL COMMENT 'image name',
   `imagePath` varchar(225) NOT NULL COMMENT 'image Path',
   `subcategoryid` int(30) NOT NULL,
-  `createdDate` int(11) NOT NULL,
-  `modifiedDate` int(11) NOT NULL
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modifiedDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -273,8 +273,8 @@ CREATE TABLE `taggingimages` (
 CREATE TABLE `taggingimagescategory` (
   `id` int(30) NOT NULL,
   `categoryName` varchar(50) NOT NULL COMMENT 'category level and value',
-  `createdDate` text NOT NULL,
-  `modifiedDate` text NOT NULL
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modifiedDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -287,8 +287,8 @@ CREATE TABLE `taggingimagessubcategory` (
   `subid` int(30) NOT NULL COMMENT 'sub category id',
   `subcategoryName` varchar(50) NOT NULL COMMENT 'sub category name ',
   `categoryid` int(11) NOT NULL COMMENT 'ref of category',
-  `createdDate` text NOT NULL,
-  `modifiedDate` text NOT NULL
+  `createdDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modifiedDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --

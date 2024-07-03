@@ -49,7 +49,7 @@ const handleFileChange = async (event) => {
                             return cell && cell.v !== undefined && cell.v !== null && cell.v.toString().trim() !== '';
                         });
                         if (!isRowValid) {
-                            console.log(`Row ${rowIndex + 1} has missing values in required columns.`);
+                           // console.log(`Row ${rowIndex + 1} has missing values in required columns.`);
                             alert(`Please fill all required columns (A, B, D, E, F, G, H, I) for row ${rowIndex + 1} in the Excel file.`);
                             return; // Stop processing further rows if any row is invalid
                         }
@@ -113,7 +113,6 @@ const showAlert = (arg, icon='info') => {
 };    
 
 const handleUploadClick = async (e) => {
-    console.log(e.target.id);
     if (excelFile && zipFile) {
         try {
             const workbook = await readExcelFile(excelFile);

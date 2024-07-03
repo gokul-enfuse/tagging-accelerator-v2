@@ -9,12 +9,12 @@ function SearchBar() {
   return (
     <div className='searchbar-cont'>
         <div className='search-heading'>
-            <h1>ENFUSE TAGGING TOOL</h1>
+            <h3>ENFUSE TAGGING TOOL</h3>
             <input type='search' placeholder='search' />
         </div>
         <div className='search-icon'>
-            <h1><FaBell/></h1>
-            <h1><FaCheckSquare/></h1>
+            <h3><FaBell/></h3>
+            <h3><FaCheckSquare/></h3>
             <div className='search-icon-data'>
                 <h4>Your Name</h4>
                 <p>{auth.profile_username}</p>

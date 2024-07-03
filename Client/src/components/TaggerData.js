@@ -5,7 +5,7 @@ import axios from "axios";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import 'antd/dist/antd.min.css';
-import { DOMAIN } from '../Constant.js';
+import { DOMAIN, DOMAINCLIENT } from '../Constant.js';
 import { AssignToTagger } from '../utilities/Assignto.js';
 
 
@@ -42,7 +42,7 @@ const TaggerData = () => {
         try {
             let numItems = (record.numimage > 0)? record.numimage : record.numdocs; 
 
-          const otherAppUrl = `http://localhost:${portNumber}/${record.profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${taggerId}`;
+          const otherAppUrl = `${DOMAINCLIENT}/${record.profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${taggerId}`;
           return (
             <a href={otherAppUrl} target="_blank">
               {numItems}
@@ -149,8 +149,14 @@ const TaggerData = () => {
   };
 
   const getTaggers = () => {
+    console.log("auth = ", auth, auth.profile_id);
     axios
-      .get(`${DOMAIN}/gettaggertask`)
+      .get(`${DOMAIN}/gettaggertask`, {
+         params: {
+           profile_id: auth.profile_id,
+           profile_role: auth.profile_role
+         }
+      })
       .then((response) => {
         const taggerTasks = response.data;
         setData(taggerTasks);
