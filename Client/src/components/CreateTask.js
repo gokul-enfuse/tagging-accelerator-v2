@@ -39,8 +39,22 @@ const CreateTask = () => {
     };
 
     const handleFileChange = async (e) => {
+        const files = Array.from(e.target.files);
+        const allowedExtensions = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'png'];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+
+            if (!allowedExtensions.includes(fileExtension)) {
+                showAlert('Only .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png files are allowed', 'warning');
+                e.target.value = ''; // Reset the input
+                return; // Exit the function if any file is invalid
+            }
+        }
+
         const selectedFiles = (e.target.files.length > 1)? Array.from(e.target.files).filter(file =>
-           file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.type === 'application/pdf'
+           file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.type === 'application/pdf' || file.type !== 'application/x-msdownload' 
         ): [e.target.files[0]];
         if (selectedFiles) {
             const formDatas = new FormData();
