@@ -6,10 +6,11 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import 'antd/dist/antd.min.css';
 import { DOMAIN, DOMAINCLIENT } from '../Constant.js';
-import { AssignToTagger } from '../utilities/Assignto.js';
+import { AssignToTagger, PriprityLevel } from '../utilities/Assignto.js';
+import usePageVisibility from '../utilities/usePageVisibility';
 
 
-const TaggerData = () => {
+const TaggerData = ({searchValue}) => {
   const { Option } = Select;
   const { auth } = useAuth();
   const taggerId = auth.profile_username === "admin" ? auth.profile_username : auth.profile_id;
@@ -18,6 +19,7 @@ const TaggerData = () => {
   let currentURL = window.location.href;
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
+  const [finalData,setFinalData] = useState([]);
   //let location = useLocation();
   const columnsRow = [
     
@@ -75,7 +77,14 @@ const TaggerData = () => {
         <StatusSelect record={record} />
       )
     },
-
+    {
+      title: 'Priority Level',
+      dataIndex: 'task_prioroty',
+      key: 'priorotyLevel',
+      render: (text, record) => (
+         <PriprityLevel record={record}/>
+      )
+    },
     {
       title: 'Created Date',
       dataIndex: 'createdDate',
@@ -125,15 +134,6 @@ const TaggerData = () => {
         .catch((error) => console.error(error));
     };
 
-    /* axios.post(`${DOMAIN}/storePort`, { port: appPort })
-      .then((response) => {
-        // Handle the response if needed
-        console.log("Port stored in the backend:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error storing port in the backend:", error);
-      }) */
-
     return (
       <Select
         value={taskStatus[record.task_id]}
@@ -160,6 +160,7 @@ const TaggerData = () => {
       .then((response) => {
         const taggerTasks = response.data;
         setData(taggerTasks);
+        setFinalData(taggerTasks);
       })
       .catch((error) => console.error(error));
   };
@@ -172,24 +173,32 @@ const TaggerData = () => {
       confirmButtonText: 'OK',
     });
   };
+  useEffect(()=>{
+    if(searchValue!=''){
+    const newData = data.filter((item)=>{
+      return item.profile_email.includes(searchValue);
+    })
+      setFinalData(newData);
+    }else{
+      setFinalData(data);
+    } 
+  },[searchValue]);
+
   useEffect(() => {
      getTaggers();
-
-    axios.get(`${DOMAIN}/getPort?appName=tagging-toolV2`)
-      .then(result => {
-        setPortNumber(result['data'].appPort);
-      }).catch(error => {
-        showCustomeAlert(error)
-      })
   }, []);
+
+  usePageVisibility(() => {
+    getTaggers();
+  });
 
   return (
     <div>
       <Table
         //rowSelection={rowSelection}
         columns={columnsRow}
-        dataSource={data}
-        pagination={{ pageSize: 5 }}
+        dataSource={finalData}
+        pagination={{ pageSize: 10 }}
       />
     </div>
   );

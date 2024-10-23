@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { DOMAIN, DOMAINCLIENT } from '../Constant';
+import { DOMAIN, DOMAINCLIENT, MEDIAMANUALPATH } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
+import commonfunction from '../utilities/commonFunction';
 
 const CreateTask = () => {
     const [currentDate, setCurrentDate] = useState('');
@@ -21,7 +22,6 @@ const CreateTask = () => {
         creationDate: '',
         mediaType: '',
         category: '',
-        status: 'To Do', // Include the status field
     };
 
     const [formData, setFormData] = useState(defaultFormData);
@@ -40,54 +40,133 @@ const CreateTask = () => {
 
     const handleFileChange = async (e) => {
         const files = Array.from(e.target.files);
-        const allowedExtensions = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'png'];
-
+        const allowedImageExtensions = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'png'];
+        const allowedDocumentExtensions = ['docx', 'pdf'];
+        const maxFileSize = 3 * 1024 * 1024; // 3 MB per file
+        const totalMaxSize = 3 * 1024 * 1024; // Total max size (e.g., 3 MB)
+    
+        let totalSize = 0;
+        let isValid = true;
+        let isImageType = false;
+        let isDocumentType = false;
+        let errorMessage = '';
+    
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const fileExtension = file.name.split('.').pop().toLowerCase();
-
-            if (!allowedExtensions.includes(fileExtension)) {
-                showAlert('Only .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png files are allowed', 'warning');
-                e.target.value = ''; // Reset the input
-                return; // Exit the function if any file is invalid
+    
+            // Check if the file is an image or document
+            if (allowedImageExtensions.includes(fileExtension)) {
+                isImageType = true;
+            } else if (allowedDocumentExtensions.includes(fileExtension)) {
+                isDocumentType = true;
+            } else {
+                errorMessage = 'Only .jpg, .jpeg, .jfif, .pjpeg, .pjp, .png, and .docx files are allowed.';
+                isValid = false;
+                break;
+            }
+    
+            // File size validation
+            if (file.size > maxFileSize) {
+                errorMessage = 'Each file must be 3 MB or smaller.';
+                isValid = false;
+                break;
+            }
+    
+            // Total size validation
+            totalSize += file.size;
+            if (totalSize > totalMaxSize) {
+                errorMessage = 'Total size of all files must not exceed 3 MB.';
+                isValid = false;
+                break;
             }
         }
-
-        const selectedFiles = (e.target.files.length > 1)? Array.from(e.target.files).filter(file =>
-           file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.type === 'application/pdf' || file.type !== 'application/x-msdownload' 
-        ): [e.target.files[0]];
-        if (selectedFiles) {
-            const formDatas = new FormData();
-            for (const file of selectedFiles) {
-                formDatas.append('images', file);
-            }
-            
-            try {
-                const response = await axios.post(`${DOMAIN}/api/upload`, formDatas, {
-                    headers: {
-                      'Content-Type': 'multipart/form-data',
-                    },
-                  });
-                if (response.status === 200) {
-                    setFormData({
-                        ...formData,
-                        fileName: response.data.fileName,
-                        filePath: response.data.filePath
-                    });
-                    // validateForm();
-
-                } else {
-                    console.error('File upload failed');
-                }
-            } catch (error) {
-                console.error('File upload error:', error);
-            }
+    
+        if (!isValid) {
+            showAlert(errorMessage, 'warning');
+            e.target.value = '';
+            setFormData((prevData) => ({ ...prevData, mediaType: '' }));
+            return;
         }
-
+    
+        if (isImageType && isDocumentType) {
+            showAlert('You cannot upload both images and documents at the same time.', 'warning');
+            e.target.value = '';
+            setFormData((prevData) => ({ ...prevData, mediaType: '' }));
+            commonfunction.unlinkfiles(formData);
+            return;
+        }
+    
+        // Validation for media type and file types matching
+        if (isImageType && formData.mediaType && formData.mediaType !== 'image') {
+            showAlert('Media type does not match the selected file type. Please select "Image" as media type.', 'warning');
+            e.target.value = '';
+            setFormData((prevData) => ({ ...prevData, mediaType: '' }));
+            commonfunction.unlinkfiles(formData);
+            return;
+        } else if (isDocumentType && formData.mediaType && formData.mediaType !== 'doc') {
+            showAlert('Media type does not match the selected file type. Please select "Document" as media type.', 'warning');
+            e.target.value = '';
+            setFormData((prevData) => ({ ...prevData, mediaType: '' }));
+            commonfunction.unlinkfiles(formData);
+            return;
+        }
+    
+        const formDatas = new FormData();
+        for (const file of files) {
+            formDatas.append('images', file);
+        }
+    
+        try {
+            const response = await axios.post(`${DOMAIN}/api/upload`, formDatas, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+    
+            if (response.status === 200) {
+                setFormData({
+                    ...formData,
+                    fileName: response.data.fileName,
+                    filePath: response.data.filePath,
+                });
+            } else {
+                console.error('File upload failed');
+                showAlert('File upload failed', 'error');
+            }
+        } catch (error) {
+            console.error('File upload error:', error);
+            showAlert('File upload error', 'error');
+        }
+    
+        setFiles(files);
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log(files)
+        // Validate media type selection based on existing files
+        if (name === 'mediaType' && files.length > 0) {
+            const fileExtension = files[0].name.split('.').pop().toLowerCase();
+            const allowedImageExtensions = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'png'];
+            const allowedDocumentExtensions = ['docx', 'pdf'];
+    
+            // Check for mismatch between selected media type and file types
+            if (value === 'image' && !allowedImageExtensions.includes(fileExtension)) {
+                showAlert('You have selected document files. Please select "Document" as media type.', 'warning');
+                setFormData((prevData) => ({ ...prevData, mediaType: '' }));
+                commonfunction.unlinkfiles(formData);
+                return;
+            }
+    
+            if (value === 'doc' && !allowedDocumentExtensions.includes(fileExtension)) {
+                showAlert('You have selected image files. Please select "Image" as media type.', 'warning');
+                setFormData((prevData) => ({ ...prevData, mediaType: '' }));
+                commonfunction.unlinkfiles(formData);
+                return;
+            }
+        }
+    
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -113,6 +192,7 @@ const CreateTask = () => {
                 setFormData(defaultFormData); // Reset the form
             } else {
                 console.error('Task creation failed');
+                showAlert(response.data.message, 'info');
             }
         } catch (error) {
             showAlert(error.response.data.message, 'error');
@@ -203,14 +283,14 @@ const CreateTask = () => {
                 <select className="create-task-select" name="mediaType" id='mediaType' value={formData.mediaType} onChange={handleChange} required >
                     <option value="">Select value</option>
                     <option value="image">Image</option>
-                    <option value="audio">Audio</option>
-                    <option value="video">Video</option>
+                    <option value="audio" disabled>Audio</option>
+                    <option value="video" disabled>Video</option>
                     <option value="doc">Document</option>
                 </select><br />
                 </div>
              </fieldset>  
             <div className='createtask_button_cont'>
-                <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Task</button>
+                <button type="submit" className='Btn' style={{ width: '800px', margin: '10px' }}>Add Task</button>
             </div>
         </form>
     );

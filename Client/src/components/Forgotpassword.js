@@ -25,8 +25,12 @@ const Forgotpassword = () => {
         e.preventDefault();
         if (password !== confirmPassword) {
             setError('Passwords do not match');
-        } else if (!/^[\w!@#$%^&*]{5,25}$/.test(password)) {
-            setError('Password must be any combination of alphanumeric,symbol 5 to 25 characters.');
+        } else if (password.length < 5 || password.length > 25) {
+            setError('Password must be between 5 and 25 characters.');
+        } else if (!/[A-Za-z]/.test(password) || !/\d/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+            setError('Password must include letters, numbers, and special characters.');
+        } else if (/^(password|12345|qwerty|abc123)$/i.test(password)) {
+            setError('Weak password. Please choose a stronger password.');
         } else {
             setError('');
             const value = {

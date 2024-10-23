@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
+import { Table, Select } from 'antd';
 import useAuth from '../hooks/useAuth.js';
 import { DOMAIN } from '../Constant.js';
 
@@ -72,7 +73,7 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
 
  };
 
- export function AssignToTagger({ pname, record, mismatchedTasks }) {
+export function AssignToTagger({ pname, record, mismatchedTasks }) {
     let { auth } = useAuth();
     let defaultFormData = {
         taskTitle: '',
@@ -145,3 +146,32 @@ export function AssignToReviewer({ pname, record, mismatchedTasks }) {
         </select>
       )
  };
+
+export function PriprityLevel({record}) {
+  const { Option } = Select;
+  const [priorityLevel, setPriorityLevel] = useState({});
+
+  useEffect(() => {
+    setPriorityLevel(() => (record.task_prioroty !== 0 ? record.task_prioroty : "Selcted"));
+  }, [])
+  const handlePriortyLevelChange = (e) => {
+    setPriorityLevel(e)
+    console.log(record, e);
+  }
+   return (
+      <Select 
+        name="prioritylevel"
+        id="prioritylevel"
+        style={{ width: 120 }}
+        value={priorityLevel}
+        onChange={handlePriortyLevelChange}
+      >
+        {
+          [1,2,3,4,5].map((level) => (
+            
+              <Option key={level} value={level}>{level}</Option>
+          ))
+        }
+      </Select>
+   )
+};

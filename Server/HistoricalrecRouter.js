@@ -70,7 +70,6 @@ const updateHistoricalRec = (response, tablename, tablenametwo = null, setfields
         } else {
             if(tablenametwo) {
                 let sqlUpdateTwo = ` UPDATE ${tablenametwo} ${setfieldsTwo} WHERE ${conditionsTwo} `;
-                console.log(sqlUpdateTwo);
                 conn.query(sqlUpdateTwo, (error, resultT) => {
                     if(error) {
                         response.status(400).json({ message: "Data not updated.", error: error });

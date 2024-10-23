@@ -6,8 +6,9 @@ import { DOMAIN } from '../Constant';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import SearchBar from './SearchBar';
-import Model from '../utilities/Model';
-
+import {Model} from '../utilities/Model';
+import usePageVisibility from '../utilities/usePageVisibility';
+import useAuth from '../hooks/useAuth';
 
 const HistoricalRecords = () => {
   const [data, setData] = useState([]);
@@ -15,16 +16,42 @@ const HistoricalRecords = () => {
   const [isSubmitted, setIsSubmitted] = useState({});
   const [open, setOpen] = useState(false);
   const [taskid, setTaskId] = useState();
+  const [searchValue,setSearchValue] = useState('');
+  const [finalData,setFinalData] = useState([]);
+  const { auth} = useAuth();
   
   useEffect(() => {
-     axios.get(`${DOMAIN}/api/historicalRec`)
+    fetchHistoricalRecords();  // Initial data fetch
+  }, []);
+
+  usePageVisibility(() => {
+    fetchHistoricalRecords();
+  });
+
+  const fetchHistoricalRecords = () => {
+    axios.get(`${DOMAIN}/api/historicalRec`)
       .then(res => {
          setData(res.data);
          setLoading(false);
+         setFinalData(res.data);
       }).catch(error => {
-         console.log(error)
+         console.error(error);
       });
-  }, []);
+  };
+  const refreshData = () => {
+    fetchHistoricalRecords();
+  };
+  
+  useEffect(()=>{
+    if(searchValue!=''){
+    const newData = data.filter((item)=>{
+      return item.tagger.includes(searchValue);
+    })
+    setFinalData(newData);
+  }else{
+    setFinalData(data);
+  }
+  },[searchValue])
 
   const columns = [
     {
@@ -73,7 +100,7 @@ const HistoricalRecords = () => {
       key: 'action',
       render: (text, records) => { 
         let combineId = records.task_id+'_'+records.reviewer_profile_id;
-        return (<button style={{width: 'auto', height: '40px', margin: '0px', fontSize:'20px'}} onClick={showModelBox} id={combineId}>Edit</button>);
+        return (<button style={{width: '55px', height: '30px', margin: '0px',fontSize:'18x',background:"#09deb0dc", cursor:'pointer'}} onClick={showModelBox} id={combineId}>Edit</button>);
       }
     }
   ];
@@ -93,51 +120,33 @@ const HistoricalRecords = () => {
       confirmButtonText: 'OK',
     });
   };
+  useEffect(()=>{
+    if(searchValue!=''){
+    const newData = data.filter((item)=>{
+      return item.tagger.includes(searchValue);
+    })
+    setFinalData(newData);
+    }else{
+      setFinalData(data);
+    } 
+  },[searchValue])
 
   return (
     <div>
       <div>
-        <SearchBar/>
+        <SearchBar setSearchValue={setSearchValue} />
       </div>
     
     <div>
-      {/*<div style={{marginTop: "10px"}}>
-         <label style={{ marginTop: 20, color: 'white' }}>Assign to a Tagger</label> &nbsp;&nbsp; */}
-        {/* <select
-        className='historicalrecords'
-          name="assignedTo"
-          style={{ width: '150px', height: '35px', border: '1px solid skyblue' }}
-          value={assignedTo}
-          onChange={handleAssignToChange}
-        >
-          <option key="0" value="">
-            Select
-          </option>
-          {reviewerList && reviewerList.map((item) => (
-            <option key={item.profile_id} value={item.profile_id}>
-              {item.profile_username}
-            </option>
-          ))}
-        </select> */}
-        {/* {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-        <Button
-          type="primary"
-          onClick={handleTaskSubmit}
-          disabled={!hasSelected || !assignedTo}
-          style={{ marginTop: 10 }}
-        >
-          Submit
-        </Button> 
-      </div>*/}
 
       <div>
-        <h1 style={{ marginBottom: '20px', textAlign: 'center', alignItems: 'center', marginTop: 26 }}>
-
+        <h1 style={{ marginBottom: '5px', textAlign: 'center',color:'white', alignItems: 'center', marginTop: 5,fontSize:'22px' }}>
+        Welcome {(auth.profile_name !== 'null') ? auth.profile_name : auth.profile_username} - Historical Records Page
         </h1>
-        <div style={{ overflowY: 'scroll', height: '356px' }}>
-          <Table columns={columns} dataSource={data} loading={loading} pagination={{ pageSize: 10 }} rowKey="task_id" />            
+        <div style={{ overflowY: 'auto', height: '356px' }}>
+          <Table columns={columns} dataSource={finalData} loading={loading} pagination={{ pageSize: 10 }} rowKey="task_id" />            
         </div>
-        <Model open={open} handleClose={handleClose} taskId={taskid}/>
+        <Model open={open} handleClose={handleClose} taskId={taskid} refreshData={refreshData}/>
       </div>
     </div>
     </div>

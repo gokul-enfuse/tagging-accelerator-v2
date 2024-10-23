@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
+import { DOMAIN } from '../../Constant';
 let port = 3030;
 
 function ImageBUlkUpload() {
@@ -14,7 +15,7 @@ let [zipFile, setZipFile] = useState(null);
 
 let handleDownloadClick = () => {
     // Reference the Excel file in the public/template folder
-    let excelFileUrl = process.env.PUBLIC_URL + `/template/bulkuploadtemplate.xlsx`;
+    let excelFileUrl = process.env.PUBLIC_URL + `/Template/bulkuploadtemplate.xlsx`;
     // Create a dummy anchor element to trigger the download
     let anchor = document.createElement('a');
     anchor.href = excelFileUrl;
@@ -126,7 +127,7 @@ let handleUploadClick = async (e) => {
                 "assignNameOftaggers": item.assignNameOftaggers
             }));
             
-            await axios.get(`http://localhost:3030/bulkuploadcheck`, {
+            await axios.get(`${DOMAIN}/bulkuploadcheck`, {
                 params:{
                     args: formattedExcelData[0]['project_name']
                 }
@@ -134,7 +135,7 @@ let handleUploadClick = async (e) => {
                 if(resarg['data']['resargs'].project_status > 0) {
                     let formDataExl = new FormData();
                     formDataExl.append('excelData', JSON.stringify(excelData))
-                    await axios.post('http://localhost:3030/api/excelupload', formDataExl, {
+                    await axios.post(`${DOMAIN}/api/excelupload`, formDataExl, {
                         headers: {
                             'Content-Type': 'application/json',
                         }
@@ -144,7 +145,7 @@ let handleUploadClick = async (e) => {
                             formData.append('zipFile', zipFile);
                             formData.append('body', JSON.stringify(excelData));
 
-                            await axios.post(`http://localhost:${port}/zipextraction`, formData, {
+                            await axios.post(`${DOMAIN}/zipextraction`, formData, {
                                 headers: {
                                 'Content-Type': 'multipart/form-data'
                                 }
@@ -152,7 +153,7 @@ let handleUploadClick = async (e) => {
                                 showAlert(resZip.data, 'success');
                             }).catch(async(error) => {
                                 showAlert(error.response.data.message, 'error');
-                                await axios.delete(`http://localhost:${port}/delZipTask`, {
+                                await axios.delete(`${DOMAIN}/delZipTask`, {
                                     data: {
                                         details: formattedExcelData
                                     }
@@ -206,7 +207,7 @@ return (
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#0074cc',
+                backgroundColor: '#09deb0dc',
             }}
             onClick={handleDownloadClick}
         >
@@ -230,11 +231,11 @@ return (
             id="uploadImageButton"
             style={{
                 width: '250px',
-                height: '30px',
+                height: '35px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#0074cc',
+                backgroundColor: '#09deb0dc',
             }}
             onClick={handleUploadClick}
         >

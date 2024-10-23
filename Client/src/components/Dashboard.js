@@ -21,7 +21,7 @@ import Forgotpassword from './Forgotpassword.js';
  
 import HistoricalRecords from './HistoricalRecords.js';
 import BulkUpload from './BulkUpload.js';
-
+import Filter from './Filter.js';
 
 
 
@@ -37,6 +37,7 @@ const Dashboard = () => {
 
           <Route element={<RequireAuth />} >
             <Route path="/admin" element={<Admin />} />
+            <Route path="/filter" element={<Filter />} />
             <Route path="/tagger" element={<Tagger />} />
             <Route path="/reviewer" element={<Reviewer />} />
             <Route path="/manager" element={<Manager />} />

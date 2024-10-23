@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
@@ -15,7 +15,7 @@ import 'sweetalert2/dist/sweetalert2.css';
 
 
 const SignIn = () => {
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const [isOpen] = useState(true);
   const [isEmailVisible, setIsEmailVisible] = useState(false);
   const [buttonTitle, setButtonTitle] = useState('Login');
@@ -27,6 +27,18 @@ const SignIn = () => {
   let currentURL = window.location.href;
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
+  const [isFormVisible, setIsFormVisible] = useState(true);
+
+  useEffect(() => {
+    const storedAuth = sessionStorage.getItem('auth');
+    if (storedAuth) {
+      setAuth(JSON.parse(storedAuth));
+      setIsFormVisible(false);
+      navigate('/admin');
+    } else {
+      setIsFormVisible(true);
+    }
+  }, [auth, setAuth]);
 
   const showAlert = (messageText, iconType="info") => {
     Swal.fire({
@@ -63,8 +75,9 @@ const SignIn = () => {
       if(!isEmailVisible) {
         baseURL = `${DOMAIN}/api/login`;
 
-        axios.post(baseURL, values).then((response) => {
+        axios.post(baseURL, values,{ withCredentials: true }).then((response) => {
           if (response.status === 200) {
+            setAuth(response.data);
             if (response.data.profile_role === 1) {
               navigate("/admin");
             } else if (response.data.profile_role === 3) {
@@ -97,6 +110,7 @@ const SignIn = () => {
           showAlert(error.response.data.message, "error");
         });
       // navigate('/admin', { replace: false });
+        setIsFormVisible(false);
         navigate(from, { replace: true });
       } else {
         if (email){
@@ -151,12 +165,14 @@ const SignIn = () => {
 
     <div className="container">
 
-      <div className={!isSubmitSuccess ? "signin signin_wrapper" : "signin signin_success"} style={{ margin: "100px" }}>
+      <div className={!isSubmitSuccess ? "signin signin_wrapper" : "signin signin_success"} style={{ margin: "100px", display: isFormVisible ? 'block' : 'none' }}>
         {/* <div className="signin signin_wrapper"  style={{margin:"100px"}}> */}
 
         {/* {isSubmitSuccess ? (
           <SubmitForm />
         ) : ( */}
+
+        {isFormVisible && (
         <form >
 
           <div className='top-section'>
@@ -252,9 +268,14 @@ const SignIn = () => {
             <input type="hidden" name="hidForgotPassword" id="hidForgotPassword" value={!isEmailVisible} />
           </div> )}
 
-          <button type="submit" onClick={formik.handleSubmit}>{buttonTitle}</button>
+          <button className="Btn" type="submit" onClick={formik.handleSubmit}>{buttonTitle}</button>
 
         </form>
+
+        )}
+
+
+
         {/* )} */}
       </div>
     </div>

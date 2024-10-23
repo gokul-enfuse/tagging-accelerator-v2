@@ -104,18 +104,6 @@ const Sidebar = ({ children }) => {
 
       ]
     },
-    // {
-    //   path: "/tagger",
-    //   id: 3,
-    //   name: "Tagger",
-    //   // icon: <MdDns />
-    //   icon: <img src={customTaggerIcon} width={'35px'} alt="Tagger Icon" />,
-
-    // },
-
-
-
-
   ]
 
   const reports = {
@@ -124,6 +112,15 @@ const Sidebar = ({ children }) => {
     name: "Reports",
     // icon: <FaTh />
     icon: <img src={customReportsIcon} width={'35px'} alt="Reports Icon" />,
+  }
+
+  const filters ={
+    path: "/filter",
+    id: 5,
+    name: "Filter",
+    // icon: <FaTh />
+    icon: <img src={customReportsIcon} width={'35px'} alt="Filter Icon" />,
+
   }
 
   const annotation = {
@@ -172,17 +169,10 @@ const Sidebar = ({ children }) => {
     axios.put(`${DOMAIN}/logout/${profile_id}`, {profil_login_session: 0})
     setAuth({})
   }
-  const sidebarStyle = {
-    height:
-      auth.profile_role === ROLES.ADMIN ? "100vh" :
-        auth.profile_role === ROLES.MANAGER ? "100vh" :
-          auth.profile_role === ROLES.TAGGER ? "100vh" :
-            auth.profile_role === ROLES.REVIEWER ? "100vh" :
-              "auto",
-  };
+
   return (
     <div className='container'>
-      {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px", ...sidebarStyle }} className='sidebar'>
+      {auth.profile_role && <div style={{ width: isOpen ? "300px" : "50px" }} className='sidebar'>
 
         <div className='top-section'>
           <img style={{ display: isOpen ? "block" : "none" }} src={process.env.PUBLIC_URL+'/icon/enfuse-logo.png'} alt='logo' />
@@ -210,11 +200,10 @@ const Sidebar = ({ children }) => {
               <MenuItem key={reports.id} item={reports} profileRole={auth.profile_role} />}
 
             {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
-              <MenuItem key={bulkupload.id} item={bulkupload} profileRole={auth.profile_role} />}
+              <MenuItem key={filters.id} item={filters} profileRole={auth.profile_role} />}
 
             {(auth.profile_role === ROLES.ADMIN || auth.profile_role === ROLES.MANAGER) &&
-              <MenuItem key={annotation.id} item={annotation} profileRole={auth.profile_role} />}
-
+              <MenuItem key={bulkupload.id} item={bulkupload} profileRole={auth.profile_role} />}
           </ul>
         </nav>
         {auth.profile_role &&

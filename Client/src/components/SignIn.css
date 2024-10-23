@@ -7,11 +7,8 @@
 }
 
 .container {
-  /* background: #ffffff; */
   background-color: #37377d;
-  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
@@ -66,7 +63,7 @@ div.textField svg {
   font-size: 25px;
 }
 
-button {
+.Btn {
   background: #09deb0dc;
   width: 90%;
   line-height: 35px;

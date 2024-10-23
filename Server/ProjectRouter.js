@@ -36,16 +36,6 @@ projectRouter.get('/allprojects', async (req, res) => {
     await getprojects(arg, res, table_name, null);
 });
 
-/**
- * Created By: Vikas Bose | 20/02/2024
- */
-projectRouter.get('/profilerelateproject', async (req, res) => {
-    const table_name = process.env.PROJECT;
-    const { project_ids } = req.query;
-    const arg = (project_ids)?` project_id in (${project_ids})`:` project_id not in (null)`;
-    await getprojectsDuplicate(arg, res, table_name, null);
-});
-
 projectRouter.get('/specificprojects', async (req, res) => {
     const table_name = process.env.PROJECT;
     await getprojects(null, res, table_name, null);
@@ -78,29 +68,6 @@ let getprojects = (arg = null, res, table_name = null, join = null) => {
     });
 };
 
-/**
- * Created By: Vikas Bose | 20/02/2024
- * @param {*} arg 
- * @param {*} res 
- * @param {*} table_name 
- * @param {*} join 
- */
-let getprojectsDuplicate = (arg = null, res, table_name = null, join = null) => {
-    let sql = `SELECT GROUP_CONCAT(project_id) as project_id, GROUP_CONCAT(project_Name) as project_name, GROUP_CONCAT(project_clientname) as project_clientname, GROUP_CONCAT(project_domain) as project_domain, GROUP_CONCAT(project_status) as project_status, createdDate, modifiedDate from ${table_name}`;
-    if(join!=null) {
-        sql += join;
-    }
-    if(arg!=null) {
-        sql += ` WHERE ${arg}`;
-    }
-    conn.query(sql, (error, result) => {
-        if(error) {
-            res.status(404).json({ message: "Data not found.", error: error });
-        } else {
-            res.json(result);
-        }
-    });
-};
 /**
  * Created By: Vikas Bose | 08/02/2024
  * @param {*} table_name 

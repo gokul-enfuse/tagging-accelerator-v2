@@ -32,11 +32,6 @@ emailRouter.post("/user/reset", (req, res) => {
                     path: './enfuse-logo.png',
                     cid: "enfuse-logo"
                 },
-    //             {
-    //                 filename: 'welcome.jpg',
-    //                 path: './views/welcome.jpg',
-    //                 cid: "welcome"
-    //             },
             ]
         };
 
@@ -44,13 +39,11 @@ emailRouter.post("/user/reset", (req, res) => {
             if (error) {
                 console.log("Error" + error)
             } else {
-                console.log("Email sent:" + info.response);
                 res.status(201).json({ status: 201, info })
             }
         })
 
     } catch (error) {
-        console.log("Error" + error);
         res.status(401).json({ status: 401, error })
     }
 });

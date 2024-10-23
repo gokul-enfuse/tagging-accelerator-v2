@@ -68,24 +68,29 @@ taskRouter.post('/createtask', async (req, res) => {
                                             table_media_type = 'accelerator_task_image';
                                             media_fields = [`task_id`, `profile_id`, `image_imagename`, `image_imagepath`, `createdDate`, `modifiedDate`].join();
                                         }
-                                        /* if(task_mediatype === 'doc') {
+                                        if(task_mediatype === 'doc') {
                                             table_media_type = 'accelerator_task_doc';
                                             media_fields = [`task_id`, `profile_id`, `media_filename`, `media_filepath`, `createdDate`, `modifiedDate`].join();
-                                        } */
-                                        sql = `INSERT INTO ${table_media_type} (${media_fields}) VALUES `;
-                                            for(let i=0; i<task_filename.length; i++) {
-                                                sql+= `('${taskInsertRes.insertId}', '${profile_id}', '${task_filename[i]}', '${task_filepath[i].replace(/\\/g, '/')}', '${createdDate}', '${modifiedDate}')`;
-                                                if(i < task_filename.length - 1) {
-                                                    sql += ', ';
+                                        }
+                                        console.log("task_filename", task_filename);
+                                        if(task_filename) {
+                                            sql = `INSERT INTO ${table_media_type} (${media_fields}) VALUES `;
+                                                for(let i=0; i<task_filename.length; i++) {
+                                                    sql+= `('${taskInsertRes.insertId}', '${profile_id}', '${task_filename[i]}', '${task_filepath[i].replace(/\\/g, '/')}', '${createdDate}', '${modifiedDate}')`;
+                                                    if(i < task_filename.length - 1) {
+                                                        sql += ', ';
+                                                    }
                                                 }
-                                            }
-                                        conn.query(sql, (error, sqlRes) => {
-                                            if(error) {
-                                                res.status(400).json({ message: "SQL error.", error: error });
-                                            } else {
-                                                res.status(200).json({ message: "Task created.", rs: sqlRes });
-                                            }
-                                        });  
+                                            conn.query(sql, (error, sqlRes) => {
+                                                if(error) {
+                                                    res.status(400).json({ message: "SQL error.", error: error });
+                                                } else {
+                                                    res.status(200).json({ message: "Task created.", rs: sqlRes });
+                                                }
+                                            });
+                                        } else {
+                                            res.status(200).json({ message: `Task file length is 0`, rs: 0 }); 
+                                        } //end else
                                     } //end else
                                 });                    
                             } //end else
@@ -106,7 +111,7 @@ let fileName = "";
 const storageImage = multer.diskStorage({
     destination: function (req, file, cb) {
         //cb(null, "uploads/images");
-        let folderPath = (file.mimetype === 'image/jpeg')?process.env.TAGGINGSERVERPATH+'/manual/image/' : process.env.TAGGINGSERVERPATH+'/manual/doc/';
+        let folderPath = (file.mimetype === 'image/jpeg')?process.env.TAGGINGSERVERPATH+'/manual/image/' : process.env.TAGGINGDOCSERVERPATH+'/manual/doc/';
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath, { recursive: true });
         }
@@ -132,7 +137,7 @@ taskRouter.post('/api/upload', uploadImage, (req, res) => {
     }
 
     if(req.files.length >= 1) {
-        console.log(req.files)
+        //console.log(req.files)
         const filePath = req.files.map((v, i, itmes) => itmes[i].path); // Change this path as per your actual file storage location
         const fileName = req.files.map((v, i, itmes) => itmes[i].filename); // Change this path as per your actual file storage location
         const responseJson = {
@@ -171,6 +176,7 @@ taskRouter.get('/gettaggertask', async (req, res) => {
                 `accelerator_tasks.task_folder_name`, 
                 `accelerator_tasks.task_title`, 
                 `task_status`,
+                `task_prioroty`,
                 `task_mediatype`, 
                 `accelerator_tasks.profile_id`, 
                 `role_name`, 
@@ -217,7 +223,7 @@ taskRouter.get('/getreviewername', async (req, res) => {
 
 taskRouter.get('/getreviewertask', async (req, res) => {
     const { reviewer_profile_id, project_id, profile_id, profile_role } = req.query;
-    let fields = [`accelerator_tasks.task_id`, `accelerator_tasks.task_folder_name`, `accelerator_tasks.task_title`, `task_status`, 'reviewer_task_status', 'reviewer_profile_id', `task_mediatype`, `accelerator_tasks.profile_id`, `accelerator_tasks.task_role`, `role_name`, `profile_name`, `profile_email`, `profile_username`, `accelerator_tasks.project_id`, `accelerator_tasks.createdDate`, `count(image_id) as numimage`, `GROUP_CONCAT(image_imagename) as imagename`, `accelerator_tasks.modifiedDate`, `task_process_type`].join()
+    let fields = [`accelerator_tasks.task_id`, `accelerator_tasks.task_folder_name`, `accelerator_tasks.task_title`, `task_status`, `task_prioroty`, 'reviewer_task_status', 'reviewer_profile_id', `task_mediatype`, `accelerator_tasks.profile_id`, `accelerator_tasks.task_role`, `role_name`, `profile_name`, `profile_email`, `profile_username`, `accelerator_tasks.project_id`, `accelerator_tasks.createdDate`, `count(image_id) as numimage`, `GROUP_CONCAT(image_imagename) as imagename`, `accelerator_tasks.modifiedDate`, `task_process_type`].join()
     let join = ` INNER JOIN accelerator_profile ON accelerator_tasks.reviewer_profile_id = accelerator_profile.profile_id INNER JOIN accelerator_role ON accelerator_tasks.task_role = accelerator_role.role_id INNER JOIN accelerator_task_image ON accelerator_tasks.task_id = accelerator_task_image.task_id`;
     let additionalCondition = (profile_id && profile_role > 2)? ` and accelerator_tasks.reviewer_profile_id = ${profile_id}` : '';
     let arg = ` WHERE task_role = 4 and task_status in ('waiting for review') ${additionalCondition}`;
@@ -358,13 +364,32 @@ taskRouter.put('/updatereviewertask/:id', async (req, res) => {
                         res.status(200).json({ message: "Task updated.", rs: imgRes });
                     }
                 });
-            } else {
-                res.status(200).json({ message: "Task updated.", rs: result });
+            } 
+            if(task_status === 'Completed') {
+                const sqlInsSP = `CALL InsertReportData(${task_id}, ${profile_id}, ${reviewer_profile_id})`;
+                conn.query(sqlInsSP, (error, result) => {
+                    if(error) {
+                        res.status(400).json({ message: "Not insert data into report table.", error: error });
+                        return;
+                    } else {
+                        res.status(200).json({ message: "Task updated.", rs: result });
+                    }
+                });
             }
         }
     });
 });
 
+taskRouter.post('/api/unlink-files', async(req, res) => {
+    const {fileName, filePath} = req.body;
+    const fp = filePath.map(filep => {
+        fs.unlink(filep, (err) => {
+            if(err) throw err;
+            console.log(`File deleted successfully.`);
+        });
+    });
+    console.log(fp);
+})
 
 /**
  * ==============================================================Bulk Upload functionality ==========================================
@@ -501,7 +526,8 @@ let gettask = (arg = null, res, table_name = null, join = null) => {
     if (arg != null) {
         sql += ` WHERE ${arg}`;
     }
-    //console.log("SQL=", sql)
+    // console.log("SQL=", sql);
+    
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -553,7 +579,7 @@ let gettaskForReviewers = (arg = null, res, table_name = null, fields = null, jo
     if (groupby != null) {
         sql += ` ${groupby}`;
     }
-    console.log(sql);
+    //console.log(sql);
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -583,7 +609,7 @@ let executeSqlQuery = (arg = null, res, table_name = null, fields = null, join =
     if (groupby != null) {
         sql += ` ${groupby}`;
     }
-   console.log(sql);
+   //console.log(sql);
     conn.query(sql, (error, result) => {
         if (error) {
             res.status(404).json({ message: "Data not found.", error: error });
@@ -612,5 +638,60 @@ let executePythonScript = (last_inserted_id, profile_id, numOfIteration) => {
     });
     return runPy;
 }
+
+/**
+ * ============================================================== Filter: Projects and Clients ==========================================
+ */
+
+/**
+ * Created By: Mayur Patil | 16/10/2024
+ * Description: This API call is to get all clients with project status active
+ */
+taskRouter.post('/getclients', async (req, res) => {
+    let condi = `project_status = 1`;
+    let join = null;
+    await gettask(condi, res, 'accelerator_project', join);
+});
+
+/**
+ * Created By: Mayur Patil | 16/10/2024
+ * Description: This API call is to get all clients with project status active
+ */
+taskRouter.post('/getprojects', async (req, res) => {
+    const { clientname } = req.body;
+    let condi = '';
+    if (clientname) {
+      condi = `project_clientname = '${clientname}'`;
+    }  
+    let join = null;  
+    await gettask(condi, res, 'accelerator_project', join);
+  });
+
+/**
+ * Created By: Mayur Patil | 16/10/2024
+ * Description: This API call is to get all clients with project status active
+ */
+taskRouter.get('/getProjectsClients', async (req, res) => {
+    let { profile_id, profile_role, project_clientname } = req.query;
+    let fields = [`project_id`, 
+                `project_name`, 
+                `project_clientname`, 
+                `project_domain`, 
+                `project_status`,
+                `createdDate`, 
+                `modifiedDate`].join();
+
+    // let join = ` inner join accelerator_profile as ap ON accelerator_tasks.profile_id = ap.profile_id
+    // inner join accelerator_role as ar ON accelerator_tasks.task_role = ar.role_id
+    // inner join accelerator_project as apro ON accelerator_tasks.project_id = apro.project_id`
+    // let additionalCondition = (profile_id && profile_role > 2)? ` and accelerator_tasks.profile_id = ${profile_id}` : '';
+    // let arg = ` WHERE task_role = 3 and task_status not in ('Done', 'waiting for review') ${additionalCondition}`;
+    // let groupby = ` GROUP By accelerator_tasks.task_id, accelerator_tasks.task_folder_name, accelerator_tasks.task_title, task_status, task_mediatype, accelerator_tasks.profile_id, role_name, profile_name, profile_email, profile_username, accelerator_tasks.project_id, accelerator_tasks.createdDate, task_process_type`;
+    let join = '';
+    let additionalCondition = '';
+    let arg = project_clientname ? ` WHERE project_clientname = '${project_clientname}'` : '';
+    let groupby = '';
+    await executeSqlQuery(arg, res, 'accelerator_project', fields, join, groupby);
+});
 
 module.exports = taskRouter;

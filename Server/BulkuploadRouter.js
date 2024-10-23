@@ -59,7 +59,7 @@ routers.post('/zipextraction-old', upload.single('zipFile'), async (req, res) =>
                const numPersons = result[0].profileCount || 3;
                const keys = result[0].id.split(',');
                const distribution = distributeRecords(numRecords, numPersons, keys);
-               console.log("Records distribution:", distribution);
+               //console.log("Records distribution:", distribution);
                let j = 0;
                distribution.map((v, i, arr) => {
                    let insertSQL = ` INSERT INTO accelerator_task_image (task_id, profile_id, image_imagename, image_imagepath) VALUES `;
@@ -118,7 +118,7 @@ routers.post('/zipextraction', upload.single('zipFile'), async (req, res) => {
         return;
       }      
       // Output from the Python script
-      console.log('Output:', stdout);
+      //console.log('Output:', stdout);
       if(stdout) {
         const table_name = process.env.TASK;
         const dataArray = JSON.parse(req.body.body);

@@ -59,12 +59,12 @@ commRouters.post('/api/commzipextraction', upload.single('zipFileDoc'), async(re
                         if(error) {
                             res.status(400).json({message: 'You have an error in your SQL syntax.', Error: error});
                         } else {
-                            console.log(taskMediaType);
+                            //console.log(taskMediaType);
                             const numRecords = folderData.length || 10;
                             const numPersons = result[0].profileCount || 3;
                             const keys = result[0].id.split(',');
                             const distribution = distributeRecords(numRecords, numPersons, keys);
-                            console.log("Records distribution:", distribution);
+                            //console.log("Records distribution:", distribution);
                             let table_name_arr = ['accelerator_task_doc', 'accelerator_task_audio', 'accelerator_task_video'];
                             let table_name = (taskMediaType[0] === 'doc')? table_name_arr[0] : table_name_arr[1];
                             let j = 0;

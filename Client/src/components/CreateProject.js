@@ -99,7 +99,7 @@ const CreateProject = () => {
             {/* </fieldset> */}
             </div>
             <div className='project_button_cont'>
-                <button type="submit" style={{ width: '100px', marginLeft: '0px' }}>Add Project</button>
+                <button type="submit" style={{ width: '100px', marginLeft: '0px',background:'#09deb0dc'}}>Add Project</button>
             </div>
         </form>
     );
