@@ -12,7 +12,7 @@ let [zipFile, setZipFile] = useState(null);
 
 let handleDownloadClick = () =>{
     // Reference the Excel file in the public/template folder
-    let excelFileUrl = process.env.PUBLIC_URL + `/template/documentbulkuploadtemplate.xlsx`;
+    let excelFileUrl = process.env.PUBLIC_URL + `/Template/documentbulkuploadtemplate.xlsx`;
     // Create a dummy anchor element to trigger the download
     let anchor = document.createElement('a');
     anchor.href = excelFileUrl;
@@ -187,7 +187,7 @@ return (
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#0074cc',
+                backgroundColor: '#09deb0dc',
             }}
             onClick={handleDownloadClick}
         >
@@ -211,11 +211,11 @@ return (
             id="uploadImageButton"
             style={{
                 width: '250px',
-                height: '30px',
+                height: '35px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#0074cc',
+                backgroundColor: '#09deb0dc',
             }}
             onClick={handleUploadClick}
         >

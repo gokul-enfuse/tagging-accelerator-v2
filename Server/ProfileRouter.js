@@ -84,7 +84,7 @@ profileRouter.post("/api/login", (req, res) => {
                 if (decryptedPassword !== req.body.password) {
                     return res.status(401).json({ message: "Incorrect password" });
                 }
-                if(result[0].profile_role > 2) {
+                if(result[0].profile_role) {
                     updateLoginSessionFun(table_name, result[0].profile_id, 1)
                         .then(result => {
                             console.log(result);
@@ -330,7 +330,8 @@ let getuser = (arg = null, res, table_name = null, join = null, fields = null) =
  * @param {*} join 
  */
 let getTaggerAndReviewer = (arg = null, res, table_name = null, join = null) => {
-    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, (TRIM(BOTH ',' FROM ${table_name}.project_id)) as project_id, ${table_name}.createdDate, ${table_name}.modifiedDate, role_name from ${table_name}`;
+    let sql = `SELECT profile_id, profile_name, profile_email, profile_fullname, profile_username, profile_password, profile_confirmpassword, profile_role, 
+    (select project_name from accelerator_project where project_id in (TRIM(BOTH ',' FROM ${table_name}.project_id))) as project_name, ${table_name}.createdDate, ${table_name}.modifiedDate, role_name, profile_login_session, profile_login_datetime from ${table_name}`;
     if (join != null) {
         sql += join
     }
@@ -432,8 +433,8 @@ let emailFunction = (email, username, password) => {
  * @returns 
  */
 let updateLoginSessionFun = (table_name, profile_id, login_session) => {
-    let sql= `update ${table_name} set profile_login_session = ${login_session}  WHERE profile_id = ${profile_id}`;
-    //console.log(sql);
+    let sql= `update ${table_name} set profile_login_session = ${login_session}, profile_login_datetime = NOW()  WHERE profile_id = ${profile_id}`;
+    console.log(sql);
     return new Promise((resolve, reject) => {
 
         conn.query(sql, (error, result) => {

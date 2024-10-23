@@ -70,7 +70,7 @@ let columns = [
   },
 
 ]
-
+ 
 const TableData = ({ selectedProject }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);

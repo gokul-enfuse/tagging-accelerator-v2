@@ -30,7 +30,7 @@ export async function handleUpload(e, excelFile, zipFile) {
 
             const formDataExl = new FormData();
             formDataExl.append('excelData', JSON.stringify(excelData));
-            await axios.post(`http://localhost:3030/api/excelupload`, formDataExl, {
+            await axios.post(`${DOMAIN}/api/excelupload`, formDataExl, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

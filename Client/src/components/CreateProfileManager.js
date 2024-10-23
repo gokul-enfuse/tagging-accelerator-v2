@@ -184,7 +184,7 @@ const CreateProfileManager = () => {
             </div>
             {/* </fieldset> */}
             <div className='create_tagger_reviewrs_button_cont'>
-                <button type="submit" style={{ width: '800px', marginLeft: '0px' }}>Add Profile</button>
+                <button type="submit" className='Btn' style={{ width: '800px', margin: '10px'}}>Add Profile</button>
             </div>
         </form>
     );

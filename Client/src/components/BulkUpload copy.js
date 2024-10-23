@@ -5,6 +5,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 import BulkUploadTabs from './BulkUploadTabs';
+import { DOMAIN } from '../Constant';
 const port = 3030;
 
 function BulkUpload() {
@@ -128,7 +129,7 @@ const handleUploadClick = async (e) => {
 
             const formDataExl = new FormData();
             formDataExl.append('excelData', JSON.stringify(excelData))
-            await axios.post('http://localhost:3030/api/excelupload', formDataExl, {
+            await axios.post(`${DOMAIN}/api/excelupload`, formDataExl, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -138,7 +139,7 @@ const handleUploadClick = async (e) => {
                     formData.append('zipFile', zipFile);
                     formData.append('body', JSON.stringify(excelData));
 
-                    await axios.post(`http://localhost:${port}/zipextraction`, formData, {
+                    await axios.post(`${DOMAIN}/zipextraction`, formData, {
                         headers: {
                         'Content-Type': 'multipart/form-data'
                         }
@@ -146,7 +147,7 @@ const handleUploadClick = async (e) => {
                         showAlert(resZip.data, 'success');
                     }).catch(async(error) => {
                         showAlert(error.response.data.message, 'error');
-                        await axios.delete(`http://localhost:${port}/delZipTask`, {
+                        await axios.delete(`${DOMAIN}/delZipTask`, {
                             data: {
                                 details: formattedExcelData
                             }

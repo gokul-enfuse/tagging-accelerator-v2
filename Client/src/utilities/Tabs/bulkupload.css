@@ -51,11 +51,17 @@ ul.nav li:hover {
 }
 
 ul.nav li.active {
-    background: #39A2DB;
+    background: #09deb0dc;
 }
 
 /* Tab Content Styles */
 .TabContent {
     font-size: 2rem;
     text-align: center;
+}
+#downloadTopButton,#uploadImageButton{
+    cursor: pointer;
+    border: none;
+    border-radius: 30px;
+    margin: 20px auto;
 }

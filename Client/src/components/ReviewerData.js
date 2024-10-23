@@ -8,10 +8,10 @@ import { DOMAIN, DOMAINCLIENT } from '../Constant.js';
 import 'antd/dist/antd.min.css';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
-import { AssignToReviewer } from '../utilities/Assignto.js';
+import { AssignToReviewer, PriprityLevel } from '../utilities/Assignto.js';
+import usePageVisibility from '../utilities/usePageVisibility';
 
-
-const ReviewerData = () => {
+const ReviewerData = ({searchValue}) => {
   const { Option } = Select;
   const { auth } = useAuth();
   const reviewerId = (auth.profile_username === "admin") ? auth.profile_username : auth.profile_id;
@@ -22,6 +22,7 @@ const ReviewerData = () => {
   let currentURL = window.location.href;
   let porturl = new URL(currentURL);
   let appPort = porturl.port;
+  const [finalData,setFinalData] = useState([]);
 
   let columns = [
     {
@@ -56,12 +57,10 @@ const ReviewerData = () => {
       key: 'noOfItems',
       render: (text, record) => {
         try {
-          let numImages = record.numimage || 0;
-          const reviewerAppUrl = `${DOMAINCLIENT}${record.reviewer_profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${reviewerId}`;
+          let numItems = (record.numimage > 0)? record.numimage : record.numdocs; 
+          const reviewerAppUrl = `${DOMAINCLIENT}/${record.reviewer_profile_id}/${record.task_mediatype}?roleid=${auth.profile_role}&username=${reviewerId}`;
           return (
-            <a href={reviewerAppUrl} target="_blank">
-              {numImages}
-            </a>
+            <a href={reviewerAppUrl} target="_blank">{numItems}</a>
           );
         } catch (error) {
           console.error("Error rendering number of images:", error);
@@ -83,10 +82,23 @@ const ReviewerData = () => {
       )
     },
     {
+      title: 'Priority Level',
+      dataIndex: 'task_prioroty',
+      key: 'priorotyLevel',
+      render: (text, record) => (
+         <PriprityLevel record={record}/>
+      )
+    },
+    {
       title: 'Modified Date',
       dataIndex: 'modifiedDate',
       key: 'modified_Date'
-    }
+    },
+    {
+      title: 'Task Completion Date',
+      dataIndex: 'task_completedDate',
+      key: 'task_completedDate'
+    },
   ]
 
 /**
@@ -113,6 +125,7 @@ const ReviewerData = () => {
       })
       .then(response => {
         setData(response.data);
+        setFinalData(response.data)
       }).catch(error => 
         console.error(error)
       );
@@ -146,6 +159,7 @@ const ReviewerData = () => {
           showAlert(response.data.message, 'info');
           const updatedData = data.filter((task) => task.task_id !== record.task_id);
           setData(updatedData);
+          getReviewersTask();
         })
         .catch((error) => console.error(error));
     };
@@ -163,17 +177,24 @@ const ReviewerData = () => {
     );
   };
 
+  useEffect(()=>{
+    if(searchValue!=''){
+    const newData = data.filter((item)=>{
+      return item.profile_email.includes(searchValue);
+    })
+    setFinalData(newData);
+    }else{
+      setFinalData(data);
+    } 
+  },[searchValue])
 
   useEffect(() => {
     getReviewersTask();
-
-    axios.get(`${DOMAIN}/getPort?appName=tagging-toolV2`)
-      .then(result => {
-        setPortNumber(result['data'].appPort);
-      }).catch(error => {
-        showAlert(error, 'error');
-      })
   }, []);  
+
+  usePageVisibility(() => {
+    getReviewersTask();
+  });
 
   return (
     <div>
@@ -192,8 +213,8 @@ const ReviewerData = () => {
       <Table 
         //rowSelection={rowSelection} 
         columns={columns} 
-        dataSource={data} 
-        pagination={{ pageSize: 5 }} 
+        dataSource={finalData} 
+        pagination={{ pageSize: 10 }} 
       />
     </div>
   );

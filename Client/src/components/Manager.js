@@ -88,7 +88,7 @@ const Manager = () => {
             </div>
         
         <div>
-            <h1 style={{color:'white' ,marginBottom: '10px', textAlign: 'center', alignItems: 'center', marginTop: 10,fontSize:'16px' }}>
+            <h1 style={{color:'white' ,marginBottom: '10px', textAlign: 'center', alignItems: 'center', marginTop: 10,fontSize:'22px' }}>
                 Welcome {auth.profile_username === "admin" ? auth.profile_username : auth.profile_username}
             </h1>
             <div>

@@ -3,6 +3,10 @@
   padding: 0;
   text-decoration: none;
 }
+body{
+  min-height: 100vh;
+  background-color:  #37377d;
+}
 .container{
   display: center;
   position: relative;
@@ -26,14 +30,14 @@ main{
   background-color: white;
   color: rgba(3, 4, 44, 0.87);
   width: 500px;
-  height: 98vh !important;
+  height: 96vh;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none; /* Hide scrollbar for Firefox */
   -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  margin: 40px 20px 40px 20px;
+  margin:20px;
   border-radius: 20px;
 }
 
@@ -90,6 +94,7 @@ main{
   max-width: 550px;
   border-radius: 16px;
   border: solid 6px grey;
+  padding: 25px;
  }
  .projectContainer h1{
   font-size: 18px;
@@ -108,14 +113,14 @@ main{
   border-radius: 6px;
   width: 100%;
   height: 32px;
+  padding: 0px 1%;
   border: none;
-  margin-bottom: 20px;
+  margin: 5px 0px;
  }
 
  .projectContainer .project_button_cont{
   display: flex;
   justify-content: center; 
-  
  }
 
  .projectContainer .project_content{
@@ -208,7 +213,7 @@ main{
   font-size: 16px;
   width: 35% !important;
   margin-bottom: 0px;
-  background-image: linear-gradient(rgb(71, 109, 142), #21557f);
+  background-color: #09deb0dc;
  }
 
  .createtask_container input{
@@ -258,12 +263,12 @@ main{
  .create_tagger_reviewrs_container .create_tagger_reviewrs_button_cont{
   display: flex;
   justify-content: center;
+  margin-top: 10px;
  }
  .create_tagger_reviewrs_container button{
   font-size: 16px;
   width: 35% !important;
   margin-bottom: 0px;
-  background-image: linear-gradient(rgb(71, 109, 142), #21557f);
  }
 
  .create_tagger_reviewrs_container input{
@@ -367,6 +372,7 @@ main{
   padding: 20px 0px 20px 20px;
   border-radius: 18px;
   border: 3px solid gray;
+  
  }
  .historicalrecords{
   background-color: rgb(206, 209, 209);
@@ -482,11 +488,6 @@ main{
   width: 100% !important;
 }
 
-.ant-table-cell{
-  padding: 9px !important;
-  font-size: 12px;
+.ant-table-cell {
+  padding: 5px !important;
 }
-
-.ant-pagination-item-active a {
-  font-size: 10px;
-}  

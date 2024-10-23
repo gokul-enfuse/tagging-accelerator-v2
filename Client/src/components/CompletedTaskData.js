@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Checkbox } from 'antd';
+import { Table, Button } from 'antd';
 import axios from "axios";
-import useAuth from '../hooks/useAuth.js';
 import { DOMAIN } from '../Constant.js';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.css';
 
 const CompletedTaskData = () => {
-  const { auth } = useAuth();
   const [data, setData] = useState([]);
   const [reviewerList, setReviewerList] = useState([]);
   const [assignedTo, setAssignedTo] = useState("");
   const [isSubmitted, setIsSubmitted] = useState({});
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRow, setSelectedRow] = useState(null);
-
+  
   const getCompletedTasks = () => {
     axios
       .get(`${DOMAIN}/completedtasks`)
@@ -28,8 +25,6 @@ const CompletedTaskData = () => {
     axios
       .get(`${DOMAIN}/getallreviewers`)
       .then(response => {
-        /* const allProfiles = response.data
-        const reviewerList = allProfiles.length > 0 && allProfiles.filter((item) => item.profile_role === 4); */
         setReviewerList(response.data)
       })
       .catch(error => console.error(error));
@@ -76,7 +71,6 @@ const CompletedTaskData = () => {
             let temp = { ...isSubmitted };
             temp[response.data._id] = true;
             setIsSubmitted(temp);
-            // alert("success");
             showAlert();
           })
           .catch(error => console.error(error));

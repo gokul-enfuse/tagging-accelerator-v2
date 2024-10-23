@@ -17,7 +17,7 @@ const BulkUploadTabs = () => {
                 <li>Audios Bulk Upload</li>
                 <li>Videos Bulk Upload</li> */}
                 <TabNavItem title="Images Bulk Upload" id="tab1" activeTab={activeTab} setActiveTab={setActiveTab}/>
-                <TabNavItem title="Documents Bulk Upload" id="tab2" activeTab={activeTab} setActiveTab={setActiveTab}/>
+                <TabNavItem title="Doc..s Bulk Upload" id="tab2" activeTab={activeTab} setActiveTab={setActiveTab}/>
                 <TabNavItem title="Audios Bulk Upload" id="tab3" activeTab={activeTab} setActiveTab={setActiveTab}/>
                 <TabNavItem title="Videos Bulk Upload" id="tab4" activeTab={activeTab} setActiveTab={setActiveTab}/>
             </ul>

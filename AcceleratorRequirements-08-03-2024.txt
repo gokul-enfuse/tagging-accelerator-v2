@@ -171,8 +171,76 @@ Saddam
 	[issue:: Fixed all issues of Tagging tool and now it is ready for testing] [fixed]
 	[issue:: Setup Taggingtool in external ip] [fixed]
 	
+22/08/2024
+1. fetch the file name & type need to retrieve [layoutV.js] [fixed]
+2. To convert the pdf data into html and display into screen [fixed]
+
+27/08/2024 [New enhancements]
+UI changes
+1. When you click on/select any items from the side menu, it must highlighted till second option not get selected [No default selection]
+2. If the system not enhance for the menu then we must hide or remove.
+
+28/04/2024
+pip install python-dotenv flask flask_cors docx
+
+02/09/2024
+1.Enhancment for check all tagger has been logged off from the system or else set the duration when user not use the system.
+2.write the shell script for scheduler to stop the server and restart the server again ---- Accelerator tool
+3.Task statrus for reviewers different [Todo, Reassign & complete]
+4.When you do the Edit from Historical Record, the popup must close automatically.
+5.While login with Admin, we also need to set the login_session.
+6.When tagger complete the tagging tool
 
 
+Enhancment:
+next and prev button shouldn't appear when we have only single image/doc
+Insert actual/local date & time into DB and reterive while tested
+Code merge of Saddam (Accelerator)
+
+create-task functionality fully completed [need to upload into server]
+Need to discuss with point #9
+ 02241000137062 | HDFC0000224 | Rajeev halla
+ 
+How to check the database and table
+- SHOW databases; | SHOW tables; 
+how to check which DB is in use using mysql terminal commands
+- SELECT DATABASE();
+For import the sql dump in linux using terminal
+- sudo mysql -u root -p <database_name> < path_of_your_sql_dump_file
+
+
+ALTER TABLE `accelerator`.`accelerator_tasks` 
+CHANGE COLUMN `createdDate` `createdDate` TIMESTAMP NOT NULL ;
+
+14/10/2024
+1. create task - in case if data type mismatch then it must be blank the fields and browse field.
+2. UI - Reviewer Page not updated 
+3. UI - Report page font doesn't match with tagger page
+4. UI - Bulk upload page button must be left side as previously and use button style/css as previous form submitted pages
+5. Bulk upload - need to verify or validate the all excel sheet field 
+
+22/10/2024 =======================================
+Backend development
+- convert videos into multiple frames, and put into task buckets [24 frames]
+	a. convert video into multiple frames [3 days]
+	b. read the frames and store details into DB [3 days]
+	c. assign the frames to the particular task bucket/buckets [1 tagger || 3 taggers] [1 week]
+		a. check what is the limit to store the frames into single task bucket/folder
+		b. if exceed then write business logic to segregate the frames into multiple buckets/folders
+		c. Check the multiple bucket assgine to one tagger, if not then again write the business logic to assgine the buckets into multiple taggers [but tagger must belong to the same project]
+- Crop images store in the server, not downalod into local machine.
+	a. maintain the crop image folder.
+	b. unable the pickup image when is required [Discuss with Danish]
+- 
+UI development
+- When user upload Max image (15 MB) - loader [1 day]
+- In case of data type mismatch like try to upload jpg but media type selection is doc then error occure, so when click on ok then again loader appear and refresh the containt [1 day]
+- Not to strach the image (Display the same image in the dashboard)
+- Image can be move in entire dashboard, if it is not fit into dashboard (zoom-in & out fucntionality makes image size increase and decrease without scrollbar)
+- No scrollbar allowed into dashboard {both image and document)
+- Crop image must be visible below in dashboard for further annotation 
+
+14,16 Discussion required
 
 
 

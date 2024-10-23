@@ -1,22 +1,23 @@
 import { Button, Table } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.min.css';
 import useAuth from '../hooks/useAuth.js';
 import axios from "axios";
-import { useEffect } from 'react';
 import { DOMAIN } from '../Constant.js';
 import * as XLSX from 'xlsx'; // Import XLSX library for Excel file generation
 import SearchBar from './SearchBar.js';
-
+import { ColorSwitches } from "../utilities/reactToggelButtonCom.js"
+import commonfunction from '../utilities/commonFunction.js';
 
 const ProfileData = () => {
-    let [data, setData] = useState([]);
+    const [data, setData] = useState([]);
     const [xlsxData,setxlsxData] = useState([]);
+    const [projectData, setProjectData] = useState([]); 
     const getAllProfiles = () => {
         axios
             .get(`${DOMAIN}/taggerandreviewerprofiles`)
             .then(response => {
-                const managerProfiles = (response.data.length > 0)? response.data : [];                
+                const managerProfiles = (response.data.length > 0)? response.data : [];
                 const managerProfile = managerProfiles.map((v, i, arr) => {
                     //project_Name: projectData.filter(item => arr[i].project_id.split(',').every(value => item.project_id == value))
                     return {
@@ -29,7 +30,10 @@ const ProfileData = () => {
                         profile_role: arr[i].profile_role,
                         profile_username: arr[i].profile_username,
                         role_name: arr[i].role_name,
-                        project_id: arr[i].project_id
+                        project_id: arr[i].project_id,
+                        project_name: arr[i].project_name,
+                        profile_login_session: arr[i].profile_login_session,
+                        profile_login_datetime: (arr[i].profile_login_session > 0)?commonfunction.getHours(arr[i].profile_login_datetime)+' Hours' : 0+' Hours'
                     }
                 });
                 const tempData = managerProfiles.map((v, i, arr) => {
@@ -50,7 +54,7 @@ const ProfileData = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Profiles'); // Add worksheet to the workbook
         XLSX.writeFile(workbook, 'profiles.xlsx'); // Write workbook to an Excel file and download it
     }
-    
+
     const columns = [
         {
             title: "Full Name",
@@ -64,35 +68,29 @@ const ProfileData = () => {
         },
         {
             title: 'Assigned Projects',
-            dataIndex: 'project_Name',
-            key: 'projectname',
-            render: (text, records) => (
-                <Specificproject record={records}/>
-            )
+            dataIndex: 'project_name',
+            key: 'projectname'
         },
         {
             title: 'Role',
             dataIndex: 'role_name',
             key: 'role',
+        },
+        {
+            title: 'Login hours',
+            dataIndex: 'profile_login_datetime',
+            key:'datetime'
+        },
+        {
+            title: 'Action',
+            dataIndex: 'logoff',
+            key:'logoff',
+            render: (text, records) => {
+                console.log(records);
+                return (<ColorSwitches hours={records.profile_login_datetime} profileId={records.profile_id}/>)
+            }
         }
     ];
-    
-    const Specificproject = ({ record }) => {  
-        let [projectData, setProjectData] = useState([]);      
-        useEffect(() => {
-            axios.get(`${DOMAIN}/profilerelateproject`, {
-                params: {
-                    project_ids: record.project_id
-                }
-            })
-            .then(res => {
-                setProjectData(res.data[0]);
-            }).catch(error => {
-                console.log(error);
-            });
-        }, []);
-        return (<div key={projectData.project_id}>{projectData.project_name}</div>)
-    }
 
     useEffect(() => {
         getAllProfiles();
@@ -111,7 +109,7 @@ const ProfileData = () => {
                     <span>Download</span>
                 </Button>
             </div>
-            <Table columns={columns} dataSource={data} pagination={{ pageSize: 8 }} />
+            <Table columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
         </div>
         </div>
     );
